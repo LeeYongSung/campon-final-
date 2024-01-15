@@ -1,4 +1,4 @@
-package com.example.campon_app
+package com.example.camp_app
 
 import io.flutter.embedding.android.FlutterActivity
 

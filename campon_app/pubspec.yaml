@@ -1,5 +1,6 @@
 name: campon_app
-description: "A new Flutter project."
+description: A new Flutter project.
+
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -11,15 +12,13 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # build by specifying --build-name and --build-number, respectively.
 # In Android, build-name is used as versionName while build-number used as versionCode.
 # Read more about Android versioning at https://developer.android.com/studio/publish/versioning
-# In iOS, build-name is used as CFBundleShortVersionString while build-number is used as CFBundleVersion.
+# In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-# In Windows, build-name is used as the major, minor, and patch parts
-# of the product and file versions while build-number is used as the build suffix.
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.2.3 <4.0.0'
+  sdk: ">=3.1.2 <4.0.0"
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -30,6 +29,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+
+  carousel_slider: ^4.2.1
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -43,12 +44,20 @@ dependencies:
   table_calendar: ^3.0.6
   onboarding: ^3.1.0
   syncfusion_flutter_datepicker: ^23.2.4
-  flutter_sms: ^2.3.3
+  # flutter_sms: ^2.3.3
   custom_pop_up_menu: ^1.2.4
   flutter_switch: ^0.3.2
   swipe_cards: ^2.0.0+1
   shared_preferences: ^2.0.15
   provider: ^6.0.3
+  # percent_indicator: ^4.2.2
+  #  google_maps_flutter: ^2.1.9
+  #  geolocator: ^9.0.1
+  #  geocoding: ^2.0.4
+  # flutter_share: ^2.0.0
+  # screenshot: ^1.2.3
+  # path_provider: ^2.0.11
+  # file_picker: ^4.6.1
 
 dev_dependencies:
   flutter_test:
@@ -59,7 +68,7 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^2.0.0
+  flutter_lints: ^3.0.1
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -73,8 +82,8 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
+  assets:
+    - assets/images/
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
@@ -88,6 +97,28 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
+  fonts:
+    - family: Gilroy Black
+      fonts:
+        - asset: fonts/Gilroy-Black.otf
+    - family: Gilroy Light
+      fonts:
+        - asset: fonts/Gilroy-Light.otf
+    - family: Gilroy Heavy
+      fonts:
+        - asset: fonts/Gilroy-Heavy.otf
+    - family: Gilroy Medium
+      fonts:
+        - asset: fonts/Gilroy-Medium.otf
+    - family: Gilroy Bold
+      fonts:
+        - asset: fonts/Gilroy-Bold.otf
+    - family: Gilroy ExtraBold
+      fonts:
+        - asset: fonts/Gilroy-ExtraBold.otf
+    - family: Gilroy Regular
+      fonts:
+        - asset: fonts/Gilroy-Regular.otf
   # fonts:
   #   - family: Schyler
   #     fonts:

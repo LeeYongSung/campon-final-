@@ -134,7 +134,8 @@ class _hoteldetailpageState extends State<hoteldetailpage> {
               fit: BoxFit.fill,
             ),
           ),
-        ),
+        ), //SilverAppBar 끝
+
         SliverToBoxAdapter(
             child: Column(
           children: [
@@ -510,7 +511,7 @@ class _hoteldetailpageState extends State<hoteldetailpage> {
               ]),
             )
           ],
-        )),
+        )), //SliverToBoxAdapter 끝
       ]),
     );
   }

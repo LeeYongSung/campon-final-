@@ -307,6 +307,11 @@ class _HotelSearchlistState extends State<HotelSearchlist> {
   //   return;
   // }
 
+
+
+
+
+
   bottomsheet() {
     return showModalBottomSheet(
         backgroundColor: notifire.getbgcolor,

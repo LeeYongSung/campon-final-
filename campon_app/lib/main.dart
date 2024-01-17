@@ -1,4 +1,6 @@
+import 'package:campon_app/camp/camp_main_screen.dart';
 import 'package:campon_app/example/IntroScreen/onbording.dart';
+import 'package:campon_app/loading/loading_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'example/Utils/dark_lightmode.dart';
@@ -20,12 +22,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'CampOn',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const onbording(),
+      home: const LoadingScreen(),
     );
   }
 }

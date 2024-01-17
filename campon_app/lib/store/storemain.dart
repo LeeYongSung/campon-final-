@@ -147,7 +147,6 @@ class _StoreMainState extends State<StoreMain> {
       }
       proReviewList = proReviewList2;
     } else {
-      // 서버로부터 실패 응답을 받은 경우, 예외를 던집니다.
       throw Exception('Failed to load product hot list');
     }
   }

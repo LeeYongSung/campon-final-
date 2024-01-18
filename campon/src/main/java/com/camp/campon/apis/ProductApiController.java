@@ -97,8 +97,9 @@ public class ProductApiController {
 
     @GetMapping(value = "/productdetail")
     public ResponseEntity<?> productDetail(Integer productNo) {
+        log.info("productDetail 들어갔음" );
         try {
-            Product product = productService.select(productNo);
+            Product product = productService.selectWImg(productNo);
             List<Productreview> proReviewList = productService.getReviewListByNoLim(productNo);
             for (Productreview productreview : proReviewList) {
                 log.info(productreview.getPrNo() + "리뷰넘버");
@@ -110,6 +111,9 @@ public class ProductApiController {
             pd.put("product", product);
             pd.put("proReviewList", proReviewList);
             pd.put("reviewCount", reviewCount);
+            log.info(product + "product");
+            log.info(proReviewList + "proReviewList");
+            log.info(reviewCount + "reviewCount");
             return new ResponseEntity<>(pd, HttpStatus.OK);
         } catch (Exception e) {
             log.info("productdetailError : " + e);
@@ -189,7 +193,7 @@ public class ProductApiController {
             String state = "";
             int result = 0;
             int productNo = product.getProductNo();
-            log.info(productNo + "");
+            log.info(productNo + "productNo 입니다. ");
             int cnt = productService.dupliCateTest(productNo);
             if (cnt == 0) {
                 result = productService.addCart(product);

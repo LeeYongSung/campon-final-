@@ -702,16 +702,19 @@ class _StoreMainState extends State<StoreMain> {
                             width: 75,
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(12),
-                              child: Image.asset(
-                                proReviewList[index]["prImg"]
-                                        .toString()
-                                        .startsWith('/')
-                                    ? proReviewList[index]["prImg"]
-                                        .toString()
-                                        .substring(1)
-                                    : proReviewList[index]["prImg"].toString(),
-                                fit: BoxFit.cover,
-                              ),
+                              child: 
+                              // Image.asset(
+                              //   proReviewList[index]["prImg"]
+                              //           .toString()
+                              //           .startsWith('/')
+                              //       ? proReviewList[index]["prImg"]
+                              //           .toString()
+                              //           .substring(1)
+                              //       : proReviewList[index]["prImg"].toString(),
+                              //   fit: BoxFit.cover,
+                              // ),
+                              Image.network("http://10.0.2.2:8081/api/img?file=${proReviewList[index]['prImg'].toString()}", fit: BoxFit.cover,)
+
                             ),
                           ),
                           Column(

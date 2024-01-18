@@ -8,6 +8,9 @@ import 'package:campon_app/example/Utils/Colors.dart';
 import 'package:campon_app/example/Utils/customwidget%20.dart';
 import 'package:campon_app/example/Utils/dark_lightmode.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
+import 'dart:convert';
 
 class ProductDetail extends StatefulWidget {
   const ProductDetail({super.key});
@@ -30,9 +33,9 @@ class _ProductDetailState extends State<ProductDetail> {
 //상세이미지의 높이를 받아오는 방법
   GlobalKey _imageKey = GlobalKey();
   double _imageHeight = 10;
-  void _updateImageHeight()  {
-    final BuildContext? context =   _imageKey.currentContext;
-      print('이미지하이트는? ${_imageHeight}');
+  void _updateImageHeight() {
+    final BuildContext? context = _imageKey.currentContext;
+    print('이미지하이트는? ${_imageHeight}');
     if (context != null) {
       // findRenderObject가 널이 아닌 RenderObject를 반환할 것이라는 것을 보장한 후에,
       // RenderBox로 캐스팅합니다.
@@ -41,7 +44,7 @@ class _ProductDetailState extends State<ProductDetail> {
         _imageHeight = renderBox.size.height;
         print('이미지하이트는? ${_imageHeight}');
       });
-       print('이미지하이트는? ${_imageHeight}');
+      print('이미지하이트는? ${_imageHeight}');
     }
   }
 
@@ -51,6 +54,116 @@ class _ProductDetailState extends State<ProductDetail> {
   bool _floating = false;
 
   bool isExpanded = false;
+
+//상품 정보
+  dynamic product = {
+    "productNo": 1,
+    "productThumnail": "img/product/product1.png",
+    "productCategory": "텐트",
+    "productName": "상품 이름",
+    "productPrice": "20000",
+    "productConFile": "img/product/store_banner3.png",
+  };
+  // product? {productNo: 1, productName: 1, productThumnail: /img/product/3d5486f7-470c-496f-a5ef-707ff8d29c1a_20231115_103134.png, productCon: 상품1, productIntro: 상품설명1, productCategory: 텐트, productPrice: 10000000, regDate: 2023-11-01T07:28:23.000+00:00, updDate: 2023-11-01T07:28:23.000+00:00, userNo: null, productimgNo: null, productimgUrl: null, productImgsUrlList: null, productThmFile: null, productConFile: null, productImgs: null, cartNo: null, cartCnt: null, productsaveNo: 0, wishlistNo: 0, orderCnt: 0, sum: null, orderNo: 0}
+
+  List<dynamic> proReviewList = [
+    {
+      "prNo": 1,
+      "prImg": "img/product/product1.png",
+      "prTitle": "후기 제목",
+      "prCon": "구체적 후기 내용",
+      "productName": "productName",
+      "regDate": "2024-01-17",
+      "userId": "userId"
+    },
+    {
+      "prNo": 1,
+      "prImg": "img/product/product1.png",
+      "prTitle": "후기 제목",
+      "prCon": "구체적 후기 내용",
+      "productName": "productName",
+      "regDate": "2024-01-17",
+      "userId": "userId"
+    },
+    {
+      "prNo": 1,
+      "prImg": "img/product/product1.png",
+      "prTitle": "후기 제목",
+      "prCon": "구체적 후기 내용",
+      "productName": "productName",
+      "regDate": "2024-01-17",
+      "userId": "userId"
+    },
+  ];
+
+  int productNo = 1; //하드코딩 (TODO)
+  int reviewCount = 10;
+  //리뷰 비동기 요청
+  Future<void> getReviewList(productNo) async {
+    final response = await http.get(Uri.parse(
+        "http://10.0.2.2:8081/api/product/productdetail?productNo=${productNo}"));
+    if (response.statusCode == 200) {
+      final data = jsonDecode(utf8.decode(response.bodyBytes));
+      final product2 = data['product'];
+      final productReview2 = data['proReviewList'];
+      final reviewCount2 = data['reviewCount'];
+      // productReview의 formattedDate 속성 추가
+      for (int i = 0; i < productReview2.length; i++) {
+        String datetimeStr = productReview2[i]["regDate"].toString();
+        DateTime dateTime = DateTime.parse(datetimeStr);
+        String formattedDate = DateFormat('yyyy-MM-dd').format(dateTime);
+        productReview2[i]["formattedDate"] = formattedDate;
+      }
+
+      setState(() {
+        proReviewList = productReview2;
+        print('proReviewList는? ${proReviewList}');
+        product = product2;
+        print('product는? ${product}');
+        reviewCount = reviewCount2;
+        print('reviewCount? ${reviewCount}');
+      });
+    } else {
+      throw Exception('Failed to load getReviewList()');
+    }
+  }
+
+  //장바구니 버튼 클릭 시 실행되는 함수
+  Future<dynamic> addCart() async {
+    print("장바구니 버튼 클릭");
+    print("장바구니 버튼 클릭");
+    print("장바구니 버튼 클릭");
+    print("장바구니 버튼 클릭");
+    //TODO 하드코딩
+    int userNo = 1;
+    final response = await http.get(Uri.parse(
+        'http://10.0.2.2:8081/api/product/addProductsaveAjax?productNo=${productNo}&userNo=${userNo}'));
+    if (response.statusCode == 200) {
+      print("response.statusCode == 200 입니다. ");
+      final data = jsonDecode(utf8.decode(response.bodyBytes));
+      if (data == "SUCCESS") {
+        print("data == 'SUCCESS' ");
+        return showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text("장바구니에 등록되었습니다."),
+            );
+          },
+        );
+      } else {
+        print("data == 'SUCCESS' 아님 ");
+        return showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text("장바구니에 이미 등록되어있습니다. "),
+            );
+          },
+        );
+      }
+    }
+  }
 
   Widget sliderWidget() {
     return CarouselSlider(
@@ -111,6 +224,7 @@ class _ProductDetailState extends State<ProductDetail> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) => _updateImageHeight());
+    getReviewList(productNo);
   }
 
   @override
@@ -137,16 +251,24 @@ class _ProductDetailState extends State<ProductDetail> {
                 padding: const EdgeInsets.only(top: 12),
                 child: Row(
                   children: [
-                    CircleAvatar(
-                      radius: 22,
-                      backgroundColor: notifire.getlightblackcolor,
-                      child: Icon(
-                        Icons.shopping_cart,
-                        color: notifire.getdarkwhitecolor,
-                        weight: 25,
+                    //장바구니 버튼
+                    GestureDetector(
+                      onTap: () {
+                        print("장바구니 버튼 클릭");
+                        addCart();
+                      },
+                      child: CircleAvatar(
+                        radius: 22,
+                        backgroundColor: notifire.getlightblackcolor,
+                        child: Icon(
+                          Icons.shopping_cart,
+                          color: notifire.getdarkwhitecolor,
+                          weight: 25,
+                        ),
                       ),
                     ),
                     const SizedBox(width: 20),
+                    //찜 버튼
                     CircleAvatar(
                       radius: 22,
                       backgroundColor: notifire.getlightblackcolor,
@@ -177,7 +299,7 @@ class _ProductDetailState extends State<ProductDetail> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "카테고리 분류",
+                      "${product['productCategory']}",
                       style: TextStyle(
                           fontSize: 14,
                           color: notifire.getgreycolor,
@@ -186,7 +308,7 @@ class _ProductDetailState extends State<ProductDetail> {
                     ),
                     const SizedBox(height: 10),
                     Text(
-                      "대여상품 제목",
+                      "${product['productName']}",
                       style: TextStyle(
                           // color: notifire.getgreycolor,
                           color: notifire.getwhiteblackcolor,
@@ -207,7 +329,7 @@ class _ProductDetailState extends State<ProductDetail> {
                               fontFamily: "Gilroy Medium"),
                         ),
                         Text(
-                          "22",
+                          "${reviewCount}",
                           style: TextStyle(
                               // color: notifire.getgreycolor,
                               color: notifire.getwhiteblackcolor,
@@ -218,7 +340,7 @@ class _ProductDetailState extends State<ProductDetail> {
                     ),
 
                     Text(
-                      "100000원",
+                      "${product['productPrice']}원",
                       style: TextStyle(
                           // color: notifire.getgreycolor,
                           color: notifire.getwhiteblackcolor,
@@ -229,17 +351,21 @@ class _ProductDetailState extends State<ProductDetail> {
                     //상세 이미지
                     AnimatedContainer(
                       height: isExpanded
-                          ? _imageHeight *(MediaQuery.of(context).size.width /100) 
+                          ? _imageHeight *
+                              (MediaQuery.of(context).size.width / 100)
                           : 100, // isExpanded가 true일 때 전체 이미지를 보여주고, false일 때는 높이를 제한합니다.
                       width: MediaQuery.of(context).size.width,
                       child: Container(
                         width: MediaQuery.of(context).size.width,
                         height: 100,
-                        child: Image.asset(
-                          "img/product/product1.png",
-                          key: _imageKey,
-                          fit: BoxFit.cover, // 이미지가 컨테이너를 꽉 채우도록 설정합니다.
-                        ),
+                        // child: Image.asset(
+                        //   "${product['productConFile']}", //
+
+                        //   key: _imageKey,
+                        //   fit: BoxFit.cover, // 이미지가 컨테이너를 꽉 채우도록 설정합니다.
+                        // ),
+
+                        child:Image.network("http://10.0.2.2:8081/api/img?file=${product['productCon']}", key: _imageKey,fit: BoxFit.cover,)
                       ),
 
                       duration:
@@ -269,6 +395,143 @@ class _ProductDetailState extends State<ProductDetail> {
                           color: notifire.getwhiteblackcolor,
                           fontSize: 18,
                           fontFamily: "Gilroy Medium"),
+                    ),
+
+                    //상품 후기
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemCount: proReviewList.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return InkWell(
+                          onTap: () {},
+                          child: Container(
+                            width: double.infinity,
+                            margin: const EdgeInsets.symmetric(vertical: 5),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(15),
+                              color: notifire.getdarkmodecolor,
+                            ),
+                            child: Row(
+                              children: [
+                                Container(
+                                  margin: const EdgeInsets.symmetric(
+                                      horizontal: 12, vertical: 12),
+                                  height: 75,
+                                  width: 75,
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(12),
+                                    child: 
+                                    // Image.asset(
+                                    //   proReviewList[index]["prImg"]
+                                    //           .toString()
+                                    //           .startsWith('/')
+                                    //       ? proReviewList[index]["prImg"]
+                                    //           .toString()
+                                    //           .substring(1)
+                                    //       : proReviewList[index]["prImg"]
+                                    //           .toString(),
+                                    //   fit: BoxFit.cover,
+                                    // ),
+                                    Image.network("http://10.0.2.2:8081/api/img?file=${proReviewList[index]['prImg']}", fit: BoxFit.cover,)
+
+
+                                  ),
+                                ),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      proReviewList[index]["prTitle"]
+                                          .toString(),
+                                      style: TextStyle(
+                                          fontSize: 15,
+                                          color: notifire.getwhiteblackcolor,
+                                          fontFamily: "Gilroy Bold"),
+                                    ),
+                                    Text(
+                                      proReviewList[index]["prCon"].toString(),
+                                      style: TextStyle(
+                                          fontSize: 13,
+                                          color: notifire.getgreycolor,
+                                          fontFamily: "Gilroy Medium",
+                                          overflow: TextOverflow.ellipsis),
+                                    ),
+                                    Text(
+                                      proReviewList[index]["formattedDate"]
+                                          .toString(),
+                                      style: TextStyle(
+                                          fontSize: 13,
+                                          color: notifire.getgreycolor,
+                                          fontFamily: "Gilroy Medium",
+                                          overflow: TextOverflow.ellipsis),
+                                    ),
+                                    Text(
+                                      proReviewList[index]["userId"].toString(),
+                                      style: TextStyle(
+                                          fontSize: 15,
+                                          color: notifire.getwhiteblackcolor,
+                                          fontFamily: "Gilroy Bold"),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+
+                    //대여안내
+                    //캠프온이 처음이신가요?
+                    InkWell(
+                      onTap: () {},
+                      child: Column(
+                        children: [
+                          Divider(
+                            color: notifire.getgreycolor,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              SizedBox(),
+                              Text(
+                                '대여안내',
+                                style: TextStyle(),
+                              ),
+                              Icon(Icons.arrow_forward_ios),
+                            ],
+                          ),
+                          Divider(
+                            color: notifire.getgreycolor,
+                          ),
+                        ],
+                      ),
+                    ),
+                    //상품정보공시
+                    InkWell(
+                      onTap: () {},
+                      child: Column(
+                        children: [
+                          Divider(
+                            color: notifire.getgreycolor,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              SizedBox(),
+                              Text(
+                                '상품정보공시',
+                                style: TextStyle(),
+                              ),
+                              Icon(Icons.arrow_forward_ios),
+                            ],
+                          ),
+                          Divider(
+                            color: notifire.getgreycolor,
+                          ),
+                        ],
+                      ),
                     ),
                   ]), //Column 끝
             ),

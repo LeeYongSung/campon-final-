@@ -39,6 +39,13 @@ SELECT * FROM product
 SELECT * FROM product WHERE product_no = #{productNo}
 </select>
 
+<!--상품 하나 선택, 상세이미지들 포함-->
+<select id="selectWImg" resultType="Product">
+SELECT * FROM product JOIN productimg ON product.product_no = productimg.product_no WHERE product.product_no = #{productNo}
+</select>
+
+
+
 <!-- 상품등록 -->
 <insert id="productInsert">
     INSERT INTO product (

@@ -110,12 +110,16 @@ class _loginscreenState extends State<loginscreen> {
                   )),
             ),
             SizedBox(height: MediaQuery.of(context).size.height / 4.6),
+
+            //로그인 버튼
             AppButton(
                 buttontext: "Login",
                 onclick: () {
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) => const homepage()));
                 }),
+
+                
             const SizedBox(height: 10),
             Center(
               child: Column(

@@ -18,6 +18,8 @@ public interface ProductService {
 
   // 상품 하나 선택
   public Product select(int productNo) throws Exception;
+  // 상품 하나 선택(이미지)
+  public Product selectWImg(int productNo) throws Exception;
 
   // 상품 등록
   public int productInsert(Product product) throws Exception;

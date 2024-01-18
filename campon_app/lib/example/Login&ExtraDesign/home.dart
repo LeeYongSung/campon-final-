@@ -87,6 +87,7 @@ class _homeState extends State<home> {
               ),
               SizedBox(height: MediaQuery.of(context).size.height * 0.015),
               Expanded(
+                //여기 싱글차일드스크롤뷰가 있음
                 child: SingleChildScrollView(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -177,13 +178,16 @@ class _homeState extends State<home> {
                       SizedBox(
                           height: MediaQuery.of(context).size.height * 0.018),
                       // const SizedBox(height: 10),
+
+                      //가로 스크롤 하는 방법입니다~
                       SizedBox(
                           height: height / 3.1,
                           child: ListView.builder(
                             scrollDirection: Axis.horizontal,
                             itemCount: hotelList.length,
                             itemBuilder: (BuildContext context, int index) {
-                              return InkWell(
+                              return 
+                              InkWell(
                                 onTap: () {
                                   Navigator.of(context).push(MaterialPageRoute(
                                       builder: (context) =>

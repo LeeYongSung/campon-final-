@@ -302,6 +302,12 @@ public class ProductServiceImpl implements ProductService {
         return result;
     }
 
+    @Override
+    public Product selectWImg(int productNo) throws Exception {
+        Product product = productMapper.selectWImg(productNo);
+        return product;
+    }
+
     
 
 }

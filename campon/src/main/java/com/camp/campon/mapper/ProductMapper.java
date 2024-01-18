@@ -16,6 +16,8 @@ public interface ProductMapper {
   
     //상품 하나 선택
     public Product select(int productNo) throws Exception;
+    //상품 하나 선택
+    public Product selectWImg(int productNo) throws Exception;
 
     //카테고리별 상품목록
     public List<Product> getCategoryList(String category) throws Exception;

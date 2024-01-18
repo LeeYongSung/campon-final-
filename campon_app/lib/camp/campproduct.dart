@@ -1,14 +1,21 @@
+import 'dart:convert';
+
+import 'package:campon_app/camp/campdetail.dart';
 import 'package:campon_app/example/Login&ExtraDesign/chackout.dart';
 import 'package:campon_app/example/Login&ExtraDesign/hoteldetail.dart';
 import 'package:campon_app/example/Utils/Colors.dart';
 import 'package:campon_app/example/Login&ExtraDesign/review.dart';
 import 'package:campon_app/example/Utils/dark_lightmode.dart';
+import 'package:campon_app/models/camp.dart';
+import 'package:campon_app/models/user.dart';
+import 'package:campon_app/models/board.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:readmore/readmore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:campon_app/example/Utils/customwidget%20.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:http/http.dart' as http;
 
 int selectedIndex = 0;
 
@@ -22,6 +29,13 @@ class CampProduct extends StatefulWidget {
 }
 
 class _CampProductState extends State<CampProduct> {
+  Camp _camp = Camp();
+  int _reserve = 0;
+  List<Camp> cpdtList = [];
+  List<Camp> environment = [];
+  List<Camp> facility = [];
+  Users seller = Users();
+
   bool _pinned = true;
   bool _snap = false;
   bool _floating = false;
@@ -29,6 +43,100 @@ class _CampProductState extends State<CampProduct> {
   void initState() {
     getdarkmodepreviousstate();
     super.initState();
+    
+    getCamp().then((campData){
+      setState((){
+        _camp = campData['campObject'];
+        _reserve = campData['productsreserve'];
+        cpdtList = campData['cpdtList'];
+        environment = campData['environment'];
+        facility = campData['facility'];
+        seller = campData['seller'];
+        print(cpdtList);
+      });
+    });
+  }
+
+  Future<Map<String, dynamic>> getCamp() async{
+    // try{
+    var url = 'http://10.0.2.2:8081/api/camp/campproduct/11';
+    var response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200){
+    var utf8Decoded = utf8.decode(response.bodyBytes);
+    Map<String, dynamic> data = jsonDecode(utf8Decoded);
+
+    List<Camp> productsimg = List<Camp>.from(data['productsimg'].map((item) => Camp.fromJson(item)));
+      Camp productsproducts = Camp.fromJson(data['productsproducts']);
+      int productsreserve = data['productsreserve'];
+      Users productsseller = Users.fromJson(data['productsseller']);
+      List<Camp> productsenvironment = List<Camp>.from(data['productsenvironment'].map((item) => Camp.fromJson(item)));
+      // List<Board> productsreview = List<Board>.from(data['productsreview'].map((item) => Board.fromJson(item)));
+      List<Camp> productsfacility = List<Camp>.from(data['productsfacility'].map((item) => Camp.fromJson(item)));
+      List<Camp> productsproductlist = List<Camp>.from(data['productsproductlist'].map((item) => Camp.fromJson(item)));
+
+      Camp campObject = Camp(
+        campName: productsproducts.campName,
+        campAddress: productsproducts.campAddress,
+        campTel: productsproducts.campTel,
+        campOpen: productsproducts.campOpen,
+        campClose: productsproducts.campClose,
+        campCaution: productsproducts.campCaution,
+        campLatitude: productsproducts.campLatitude,
+        campLongitude: productsproducts.campLongitude,
+        campLayout: productsproducts.campLayout,
+        campIntroduction: productsproducts.campIntroduction,
+      );
+      
+      List<Camp>? cpdt = [];
+      for(var i = 0; i < productsproductlist.length; i++){
+        cpdt.add(Camp(
+          cpdtNo: productsproductlist[i].cpdtNo,
+          cpdiUrl: productsproductlist[i].cpdiUrl,
+          campTypeName: productsproductlist[i].campTypeName,
+          cpdtName: productsproductlist[i].cpdtName,
+          cpdtPrice: productsproductlist[i].cpdtPrice
+        ));
+      }
+
+      List<Camp>? environment = [];
+      for(var i = 0; i < productsenvironment.length; i++){
+        environment.add(Camp(
+          environmentTypeName: productsenvironment[i].environmentTypeName,
+        ));
+      }
+      
+      List<Camp>? facility = [];
+      for(var i = 0; i < productsfacility.length; i++){
+        facility.add(Camp(
+          facilitytypeImg: productsfacility[i].facilitytypeImg,
+          facilitytypeName: productsfacility[i].facilitytypeName
+        ));
+      }
+
+      Users seller = Users(
+        companyName: productsseller.companyName,
+        companyNumber: productsseller.companyNumber,
+        userName: productsseller.userName
+      );
+      
+      print("캠프설명 : ${campObject}");
+      return {
+        'campObject': campObject,
+        'productsreserve': productsreserve,
+        'cpdtList' : cpdt,
+        'environment' : environment,
+        'facility' : facility,
+        'seller' : seller
+      };
+    }else{
+      print("서버 문제");
+      return {};
+    }
+    // }catch(e){
+    //   print("예외!!!! $e");
+    //   return {};
+    // }
   }
 
   late ColorNotifire notifire;
@@ -61,15 +169,18 @@ class _CampProductState extends State<CampProduct> {
                 ),
               ),
             ),
-            Image.asset("assets/images/header_logo.png",
-                                  height: 40,)
-                                  
             ]),
           actions: [
             Padding(
               padding: const EdgeInsets.only(top: 12),
               child: Row(
                 children: [
+                  Image.asset(
+                    "assets/images/logo2.png",
+                    width: 110,
+                    height: 60,
+                  ),
+                  const SizedBox(width: 20),
                   CircleAvatar(
                     radius: 22,
                     backgroundColor: notifire.getlightblackcolor.withAlpha(0),
@@ -113,20 +224,24 @@ class _CampProductState extends State<CampProduct> {
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-              child: Stack(children: [
+              child:
                 Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: environment.map((item) => 
+                            Text(
+                            item.environmentTypeName ?? '환경',
+                            style: TextStyle(
+                                fontSize: 12,
+                                color: notifire.getwhiteblackcolor,
+                                fontFamily: "Gilroy Bold"),
+                          )).toList(),
+                      ),
                     Text(
-                      "캠핑장 환경 ( 산/바다 )",
-                      style: TextStyle(
-                          fontSize: 12,
-                          color: notifire.getwhiteblackcolor,
-                          fontFamily: "Gilroy Bold"),
-                    ),
-                    Text(
-                      "캠핑장명",
+                      _camp.campName ?? '캠핑장명',
                       style: TextStyle(
                           fontSize: 25,
                           color: notifire.getwhiteblackcolor,
@@ -142,35 +257,35 @@ class _CampProductState extends State<CampProduct> {
                           fontFamily: "Gilroy Bold"),
                     ),
                     Text(
-                      "캠핑장 주소",
+                      "주소 : ${_camp.campAddress ?? '캠핑장 주소'}",
                       style: TextStyle(
                           fontSize: 15,
                           color: notifire.getwhiteblackcolor,
                           fontFamily: "Gilroy Bold"),
                     ),
                     Text(
-                      "캠핑장 연락처",
+                      "연락처 : ${_camp.campTel ?? '캠핑장 연락처'}",
                       style: TextStyle(
                           fontSize: 15,
                           color: notifire.getwhiteblackcolor,
                           fontFamily: "Gilroy Bold"),
                     ),
                     Text(
-                      "캠핑장 오픈날짜",
+                      "OPEN : ${_camp.campOpen ?? '오픈일'}",
                       style: TextStyle(
                           fontSize: 15,
                           color: notifire.getwhiteblackcolor,
                           fontFamily: "Gilroy Bold"),
                     ),
                     Text(
-                      "캠핑장 클로즈날짜",
+                      "CLOSE : ${_camp.campClose ?? '마감일'}",
                       style: TextStyle(
                           fontSize: 15,
                           color: notifire.getwhiteblackcolor,
                           fontFamily: "Gilroy Bold"),
                     ),
                     Text(
-                      "매너타임",
+                      "매너타임 : ${_camp.campCaution ?? '매너타임'}",
                       style: TextStyle(
                           fontSize: 15,
                           color: notifire.getwhiteblackcolor,
@@ -185,7 +300,7 @@ class _CampProductState extends State<CampProduct> {
                         ), 
                       child: 
                         Text(
-                        "그동안 ( ) 명이 방문하셨습니다.",
+                        "그동안 $_reserve 명이 방문하셨습니다.",
                         style: TextStyle(
                           fontSize: 15,
                           color: notifire.getwhiteblackcolor,
@@ -201,7 +316,7 @@ class _CampProductState extends State<CampProduct> {
                           fontFamily: "Gilroy Bold"),
                     ),
                     ReadMoreText(
-                      "캠핑장 소개 지금 3줄 이상이면 접혀진다~캠핑장 소개 지금 3줄 이상이면 접혀진다~캠핑장 소개 지금 3줄 이상이면 접혀진다~캠핑장 소개 지금 3줄 이상이면 접혀진다~캠핑장 소개 지금 3줄 이상이면 접혀진다~캠핑장 소개 지금 3줄 이상이면 접혀진다~캠핑장 소개 지금 3줄 이상이면 접혀진다~캠핑장 소개 지금 3줄 이상이면 접혀진다~",
+                      _camp.campIntroduction ?? '캠핑장 소개',
                       trimLines: 3,
                       trimMode: TrimMode.Line,
                       style: TextStyle(
@@ -224,41 +339,18 @@ class _CampProductState extends State<CampProduct> {
                           color: notifire.getwhiteblackcolor,
                           fontFamily: "Gilroy Bold"),
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Column(
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: facility.map((item) => Column(
                           children: [
-                            Image.asset("assets/images/wifi.png",
-                                height: 30, color: notifire.getwhiteblackcolor),
+                            Image.asset("assets/images/wifi.png", height: 30, color: notifire.getwhiteblackcolor),
                             Text(
-                              "Wifi",
-                              style: TextStyle(
-                                  fontSize: 15,
-                                  color: notifire.getgreycolor,
-                                  fontFamily: "Gilroy Medium"),
+                              item.facilitytypeName ?? '시설명',
+                              style: TextStyle(fontSize: 15, color: notifire.getgreycolor, fontFamily: "Gilroy Medium"),
                             ),
                           ],
-                        ),
-                        const SizedBox(width: 20,),
-                        Column(
-                          children: [
-                            Image.asset(
-                              "assets/images/shower.png",
-                              height: 30,
-                              color: notifire.getwhiteblackcolor,
-                            ),
-                            Text(
-                              "shower",
-                              style: TextStyle(
-                                  fontSize: 15,
-                                  color: notifire.getgreycolor,
-                                  fontFamily: "Gilroy Medium"),
-                            )
-                          ],
-                        ),
-                        const SizedBox(width: 20,),
-                        ]),
+                        )).toList(),
+                      ),
                         Divider(),
                         const SizedBox(height: 10),
                         Text(
@@ -277,7 +369,8 @@ class _CampProductState extends State<CampProduct> {
                         Divider(),
                         const SizedBox(height: 10),
                         Text(
-                          "캠핑장 배치도",
+                          "캠핑장 배치도 : ${_camp.campLayout ?? '캠핑장 배치도'}",
+                          // "캠핑장 배치도",
                           style: TextStyle(
                               fontSize: 18,
                               color: notifire.getwhiteblackcolor,
@@ -302,13 +395,13 @@ class _CampProductState extends State<CampProduct> {
                         shrinkWrap: true,
                         padding: EdgeInsets.zero,
                         physics: const NeverScrollableScrollPhysics(),
-                        itemCount: hotelList2.length,
+                        itemCount: cpdtList.length,
                         itemBuilder: (BuildContext context, int index) {
                           return InkWell(
                             onTap: () {
                               Navigator.of(context).push(MaterialPageRoute(
                                   builder: (context) =>
-                                      const hoteldetailpage()));
+                                      CampDetail(cpdtNo: cpdtList[index].cpdtNo)));
                             },
                             child: Container(
                               width: double.infinity,
@@ -337,21 +430,18 @@ class _CampProductState extends State<CampProduct> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        "캠핑상품명",
+                                        cpdtList[index].cpdtName ?? '캠핑상품명',
                                         style: TextStyle(
                                             fontSize: 15,
                                             color: notifire.getwhiteblackcolor,
                                             fontFamily: "Gilroy Bold"),
                                       ),
-                                      Row(
-                                      children: [
                                         SizedBox(
                                           width:
                                               MediaQuery.of(context).size.width *
                                                   0.2,
                                           child: Text(
-                                            "( 글램핑 )"
-                                                .toString(),
+                                            cpdtList[index].campTypeName ?? '캠핑 타입',
                                             style: TextStyle(
                                                 fontSize: 13,
                                                 color: notifire.getgreycolor,
@@ -359,39 +449,12 @@ class _CampProductState extends State<CampProduct> {
                                                 overflow: TextOverflow.ellipsis),
                                           ),
                                         ),
-                                        SizedBox(
-                                          child: Text(
-                                            "수용가능 인원 : "
-                                                .toString(),
-                                            style: TextStyle(
-                                                fontSize: 13,
-                                                color: notifire.getgreycolor,
-                                                fontFamily: "Gilroy Medium",
-                                                overflow: TextOverflow.ellipsis),
-                                          ),
-                                        ),
-                                      ]
-                                      ),
-                                      SizedBox(
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                0.65,
-                                        child: Text(
-                                          "캠핑상품 소개"
-                                              .toString(),
-                                          style: TextStyle(
-                                              fontSize: 13,
-                                              color: notifire.getgreycolor,
-                                              fontFamily: "Gilroy Medium",
-                                              overflow: TextOverflow.ellipsis),
-                                        ),
-                                      ),
                                       Row(
                                         children: [
                                           Row(
                                             children: [
                                               Text(
-                                                "가격",
+                                                cpdtList[index].cpdtPrice.toString(),
                                                 style: TextStyle(
                                                     fontSize: 16,
                                                     color: notifire
@@ -399,7 +462,7 @@ class _CampProductState extends State<CampProduct> {
                                                     fontFamily: "Gilroy Bold"),
                                               ),
                                               Text(
-                                                "원 / 1박",
+                                                " 원 / 1박",
                                                 style: TextStyle(
                                                     fontSize: 16,
                                                     color:
@@ -587,21 +650,21 @@ class _CampProductState extends State<CampProduct> {
                               fontFamily: "Gilroy Bold"),
                         ),
                         Text(
-                          "업체명 : ",
+                          "업체명 : ${seller.companyName ?? '업체명'}",
                           style: TextStyle(
                               fontSize: 15,
                               color: notifire.getwhiteblackcolor,
                               fontFamily: "Gilroy Bold"),
                         ),
                         Text(
-                          "사업자번호 : ",
+                          "사업자번호 : ${seller.companyNumber ?? '사업자번호'}",
                           style: TextStyle(
                               fontSize: 15,
                               color: notifire.getwhiteblackcolor,
                               fontFamily: "Gilroy Bold"),
                         ),
                         Text(
-                          "사업주 : ",
+                          "사업주 : ${seller.userName ?? '사업주'}",
                           style: TextStyle(
                               fontSize: 15,
                               color: notifire.getwhiteblackcolor,
@@ -611,7 +674,7 @@ class _CampProductState extends State<CampProduct> {
 
                   ],
                 ),
-              ]),
+
             )
           ],
         )),

@@ -1,19 +1,25 @@
+import 'dart:convert';
+
+import 'package:campon_app/camp/reservate.dart';
 import 'package:campon_app/example/Login&ExtraDesign/chackout.dart';
 import 'package:campon_app/example/Login&ExtraDesign/hoteldetail.dart';
 import 'package:campon_app/example/Utils/Colors.dart';
 import 'package:campon_app/example/Login&ExtraDesign/review.dart';
 import 'package:campon_app/example/Utils/dark_lightmode.dart';
+import 'package:campon_app/models/camp.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:readmore/readmore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:campon_app/example/Utils/customwidget%20.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:http/http.dart' as http;
 
 int selectedIndex = 0;
 
 class CampDetail extends StatefulWidget {
-  const CampDetail({super.key});
+  final int? cpdtNo;
+  const CampDetail({super.key, required this.cpdtNo});
 
   @override
   State<CampDetail> createState() => _CampDetailState();
@@ -23,10 +29,50 @@ class _CampDetailState extends State<CampDetail> {
   bool _pinned = true;
   bool _snap = false;
   bool _floating = false;
+
+  Camp camp = Camp();
+  
   @override
   void initState() {
     getdarkmodepreviousstate();
     super.initState();
+
+    getCamp().then((campData){
+      setState((){
+        camp = campData['camp'];
+      });
+    });
+  }
+
+  Future<Map<String, dynamic>> getCamp() async{
+    var url = 'http://10.0.2.2:8081/api/camp/campdetail/${widget.cpdtNo}';
+    var response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200){
+      var utf8Decoded = utf8.decode(response.bodyBytes);
+      Map<String, dynamic> data = jsonDecode(utf8Decoded);
+
+      List<Camp> productimg = List<Camp>.from(data['productimg'].map((item) => Camp.fromJson(item)));
+      Camp productintro = Camp.fromJson(data['productintro']);
+      
+      Camp camp = Camp(
+        cpdtNo: productintro.cpdtNo,
+        campName: productintro.campName,
+        cpdtName: productintro.cpdtName,
+        campTypeName: productintro.campTypeName,
+        cpdtSize: productintro.cpdtSize,
+        cpdtNop: productintro.cpdtNop,
+        cpdtPrice: productintro.cpdtPrice,
+        cpdtIntroduction: productintro.cpdtIntroduction
+      );
+
+      return {
+        'camp': camp,
+      };
+    }else{
+      print("서버 문제");
+      return {};
+    }
   }
 
   late ColorNotifire notifire;
@@ -36,6 +82,8 @@ class _CampDetailState extends State<CampDetail> {
     'assets/images/SagamoreResort.jpg',
     'assets/images/SagamoreResort.jpg',
   ];
+
+  
 
   @override
   Widget build(BuildContext context) {
@@ -61,6 +109,12 @@ class _CampDetailState extends State<CampDetail> {
                   padding: const EdgeInsets.only(top: 12),
                   child: Row(
                     children: [
+                      Image.asset(
+                        "assets/images/logo2.png",
+                        width: 110,
+                        height: 60,
+                      ),
+                      const SizedBox(width: 20),
                       CircleAvatar(
                           radius: 22,
                           backgroundColor:
@@ -120,14 +174,14 @@ class _CampDetailState extends State<CampDetail> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Text(
-                              "캠핑장명 ",
+                              camp.campName ?? '캠핑장명',
                               style: TextStyle(
                                   fontSize: 12,
                                   color: notifire.getwhiteblackcolor,
                                   fontFamily: "Gilroy Bold"),
                             ),
                             Text(
-                              "캠핑상품명",
+                              camp.cpdtName ?? "캠핑상품명",
                               style: TextStyle(
                                   fontSize: 25,
                                   color: notifire.getwhiteblackcolor,
@@ -160,7 +214,7 @@ class _CampDetailState extends State<CampDetail> {
                                         height: 10,
                                       ),
                                       Text(
-                                        "오토캠핑",
+                                        camp.campTypeName ?? "캠핑유형",
                                         style: TextStyle(
                                             fontSize: 15,
                                             color: notifire.getwhiteblackcolor,
@@ -179,7 +233,7 @@ class _CampDetailState extends State<CampDetail> {
                                         height: 10,
                                       ),
                                       Text(
-                                        "9m X 5m",
+                                        camp.cpdtSize ?? "상품 사이즈",
                                         style: TextStyle(
                                             fontSize: 15,
                                             color: notifire.getwhiteblackcolor,
@@ -198,7 +252,7 @@ class _CampDetailState extends State<CampDetail> {
                                         height: 10,
                                       ),
                                       Text(
-                                        "4",
+                                        camp.cpdtNop.toString(),
                                         style: TextStyle(
                                             fontSize: 15,
                                             color: notifire.getwhiteblackcolor,
@@ -217,7 +271,7 @@ class _CampDetailState extends State<CampDetail> {
                                         height: 10,
                                       ),
                                       Text(
-                                        "45000",
+                                        camp.cpdtPrice.toString(),
                                         style: TextStyle(
                                             fontSize: 15,
                                             color: notifire.getwhiteblackcolor,
@@ -237,7 +291,7 @@ class _CampDetailState extends State<CampDetail> {
                               fontFamily: "Gilroy Bold"),
                         ),
                         ReadMoreText(
-                          "캠핑장 소개 지금 3줄 이상이면 접혀진다~캠핑장 소개 지금 3줄 이상이면 접혀진다~캠핑장 소개 지금 3줄 이상이면 접혀진다~캠핑장 소개 지금 3줄 이상이면 접혀진다~캠핑장 소개 지금 3줄 이상이면 접혀진다~캠핑장 소개 지금 3줄 이상이면 접혀진다~캠핑장 소개 지금 3줄 이상이면 접혀진다~캠핑장 소개 지금 3줄 이상이면 접혀진다~",
+                          camp.cpdtIntroduction ?? "상품소개",
                           trimLines: 3,
                           trimMode: TrimMode.Line,
                           style: TextStyle(
@@ -259,7 +313,11 @@ class _CampDetailState extends State<CampDetail> {
                 Container(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) =>
+                                      const Reservate()));
+                      },
                       style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.all<Color>(
                             Color.fromARGB(255, 254, 217, 131)), // 배경색 설정

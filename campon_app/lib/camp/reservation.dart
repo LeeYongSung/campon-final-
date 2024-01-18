@@ -32,10 +32,10 @@ class _ReservationState extends State<Reservation> {
         centerTitle: true,
         backgroundColor: notifire.getbgcolor,
         leading: BackButton(color: notifire.getwhiteblackcolor),
-        title: Text(
-          "CampOn",
-          style: TextStyle(
-              color: notifire.getwhiteblackcolor, fontFamily: "Gilroy Bold"),
+        title: Image.asset(
+          "assets/images/logo2.png",
+          width: 110,
+          height: 60,
         ),
       ),
       backgroundColor: notifire.getbgcolor,

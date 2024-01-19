@@ -23,12 +23,33 @@ class _ProductDetailState extends State<ProductDetail> {
   int _current = 0;
   final CarouselController _controller = CarouselController();
   List<String> imgList = [
-    'img/product/store_banner.png',
-    'img/product/store_banner2.png',
-    'img/product/store_banner3.png',
-    'img/product/store_banner4.png',
-    'img/product/store_banner5.png',
+    'img/product/11.png',
+    'img/product/12.png',
+    'img/product/13.png',
+    'img/product/14.png',
+    'img/product/15.png',
   ];
+
+
+  //이미지 에 대한 서버 접근 가능한지에 대한 여부 함수
+  Future<Widget> checkUrlAccessibility(String url, int index) async {
+    try {
+      final response = await http.get(Uri.parse(url));
+      if (response == 200) {
+        print('서버 접근 가능');
+        return Image.network(
+          "http://10.0.2.2:8081/api/img?file=${proReviewList[index]['prImg'].toString()}",
+          fit: BoxFit.cover,
+        );
+      } else {
+        return Image.asset("img/product/11.png", fit: BoxFit.cover);
+      }
+    } catch (e) {
+      print('서버 접근 불가');
+      return Image.asset("img/product/11.png", fit: BoxFit.cover);
+    }
+  }
+
 
 //상세이미지의 높이를 받아오는 방법
   GlobalKey _imageKey = GlobalKey();
@@ -60,8 +81,8 @@ class _ProductDetailState extends State<ProductDetail> {
     "productNo": 1,
     "productThumnail": "img/product/product1.png",
     "productCategory": "텐트",
-    "productName": "상품 이름",
-    "productPrice": "20000",
+    "productName": "비바코 리빙쉘텐트 젤라",
+    "productPrice": "50,000",
     "productConFile": "img/product/store_banner3.png",
   };
   // product? {productNo: 1, productName: 1, productThumnail: /img/product/3d5486f7-470c-496f-a5ef-707ff8d29c1a_20231115_103134.png, productCon: 상품1, productIntro: 상품설명1, productCategory: 텐트, productPrice: 10000000, regDate: 2023-11-01T07:28:23.000+00:00, updDate: 2023-11-01T07:28:23.000+00:00, userNo: null, productimgNo: null, productimgUrl: null, productImgsUrlList: null, productThmFile: null, productConFile: null, productImgs: null, cartNo: null, cartCnt: null, productsaveNo: 0, wishlistNo: 0, orderCnt: 0, sum: null, orderNo: 0}
@@ -69,7 +90,7 @@ class _ProductDetailState extends State<ProductDetail> {
   List<dynamic> proReviewList = [
     {
       "prNo": 1,
-      "prImg": "img/product/product1.png",
+      "prImg": "img/product/review.png",
       "prTitle": "후기 제목",
       "prCon": "구체적 후기 내용",
       "productName": "productName",
@@ -78,7 +99,7 @@ class _ProductDetailState extends State<ProductDetail> {
     },
     {
       "prNo": 1,
-      "prImg": "img/product/product1.png",
+      "prImg": "img/product/review.png",
       "prTitle": "후기 제목",
       "prCon": "구체적 후기 내용",
       "productName": "productName",
@@ -87,7 +108,7 @@ class _ProductDetailState extends State<ProductDetail> {
     },
     {
       "prNo": 1,
-      "prImg": "img/product/product1.png",
+      "prImg": "img/product/review.png",
       "prTitle": "후기 제목",
       "prCon": "구체적 후기 내용",
       "productName": "productName",
@@ -352,8 +373,9 @@ class _ProductDetailState extends State<ProductDetail> {
                     AnimatedContainer(
                       height: isExpanded
                           ? _imageHeight *
-                              (MediaQuery.of(context).size.width / 100)
-                          : 100, // isExpanded가 true일 때 전체 이미지를 보여주고, false일 때는 높이를 제한합니다.
+                              // (MediaQuery.of(context).size.width )
+                              70
+                          : 150, // isExpanded가 true일 때 전체 이미지를 보여주고, false일 때는 높이를 제한합니다.
                       width: MediaQuery.of(context).size.width,
                       child: Container(
                         width: MediaQuery.of(context).size.width,
@@ -365,7 +387,8 @@ class _ProductDetailState extends State<ProductDetail> {
                         //   fit: BoxFit.cover, // 이미지가 컨테이너를 꽉 채우도록 설정합니다.
                         // ),
 
-                        child:Image.network("http://10.0.2.2:8081/api/img?file=${product['productCon']}", key: _imageKey,fit: BoxFit.cover,)
+                        // child:Image.network("http://10.0.2.2:8081/api/img?file=${product['productCon']}", key: _imageKey,fit: BoxFit.cover,)
+                        child: Image.asset("img/product/detailproduct.jpg", fit: BoxFit.cover,),
                       ),
 
                       duration:
@@ -421,21 +444,44 @@ class _ProductDetailState extends State<ProductDetail> {
                                   width: 75,
                                   child: ClipRRect(
                                     borderRadius: BorderRadius.circular(12),
-                                    child: 
-                                    // Image.asset(
-                                    //   proReviewList[index]["prImg"]
-                                    //           .toString()
-                                    //           .startsWith('/')
-                                    //       ? proReviewList[index]["prImg"]
-                                    //           .toString()
-                                    //           .substring(1)
-                                    //       : proReviewList[index]["prImg"]
-                                    //           .toString(),
-                                    //   fit: BoxFit.cover,
+                                    child:
+                                        // Image.asset(
+                                        //   proReviewList[index]["prImg"]
+                                        //           .toString()
+                                        //           .startsWith('/')
+                                        //       ? proReviewList[index]["prImg"]
+                                        //           .toString()
+                                        //           .substring(1)
+                                        //       : proReviewList[index]["prImg"]
+                                        //           .toString(),
+                                        //   fit: BoxFit.cover,
+                                        // ),
+                                      //   Image.network(
+                                      // "http://10.0.2.2:8081/api/img?file=${proReviewList[index]['prImg']}",
+                                      // fit: BoxFit.cover,
                                     // ),
-                                    Image.network("http://10.0.2.2:8081/api/img?file=${proReviewList[index]['prImg']}", fit: BoxFit.cover,)
-
-
+                                    FutureBuilder<Widget?>(
+                                  future: checkUrlAccessibility(
+                                      "http://10.0.2.2:8081/api/img?file=${proReviewList[index]['prImg'].toString()}",
+                                      index),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      // 데이터 로딩 중에 보여줄 위젯
+                                      return Image.asset("img/product/11.png", fit: BoxFit.cover);
+                                    } else if (snapshot.hasError) {
+                                      // 에러가 발생했을 때 보여줄 위젯
+                                      return Image.asset("img/product/11.png", fit: BoxFit.cover);
+                                    } else {
+                                      // 데이터가 성공적으로 로드되었을 때 보여줄 위젯
+                                      return snapshot.data ??
+                                         Image.network("http://10.0.2.2:8081/api/img?file=${proReviewList[index]['prImg'].toString()}", fit: BoxFit.cover);
+                                    }
+                                  },
+                                ),
+                                    // Image.asset(
+                                    //   "img/product/detailproduct.jpg"
+                                    // ),
                                   ),
                                 ),
                                 Column(

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:campon_app/camp/camp_schedule_screen.dart';
+import 'package:campon_app/store/productdetail.dart';
 import 'package:flutter/material.dart';
 import 'package:campon_app/example/Utils/dark_lightmode.dart';
 import 'package:provider/provider.dart';
@@ -20,14 +21,14 @@ class _CategoryState extends State<Category> {
 
   List category = [
     {
-      "productThumnail": "img/product/product1.png",
+      "productThumnail": "img/product/11.png",
       "productCategory": "텐트",
       "productName": "상품이름",
       "productIntro": "상품설명",
       "productPrice": "3000",
     },
     {
-      "productThumnail": "img/product/product1.png",
+      "productThumnail": "img/product/12.png",
       "productCategory": "텐트2",
       "productName": "상품이름2",
       "productIntro": "상품설명2",
@@ -36,19 +37,38 @@ class _CategoryState extends State<Category> {
   ];
 
 //TODO 하드코딩
-var categoryName = '텐트';
+  var categoryName = '텐트';
   //카테고리 상품 가져오는 함수
 
-  Future<void> getCatProList () async {
-    final response = await http.get(Uri.parse('http://10.0.2.2:8081/api/product/productList?category=${categoryName}'));
-    if (response.statusCode == 200){
+  Future<void> getCatProList() async {
+    final response = await http.get(Uri.parse(
+        'http://10.0.2.2:8081/api/product/productList?category=${categoryName}'));
+    if (response.statusCode == 200) {
       final category2 = jsonDecode(utf8.decode(response.bodyBytes));
       print('카테고리2는? ${category2}');
       //카테고리2는? [{productNo: 1, productName: 1, productThumnail: /img/product/3d5486f7-470c-496f-a5ef-707ff8d29c1a_20231115_103134.png, productCon: C:/upload/f463b7a9-fe3c-4221-a72e-4adab7eea70f_camp1-5.jpg, productIntro: 상품설명1, productCategory: 텐트, productPrice: 10000000, regDate: 2023-11-01T07:28:23.000+00:00, updDate: 2023-11-01T07:28:23.000+00:00, userNo: null, productimgNo: null, productimgUrl: null, productImgsUrlList: null, productThmFile: null, productConFile: null, productImgs: null, cartNo: null, cartCnt: null, productsaveNo: 0, wishlistNo: 0, orderCnt: 0, sum: null, orderNo: 0}]
       setState(() {
         category = category2;
       });
+    }
+  }
 
+  //이미지 에 대한 서버 접근 가능한지에 대한 여부 함수
+  Future<Widget> checkUrlAccessibility(String url, int index) async {
+    try {
+      final response = await http.get(Uri.parse(url));
+      if (response == 200) {
+        print('서버 접근 가능');
+        return Image.network(
+          "http://10.0.2.2:8081/api/img?file=${category[index]["productThumnail"].toString()}",
+          fit: BoxFit.cover,
+        );
+      } else {
+        return Image.asset("img/product/11.png", fit: BoxFit.cover);
+      }
+    } catch (e) {
+      print('서버 접근 불가');
+      return Image.asset("img/product/11.png", fit: BoxFit.cover);
     }
   }
 
@@ -63,9 +83,8 @@ var categoryName = '텐트';
     notifire = Provider.of<ColorNotifire>(context, listen: true);
     return SafeArea(
         child: Scaffold(
-
-          //TODO 여기부터 수정 (헤더)
-          appBar: AppBar(
+      //TODO 여기부터 수정 (헤더)
+      appBar: AppBar(
         title: Image.asset(
           "assets/images/logo2.png",
           width: 110,
@@ -90,7 +109,6 @@ var categoryName = '텐트';
             onTap: () {
               print('장바구니 클릭.....');
               //TODO
-
             },
           ),
         ],
@@ -356,10 +374,32 @@ var categoryName = '텐트';
                                 borderRadius: const BorderRadius.only(
                                     topLeft: Radius.circular(12),
                                     topRight: Radius.circular(12)),
-                                child: Image.network(
-                                  "http://10.0.2.2:8081/api/img?file=${category[index]["productThumnail"].toString()}",
-                                  fit: BoxFit.cover,
+                                child: FutureBuilder<Widget?>(
+                                  future: checkUrlAccessibility(
+                                      "http://10.0.2.2:8081/api/img?file=${category[index]["productThumnail"].toString()}",
+                                      index),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      // 데이터 로딩 중에 보여줄 위젯
+                                      return Image.asset("img/product/11.png", fit: BoxFit.cover);
+                                    } else if (snapshot.hasError) {
+                                      // 에러가 발생했을 때 보여줄 위젯
+                                      return Image.asset("img/product/11.png", fit: BoxFit.cover);
+                                    } else {
+                                      // 데이터가 성공적으로 로드되었을 때 보여줄 위젯
+                                      return snapshot.data ??
+                                         Image.network("http://10.0.2.2:8081/api/img?file=${category[index]["productThumnail"].toString()}", fit: BoxFit.cover);
+                                    }
+                                  },
                                 ),
+
+                                //checkUrlAccessibility("http://10.0.2.2:8081/api/img?file=${category[index]["productThumnail"].toString()}", index),
+
+                                // Image.network(
+                                //   "http://10.0.2.2:8081/api/img?file=${category[index]["productThumnail"].toString()}",
+                                //   fit: BoxFit.cover,
+                                // ),
                               ),
                             ),
                             Padding(
@@ -402,7 +442,8 @@ var categoryName = '텐트';
 
                                   //가격
                                   Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
                                         "${category[index]["productPrice"].toString()}원",
@@ -413,7 +454,6 @@ var categoryName = '텐트';
                                       ),
                                       //버튼 2개
                                       Row(
-                                        
                                         children: [
                                           //상세정보 버튼
                                           Container(
@@ -422,15 +462,17 @@ var categoryName = '텐트';
                                             child: AppButton(
                                                 buttontext: "상세정보",
                                                 onclick: () {
-                                                  Navigator.of(context).push(
-                                                      MaterialPageRoute(
+                                                  Navigator.of(context)
+                                                      .push(MaterialPageRoute(
                                                           builder: (context) =>
-                                                          //TODO 수정예정
-                                                              const homepage()));
+                                                              //TODO 수정예정
+                                                              const ProductDetail()));
                                                 }),
                                           ),
 
-                                          SizedBox(width: 10,),
+                                          SizedBox(
+                                            width: 10,
+                                          ),
 
                                           //장바구니 버튼
                                           Container(

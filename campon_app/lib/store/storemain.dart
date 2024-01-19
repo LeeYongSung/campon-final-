@@ -1,3 +1,4 @@
+import 'package:campon_app/store/category.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
@@ -18,6 +19,7 @@ class StoreMain extends StatefulWidget {
 
 class _StoreMainState extends State<StoreMain> {
   late ColorNotifire notifire;
+  var connected = false;
 
   int _current = 0;
   final CarouselController _controller = CarouselController();
@@ -32,36 +34,36 @@ class _StoreMainState extends State<StoreMain> {
   List<dynamic> productHotList = [
     {
       "productNo": 1,
-      "productThumnail": "img/product/product1.png",
-      "productName": "프로덕트이름",
+      "productThumnail": "img/product/11.png",
+      "productName": "텐트텐트",
       "productCategory": "텐트",
       "productPrice": "10000"
     },
     {
       "productNo": 1,
-      "productThumnail": "img/product/product1.png",
-      "productName": "프로덕트이름",
+      "productThumnail": "img/product/12.png",
+      "productName": "아주좋은텐트",
       "productCategory": "텐트",
       "productPrice": "10000"
     },
     {
       "productNo": 1,
-      "productThumnail": "img/product/product1.png",
-      "productName": "프로덕트이름",
+      "productThumnail": "img/product/13.png",
+      "productName": "정말좋은텐트",
       "productCategory": "텐트",
       "productPrice": "10000"
     },
     {
       "productNo": 1,
-      "productThumnail": "img/product/product1.png",
-      "productName": "프로덕트이름",
+      "productThumnail": "img/product/14.png",
+      "productName": "최고의텐트",
       "productCategory": "텐트",
       "productPrice": "10000"
     },
     {
       "productNo": 1,
-      "productThumnail": "img/product/product1.png",
-      "productName": "프로덕트이름",
+      "productThumnail": "img/product/15.png",
+      "productName": "텐트최고",
       "productCategory": "텐트",
       "productPrice": "10000"
     },
@@ -98,30 +100,30 @@ class _StoreMainState extends State<StoreMain> {
   List<dynamic> proReviewList = [
     {
       "prNo": 1,
-      "prImg": "img/product/product1.png",
-      "prTitle": "후기 제목",
-      "prCon": "구체적 후기 내용",
+      "prImg": "img/product/review.png",
+      "prTitle": "텐트가 좋았어요",
+      "prCon": "텐트가 좋았어요 가족들이랑 재밌게 놀다가요",
       "productName": "productName",
       "regDate": "2024-01-17",
-      "userId": "userId"
+      "userId": "홍길동"
     },
     {
       "prNo": 1,
-      "prImg": "img/product/product1.png",
-      "prTitle": "후기 제목",
-      "prCon": "구체적 후기 내용",
+      "prImg": "img/product/review.png",
+      "prTitle": "텐트가 좋았어요",
+      "prCon": "텐트가 좋았어요 가족들이랑 재밌게 놀다가요",
       "productName": "productName",
       "regDate": "2024-01-17",
-      "userId": "userId"
+      "userId": "길동이"
     },
     {
       "prNo": 1,
-      "prImg": "img/product/product1.png",
-      "prTitle": "후기 제목",
-      "prCon": "구체적 후기 내용",
+      "prImg": "img/product/review.png",
+      "prTitle": "텐트가 좋았어요",
+      "prCon": "텐트가 좋았어요 가족들이랑 재밌게 놀다가요",
       "productName": "productName",
       "regDate": "2024-01-17",
-      "userId": "userId"
+      "userId": "동길이"
     },
   ];
 
@@ -131,6 +133,9 @@ class _StoreMainState extends State<StoreMain> {
         await http.get(Uri.parse("http://10.0.2.2:8081/api/product/index"));
     // 서버로부터 응답이 성공적으로 돌아왔는지 확인
     if (response.statusCode == 200) {
+      setState(() {
+        connected = true;
+      });
       final data = jsonDecode(utf8.decode(response.bodyBytes));
       // data는 JSON 형태이므로, 'productHotList' 키로 접근하여 데이터를 가져옵니다.
       final productHotList2 = data['productHotList'];
@@ -147,8 +152,31 @@ class _StoreMainState extends State<StoreMain> {
       }
       proReviewList = proReviewList2;
     } else {
+
       throw Exception('Failed to load product hot list');
     }
+  }
+
+  //이미지 에 대한 서버 접근 가능한지에 대한 여부 함수
+  Future<Widget> checkUrlAccessibility(String url, int index) async {
+    // try {
+      final response = await http.get(Uri.parse(url));
+      if (response == 200) {
+        print('서버 접근 가능');
+        return Image.network(
+          // "http://10.0.2.2:8081/api/img?file=${proReviewList[index]['prImg'].toString()}",
+          url,
+          fit: BoxFit.cover,
+        );
+      }
+    //   } else {
+    //     return Image.asset("img/product/11.png", fit: BoxFit.cover);
+    //   }
+    // } catch (e) {
+    //   print('서버 접근 불가');
+    //   return Image.asset("img/product/11.png", fit: BoxFit.cover);
+    // }
+    return CircularProgressIndicator();
   }
 
   Widget sliderWidget() {
@@ -236,7 +264,9 @@ class _StoreMainState extends State<StoreMain> {
                       children: [
                         Expanded(
                           child: InkWell(
-                            onTap: () {},
+                            onTap: () {
+                               Navigator.push(context, MaterialPageRoute(builder: (context)=> Category()));
+                            },
                             child: Column(
                               children: [
                                 Image.asset(
@@ -530,10 +560,10 @@ class _StoreMainState extends State<StoreMain> {
                                             ],
                                           ),
                                           const SizedBox(height: 6),
-                                          Text(
-                                            productHotList[index]
+                                          Text("${productHotList[index]
                                                     ["productPrice"]
-                                                .toString(),
+                                                .toString()}원"
+                                            ,
                                             style: TextStyle(
                                                 fontSize: 14,
                                                 color: notifire.getgreycolor,
@@ -703,17 +733,45 @@ class _StoreMainState extends State<StoreMain> {
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(12),
                               child: 
-                              // Image.asset(
-                              //   proReviewList[index]["prImg"]
-                              //           .toString()
-                              //           .startsWith('/')
-                              //       ? proReviewList[index]["prImg"]
-                              //           .toString()
-                              //           .substring(1)
-                              //       : proReviewList[index]["prImg"].toString(),
-                              //   fit: BoxFit.cover,
-                              // ),
-                              Image.network("http://10.0.2.2:8081/api/img?file=${proReviewList[index]['prImg'].toString()}", fit: BoxFit.cover,)
+                              connected ? 
+                              Image.network(
+                                "http://10.0.2.2:8081/api/img?file=${proReviewList[index]['prImg'].toString()}", 
+                                
+                                errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                                  return const CircularProgressIndicator();
+                                },
+                                fit: BoxFit.cover,
+                              )
+                              :
+                              Image.asset(
+                                proReviewList[index]["prImg"]
+                                        .toString()
+                                        .startsWith('/')
+                                    ? proReviewList[index]["prImg"]
+                                        .toString()
+                                        .substring(1)
+                                    : proReviewList[index]["prImg"].toString(),
+                                fit: BoxFit.cover,
+                              ),
+                              
+                              // FutureBuilder<Widget?>(
+                              //     future: checkUrlAccessibility(
+                              //         "http://10.0.2.2:8081/api/img?file=${proReviewList[index]['prImg'].toString()}",
+                              //         index),
+                              //     builder: (context, snapshot) {
+                              //       if (snapshot.connectionState == ConnectionState.waiting) {
+                              //         // 데이터 로딩 중에 보여줄 위젯
+                              //         return Image.asset("img/product/product1.png", fit: BoxFit.cover);
+                              //       } else if (snapshot.hasError) {
+                              //         // 에러가 발생했을 때 보여줄 위젯
+                              //         return Image.asset("img/product/product2.png", fit: BoxFit.cover);
+                              //       } else {
+                              //         // 데이터가 성공적으로 로드되었을 때 보여줄 위젯
+                              //         return snapshot.data ??
+                              //            Image.asset("img/product/product3.png", fit: BoxFit.cover);
+                              //       }
+                              //     },
+                              //   ),
 
                             ),
                           ),

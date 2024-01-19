@@ -1,65 +1,56 @@
-import 'package:image_picker/image_picker.dart';
-import 'package:flutter/material.dart';
 import 'dart:io';
-import 'package:campon_app/common/footer_screen.dart';
 
-class ProductAdd extends StatefulWidget {
-  const ProductAdd({Key? key}) : super(key: key);
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+
+class ProductUpdate extends StatefulWidget {
+  const ProductUpdate({Key? key}) : super(key: key);
 
   @override
-  State<ProductAdd> createState() => _ProductAddState();
+  State<ProductUpdate> createState() => _ProductUpdateState();
 }
 
-class _ProductAddState extends State<ProductAdd> {
+class _ProductUpdateState extends State<ProductUpdate> {
   final _formKey = GlobalKey<FormState>();
 
   String? productName;
-  late File productThmFile;
+  File? productThmFile;
   String? productCategory;
   String? productPrice;
   String? productIntro;
-  late File productConFile;
-  late List<File> productImgs;
+  File? productConFile;
+  List<File>? productImgs;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('렌탈샵 상품 등록'),
+        title: Text('렌탈샵 상품 수정/삭제'),
       ),
       body: Form(
         key: _formKey,
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: SingleChildScrollView(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // 상품 이름
                 TextFormField(
                   decoration: InputDecoration(labelText: '상품 이름'),
-                  validator: (value) {
-                    if (value?.isEmpty ?? true) {
-                      return '상품 이름을 입력해주세요.';
-                    }
-                    return null;
-                  },
                   onSaved: (value) => productName = value,
                 ),
-                SizedBox(height: 16),
+
+                // 썸네일 이미지
                 Text('상품 썸네일'),
                 ElevatedButton(
                   onPressed: () {
-                    _pickImage(ImageSource.gallery).then((file) {
-                      if (file != null) {
-                        setState(() {
-                          productThmFile = file;
-                        });
-                      }
-                    });
+                    _pickImage();
                   },
                   child: Text('이미지 선택'),
                 ),
-                SizedBox(height: 16),
+
+                // 카테고리
                 Text('카테고리'),
                 Column(
                   children: [
@@ -244,60 +235,63 @@ class _ProductAddState extends State<ProductAdd> {
                     ),
                   ],
                 ),
+
+                // 1일 대여금액
                 TextFormField(
                   decoration: InputDecoration(labelText: '1일 대여금액'),
-                  validator: (value) {
-                    if (value?.isEmpty ?? true) {
-                      return '1일 대여금액을 입력해주세요.';
-                    }
-                    return null;
-                  },
                   onSaved: (value) => productPrice = value,
                 ),
+
+                // 상품 기본내용
                 TextFormField(
                   decoration: InputDecoration(labelText: '상품 기본내용'),
                   onSaved: (value) => productIntro = value,
                 ),
+
+                // 상품 상세설명 이미지
                 Text('상품 상세설명(이미지)'),
                 ElevatedButton(
                   onPressed: () {
-                    _pickImage(ImageSource.gallery).then((file) {
-                      if (file != null) {
-                        setState(() {
-                          productConFile = file;
-                        });
-                      }
-                    });
+                    _pickImage();
                   },
                   child: Text('이미지 선택'),
                 ),
+
+                // 상품 이미지 (여러장)
                 Text('상품 이미지(여러장)'),
                 ElevatedButton(
                   onPressed: () {
-                    _pickMultipleImages().then((files) {
-                      if (files != null) {
-                        setState(() {
-                          productImgs = files;
-                        });
-                      }
-                    });
+                    _pickMultipleImages();
                   },
                   child: Text('이미지 선택'),
                 ),
-                SizedBox(height: 16),
-                Container(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    child: Text('상품등록'),
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        _formKey.currentState!.save();
 
-                        // Submit form
-                        // 상품 등록 로직 추가
-                      }
-                    },
-                  ),
+                // 상품 수정 버튼
+                Row(
+                  children: [
+                    Expanded(
+                      child: ElevatedButton(
+                        child: Text('상품수정'),
+                        onPressed: () {
+                          if (_formKey.currentState!.validate()) {
+                            _formKey.currentState!.save();
+                          }
+                        },
+                      ),
+                    ),
+                    SizedBox(width: 16), // 버튼 사이의 간격 조정을 위한 SizedBox 추가
+                    Expanded(
+                      child: ElevatedButton(
+                        child: Text('상품삭제'),
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.red, // 배경색 빨갛게
+                        ),
+                        onPressed: () {
+                          // 삭제 로직
+                        },
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -307,9 +301,9 @@ class _ProductAddState extends State<ProductAdd> {
     );
   }
 
-  Future<File?> _pickImage(ImageSource source) async {
+  Future<File?> _pickImage() async {
     final picker = ImagePicker();
-    final pickedImage = await picker.getImage(source: source);
+    final pickedImage = await picker.getImage(source: ImageSource.gallery);
     if (pickedImage != null) {
       return File(pickedImage.path);
     }
@@ -320,7 +314,7 @@ class _ProductAddState extends State<ProductAdd> {
     final picker = ImagePicker();
     final pickedImages = await picker.getMultiImage();
     if (pickedImages != null) {
-      return pickedImages.map((pickedImage) => File(pickedImage.path)).toList();
+      return pickedImages.map((image) => File(image.path)).toList();
     }
     return null;
   }

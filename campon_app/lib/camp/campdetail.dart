@@ -31,6 +31,8 @@ class _CampDetailState extends State<CampDetail> {
   bool _floating = false;
 
   Camp camp = Camp();
+  Camp date = Camp();
+  List<Camp> imgs = [];
   
   @override
   void initState() {
@@ -40,6 +42,7 @@ class _CampDetailState extends State<CampDetail> {
     getCamp().then((campData){
       setState((){
         camp = campData['camp'];
+        imgs = campData['img'];
       });
     });
   }
@@ -65,9 +68,16 @@ class _CampDetailState extends State<CampDetail> {
         cpdtPrice: productintro.cpdtPrice,
         cpdtIntroduction: productintro.cpdtIntroduction
       );
+      List<Camp>? img = [];
+      for(var i = 0; i < productimg.length; i++){
+        img.add(Camp(
+          cpdiUrl: productimg[i].cpdiUrl,
+        ));
+      }
 
       return {
         'camp': camp,
+        'img' : img,
       };
     }else{
       print("서버 문제");
@@ -145,18 +155,21 @@ class _CampDetailState extends State<CampDetail> {
               expandedHeight: 250,
               flexibleSpace: FlexibleSpaceBar(
                 background: CarouselSlider.builder(
-                    itemCount: slideList.length,
+                    itemCount: imgs.length,
                     itemBuilder: (context, index, realIndex) {
-                      return Stack(
+                      if (index >= 0 && index < imgs.length) {
+                      return Stack(           
                         children: [
                           Image.asset(
-                            "${slideList[index]}",
+                            "${imgs[index].cpdiUrl}",
                             fit: BoxFit.cover,
-                            // 이미지 가로 사이즈를 앱 가로 사이즈로 지정
                             width: MediaQuery.of(context).size.width,
                           )
                         ],
                       );
+                    } else {
+                      return Container();
+                    }   
                     },
                     options: CarouselOptions(viewportFraction: 1.0)),
               )),
@@ -316,7 +329,7 @@ class _CampDetailState extends State<CampDetail> {
                       onPressed: () {
                         Navigator.of(context).push(MaterialPageRoute(
                                   builder: (context) =>
-                                      const Reservate()));
+                                      Reservate(cpdtNo: widget.cpdtNo, date: date,)));
                       },
                       style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.all<Color>(

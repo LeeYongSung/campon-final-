@@ -1,14 +1,21 @@
 // ignore_for_file: non_constant_identifier_names, sized_box_for_whitespace, camel_case_types
 
+import 'dart:convert';
+
 import 'package:campon_app/camp/Calander.dart';
+import 'package:campon_app/camp/camp_home_screen.dart';
+import 'package:campon_app/camp/reservation.dart';
 import 'package:campon_app/example/Login&ExtraDesign/homepage.dart';
 import 'package:campon_app/example/Profile/MyCupon.dart';
 import 'package:campon_app/example/Utils/Colors.dart';
 import 'package:campon_app/example/Utils/customwidget%20.dart';
 import 'package:campon_app/example/Utils/dark_lightmode.dart';
+import 'package:campon_app/models/camp.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 class Complete extends StatefulWidget {
   const Complete({super.key});
@@ -18,9 +25,8 @@ class Complete extends StatefulWidget {
 }
 
 class _CompleteState extends State<Complete> {
-  int _counter = 0;
-  int _counter1 = 0;
-  int _counter2 = 0;
+
+  Camp reserve = Camp(); 
 
   bool isChecked = false;
   bool isChecked1 = false;
@@ -28,6 +34,40 @@ class _CompleteState extends State<Complete> {
   void initState() {
     getdarkmodepreviousstate();
     super.initState();
+    getReserve().then((data){
+      setState((){
+        reserve = data;
+      });
+    });
+  }
+
+  Future<Camp> getReserve() async{
+    var url = 'http://10.0.2.2:8081/api/camp/complete';
+    var response = await http.get(Uri.parse(url));
+
+    if(response.statusCode == 200){
+      var utf8Decoded = utf8.decode(response.bodyBytes);
+      Map<String, dynamic> jsonData = json.decode(utf8Decoded);
+
+      
+      
+      Camp camp = Camp(
+        cpiUrl: jsonData['cpiUrl'],
+      campName: jsonData['campName'],
+      cpdtName: jsonData['cpdtName'],
+      reservationNo: jsonData['reservationNo'],
+      userName: jsonData['userName'],
+      reservationDate: jsonData['reservationDate'],
+      reservationStart: DateTime.parse(jsonData['reservationStart']),
+      reservationEnd: DateTime.parse(jsonData['reservationEnd']),
+      campPaymentType: jsonData['campPaymentType'],
+      );
+
+      return camp;
+    }else{
+      print("서버 문제");
+      return Camp();
+    }
   }
 
   int selectedValue = 1;
@@ -38,15 +78,16 @@ class _CompleteState extends State<Complete> {
     notifire = Provider.of<ColorNotifire>(context, listen: true);
     return Scaffold(
       backgroundColor: notifire.getbgcolor,
-      appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(75),
-          child: CustomAppbar(
-              centertext: "CampOn",
-              ActionIcon: Icons.more_vert,
-              bgcolor: notifire.getbgcolor,
-              actioniconcolor: notifire.getwhiteblackcolor,
-              leadingiconcolor: notifire.getwhiteblackcolor,
-              titlecolor: notifire.getwhiteblackcolor)),
+      appBar: AppBar(
+        // leading: Text(""),
+        backgroundColor: notifire.getbgcolor,
+        title: Image.asset(
+                        "assets/images/logo2.png",
+                        width: 110,
+                        height: 60,
+              ),
+        centerTitle: true,
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
@@ -73,14 +114,15 @@ class _CompleteState extends State<Complete> {
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(10),
                         child:
-                            Image.asset("assets/images/Confidiantehotel.png"),
+                            Image.asset(reserve.cpiUrl ?? "assets/images/Confidiantehotel.png",
+                            fit: BoxFit.cover,),
                       ),
                     ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "캠핑장명",
+                          reserve.campName ?? "캠핑장명",
                           style: TextStyle(
                               fontSize: 15,
                               fontFamily: "Gilroy Bold",
@@ -90,7 +132,7 @@ class _CompleteState extends State<Complete> {
                         SizedBox(
                             height: MediaQuery.of(context).size.height * 0.006),
                         Text(
-                          "캠핑상품명",
+                          reserve.cpdtName ?? "캠핑상품명",
                           style: TextStyle(
                               fontSize: 13,
                               color: notifire.getgreycolor,
@@ -106,16 +148,16 @@ class _CompleteState extends State<Complete> {
 
               const SizedBox(height: 10),
               Divider(),
-              const Column(
+              Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text("예약번호 :",
+                      Text("예약번호 : ",
                           style: TextStyle(fontSize: 15,
                               fontFamily: "Gilroy Bold",)),
-                      Text("21",
+                      Text('${reserve.reservationNo ?? "번호"}',
                           style: TextStyle(fontSize: 15,
                               fontFamily: "Gilroy Bold",)),
                     ],
@@ -127,7 +169,7 @@ class _CompleteState extends State<Complete> {
                       Text("예약자명 :",
                           style: TextStyle(fontSize: 15,
                               fontFamily: "Gilroy Bold",)),
-                      Text("홍길동",
+                      Text(reserve.userName ?? "예약자명",
                           style: TextStyle(fontSize: 15,
                               fontFamily: "Gilroy Bold",)),
                     ],
@@ -139,7 +181,7 @@ class _CompleteState extends State<Complete> {
                       Text("숙박일수 :",
                           style: TextStyle(fontSize: 15,
                               fontFamily: "Gilroy Bold",)),
-                      Text("2",
+                      Text((reserve.reservationDate ?? "일수").toString(),
                           style: TextStyle(fontSize: 15,
                               fontFamily: "Gilroy Bold",)),
                     ],
@@ -151,7 +193,7 @@ class _CompleteState extends State<Complete> {
                       Text("숙박기간 :",
                           style: TextStyle(fontSize: 15,
                               fontFamily: "Gilroy Bold",)),
-                      Text("2024-01-01 ~ 2024-01-02",
+                      Text("${reserve.reservationStart != null ? DateFormat('yyyy-MM-dd').format(reserve.reservationStart!) : "00"} ~ ${reserve.reservationEnd != null ? DateFormat('yyyy-MM-dd').format(reserve.reservationEnd!) : "00"}",
                           style: TextStyle(fontSize: 15,
                               fontFamily: "Gilroy Bold",)),
                     ],
@@ -163,7 +205,7 @@ class _CompleteState extends State<Complete> {
                       Text("결제방법 :",
                           style: TextStyle(fontSize: 15,
                               fontFamily: "Gilroy Bold",)),
-                      Text("무통장입금",
+                      Text(reserve.campPaymentType ?? "결제방법",
                           style: TextStyle(fontSize: 15,
                               fontFamily: "Gilroy Bold",)),
                     ],
@@ -173,6 +215,7 @@ class _CompleteState extends State<Complete> {
               ),
               Divider(),
               SizedBox(height: 15,),
+              if( reserve.campPaymentType == "bankbook")
               Text("통장번호가 출력될거에여", textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 20),),
               SizedBox(height: 15,),
@@ -180,7 +223,10 @@ class _CompleteState extends State<Complete> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                 ElevatedButton(
-                      onPressed: (){},
+                      onPressed: (){
+                        Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => const CampHomeScreen()));
+                      },
                       style: ButtonStyle(
                           backgroundColor: MaterialStateProperty.all<Color>(Colors.yellow), // 배경색 설정
                           shape: MaterialStateProperty.all<OutlinedBorder>(
@@ -198,7 +244,10 @@ class _CompleteState extends State<Complete> {
                           fontFamily: "Gilroy Bold"),
                     ),),
                     ElevatedButton(
-                      onPressed: (){},
+                      onPressed: (){
+                        Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => const Reservation()));
+                      },
                       style: ButtonStyle(
                           backgroundColor: MaterialStateProperty.all<Color>(Colors.green), // 배경색 설정
                           shape: MaterialStateProperty.all<OutlinedBorder>(

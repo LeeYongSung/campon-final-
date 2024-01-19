@@ -1,36 +1,93 @@
 // ignore_for_file: non_constant_identifier_names, sized_box_for_whitespace, camel_case_types
 
+import 'dart:convert';
+
 import 'package:campon_app/camp/Calander.dart';
+import 'package:campon_app/camp/campdetail.dart';
+import 'package:campon_app/camp/complete.dart';
 import 'package:campon_app/example/Login&ExtraDesign/homepage.dart';
 import 'package:campon_app/example/Profile/MyCupon.dart';
 import 'package:campon_app/example/Utils/Colors.dart';
 import 'package:campon_app/example/Utils/customwidget%20.dart';
 import 'package:campon_app/example/Utils/dark_lightmode.dart';
+import 'package:campon_app/models/camp.dart';
+import 'package:campon_app/models/user.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 
 class Reservate extends StatefulWidget {
-  const Reservate({super.key});
+  final int? cpdtNo;
+  Camp date;
+  Reservate({super.key, required this.cpdtNo, required this.date});
 
   @override
   State<Reservate> createState() => _ReservateState();
 }
 
 class _ReservateState extends State<Reservate> {
-  int _counter = 0;
   int _counter1 = 0;
-  int _counter2 = 0;
+  int selectedValue = 1;
+
+  Camp camp = Camp();
+  Users user = Users();
 
   bool isChecked = false;
   bool isChecked1 = false;
+
   @override
   void initState() {
     getdarkmodepreviousstate();
     super.initState();
+
+    getCamp().then((campData){
+      setState((){
+        camp = campData['camp'];
+        user = campData['user'];
+      });
+    });
   }
 
-  int selectedValue = 1;
+  Future<Map<String, dynamic>> getCamp() async {
+    var url = 'http://10.0.2.2:8081/api/camp/reservate/${widget.cpdtNo}';
+    var response = await http.get(Uri.parse(url));
+
+    if(response.statusCode == 200){
+      var utf8Decoded = utf8.decode(response.bodyBytes);
+      Map<String, dynamic> data = jsonDecode(utf8Decoded);
+
+      Camp productintro = Camp.fromJson(data['camp']);
+      Users users = Users.fromJson(data['user']);
+      
+      Camp camp = Camp(
+        cpdtNo: productintro.cpdtNo,
+        cpdiUrl: productintro.cpdiUrl,
+        campName: productintro.campName,
+        cpdtName: productintro.cpdtName,
+        campTypeName: productintro.campTypeName,
+        cpdtSize: productintro.cpdtSize,
+        cpdtNop: productintro.cpdtNop,
+        cpdtPrice: productintro.cpdtPrice,
+        cpdtIntroduction: productintro.cpdtIntroduction
+      );
+
+      Users user = Users(
+        userName: users.userName,
+        userTel: users.userTel,
+      );
+
+      print(user);
+      return {
+        'camp': camp,
+        'user': user,
+      };
+    }else{
+      print("서버 문제");
+      return {};
+    }
+  }
 
   late ColorNotifire notifire;
   @override
@@ -38,15 +95,24 @@ class _ReservateState extends State<Reservate> {
     notifire = Provider.of<ColorNotifire>(context, listen: true);
     return Scaffold(
       backgroundColor: notifire.getbgcolor,
-      appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(75),
-          child: CustomAppbar(
-              centertext: "CampOn",
-              ActionIcon: Icons.more_vert,
-              bgcolor: notifire.getbgcolor,
-              actioniconcolor: notifire.getwhiteblackcolor,
-              leadingiconcolor: notifire.getwhiteblackcolor,
-              titlecolor: notifire.getwhiteblackcolor)),
+      appBar: AppBar(
+        // leading: IconButton(
+        //   icon: Icon(Icons.arrow_back),
+        //   onPressed: () {
+        //     Navigator.of(context).push(MaterialPageRoute(
+        //                           builder: (context) =>
+        //                               CampDetail(cpdtNo: widget.cpdtNo)));
+        //       },
+        // ),
+        backgroundColor: notifire.getbgcolor,
+        title: Image.asset(
+                        "assets/images/logo2.png",
+                        width: 110,
+                        height: 60,
+              ),
+        centerTitle: true,
+      ),
+      
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
@@ -74,14 +140,14 @@ class _ReservateState extends State<Reservate> {
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(10),
                         child:
-                            Image.asset("assets/images/Confidiantehotel.png"),
+                            Image.asset(camp.cpdiUrl ?? "assets/images/Confidiantehotel.png"),
                       ),
                     ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "캠핑장명",
+                          camp.campName ?? '캠핑장명',
                           style: TextStyle(
                               fontSize: 15,
                               fontFamily: "Gilroy Bold",
@@ -91,7 +157,7 @@ class _ReservateState extends State<Reservate> {
                         SizedBox(
                             height: MediaQuery.of(context).size.height * 0.006),
                         Text(
-                          "캠핑상품명",
+                          camp.cpdtName ?? "캠핑상품명",
                           style: TextStyle(
                               fontSize: 13,
                               color: notifire.getgreycolor,
@@ -130,8 +196,8 @@ class _ReservateState extends State<Reservate> {
                                   fontFamily: "Gilroy Bold"),
                               ),
                               const SizedBox(height: 10,),
-                              Text(
-                                "2024-01-01",
+                              Text( 
+                                DateFormat('yyyy-MM-dd').format(widget.date.reservationStart ?? DateTime.now()),
                                 style: TextStyle(
                                   fontSize: 15,
                                   color: notifire.getwhiteblackcolor,
@@ -140,7 +206,7 @@ class _ReservateState extends State<Reservate> {
                             ]
                             ),
                               Text(
-                                "1박 2일",
+                                "${widget.date.reservationDate ?? 0}박 ${(widget.date.reservationDate ?? 0) + 1}일",
                                 style: TextStyle(
                                   fontSize: 15,
                                   color: notifire.getwhiteblackcolor,
@@ -157,7 +223,7 @@ class _ReservateState extends State<Reservate> {
                               ),
                               const SizedBox(height: 10,),
                               Text(
-                                "2024-01-02",
+                                DateFormat('yyyy-MM-dd').format(widget.date.reservationEnd ?? DateTime.now()),
                                 style: TextStyle(
                                   fontSize: 15,
                                   color: notifire.getwhiteblackcolor,
@@ -173,7 +239,7 @@ class _ReservateState extends State<Reservate> {
                 icon: Icons.keyboard_arrow_down,
                 onclick: () {
                   Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => Calander(),
+                    builder: (context) => Calander(no: camp.cpdtNo),
                   ));}
               ),
               const SizedBox(height: 10),
@@ -194,12 +260,12 @@ class _ReservateState extends State<Reservate> {
                 }),
               const SizedBox(height: 10),
               Divider(),
-              const Column(
+              Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("예약자명 : ",
+                  Text("예약자명 : ${user.userName ?? '유저명'} ",
                   style: TextStyle(fontSize: 15),),
-                  Text("연락처 : ",
+                  Text("연락처 : ${user.userTel ?? '연락처'}",
                   style: TextStyle(fontSize: 15),)
                 ],
               ),
@@ -241,7 +307,7 @@ class _ReservateState extends State<Reservate> {
                           style: TextStyle(
                               fontFamily: "Gilroy Bold",
                               color: notifire.getwhiteblackcolor)),
-                      Text("30000000원",
+                      Text("${(camp.cpdtPrice ?? 0) * (widget.date.reservationDate ?? 0)}",
                           style: TextStyle(
                               fontFamily: "Gilroy Bold",
                               color: notifire.getwhiteblackcolor)),
@@ -249,7 +315,10 @@ class _ReservateState extends State<Reservate> {
                   ),
                   const SizedBox(height: 40),
                   InkWell(
-                    onTap: (){},
+                    onTap: (){
+                      Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => const Complete()));
+                    },
                     child: Container(
                       height: 50,
                       width: double.infinity,

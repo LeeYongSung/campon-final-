@@ -202,14 +202,14 @@ public class CampAPIController {
     }
 
     //캠핑 예약 페이지
-    @PreAuthorize("hasRole('ROLE_USER')")
+    // @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping(value="/reservate/{no}")
     public ResponseEntity<?> campReservate(@PathVariable Integer no){
         try{
             Camp camp = campService.reservate(no);
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            String userId = auth.getName();
-            // String userId = "user";
+            // String userId = auth.getName();
+            String userId = "user";
             // if(userId.equals("anonymousUser")) return "redirect:/user/login";
             Users user = userService.selectById(userId);
 
@@ -274,7 +274,7 @@ public class CampAPIController {
         }
     }
     //예약완료 페이지
-    @PreAuthorize("hasRole('ROLE_USER')")
+    // @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping(value="/complete")
     public ResponseEntity<?> complete(){
         try{
@@ -282,8 +282,8 @@ public class CampAPIController {
         
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-            // String userId = "user";
-            String userId = auth.getName();
+            String userId = "user";
+            // String userId = auth.getName();
 
             Users user = userService.selectById(userId);
 

@@ -5,6 +5,7 @@ import 'package:campon_app/example/Login&ExtraDesign/chackout.dart';
 import 'package:campon_app/example/Utils/Colors.dart';
 import 'package:campon_app/example/Utils/customwidget%20.dart';
 import 'package:campon_app/example/Utils/dark_lightmode.dart';
+import 'package:campon_app/models/camp.dart';
 import 'package:flutter/material.dart';
 // ignore: depend_on_referenced_packages
 import 'package:intl/intl.dart';
@@ -13,6 +14,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 class Calander extends StatefulWidget {
+  int? no;
+  Calander({required this.no});
   @override
   CalanderState createState() => CalanderState();
 }
@@ -23,19 +26,41 @@ class CalanderState extends State<Calander> {
   String _range = '';
   String _rangeCount = '';
 
+  Camp date = Camp( reservationStart: DateTime.now(), reservationEnd: DateTime.now() );
+
   /// The method for [DateRangePickerSelectionChanged] callback, which will be
   void _onSelectionChanged(DateRangePickerSelectionChangedArgs args) {
     setState(() {
       if (args.value is PickerDateRange) {
-        _range = '${DateFormat('dd/MM/yyyy').format(args.value.startDate)} -'
+        _range = '${DateFormat('yyyy-MM-dd').format(args.value.startDate)} -'
             // ignore: lines_longer_than_80_chars
-            ' ${DateFormat('dd/MM/yyyy').format(args.value.endDate ?? args.value.startDate)}';
+            ' ${DateFormat('yyyy-MM-dd').format(args.value.endDate ?? args.value.startDate)}';
+        // _range에 저장된 시작 날짜와 종료 날짜
+        DateTime startDate = args.value.startDate;
+        DateTime endDate = args.value.endDate ?? args.value.startDate; // 종료 날짜가 없는 경우 시작 날짜 사용
+
+        print("시작날짜 : $startDate");
+        print("끝날짜 : $endDate");
+        // 날짜 차이 계산
+        Duration difference = endDate.difference(startDate);
+
+        // 차이 일수 출력
+        int dayDifference = difference.inDays;
+        print("날짜 차이 (일수): $dayDifference");
+
+        date = Camp(
+          reservationStart: startDate,
+          reservationEnd: endDate,
+          reservationDate: dayDifference
+        );
+
       } else if (args.value is DateTime) {
         _selectedDate = args.value.toString();
       } else if (args.value is List<DateTime>) {
         _dateCount = args.value.length.toString();
       } else {
         _rangeCount = args.value.length.toString();
+        print("일수 : $_rangeCount");
       }
     });
   }
@@ -58,7 +83,6 @@ class CalanderState extends State<Calander> {
                 preferredSize: const Size.fromHeight(60),
                 child: CustomAppbar(
                     centertext: "Calander",
-                    ActionIcon: Icons.more_vert,
                     bgcolor: notifire.getbgcolor,
                     actioniconcolor: notifire.getwhiteblackcolor,
                     leadingiconcolor: notifire.getwhiteblackcolor,
@@ -74,7 +98,7 @@ class CalanderState extends State<Calander> {
                       InkWell(
                         onTap: () {
                           Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => const Reservate()));
+                              builder: (context) => Reservate(cpdtNo: widget.no, date: date)));
                         },
                         child: Container(
                           height: 70,
@@ -113,16 +137,16 @@ class CalanderState extends State<Calander> {
                       SfDateRangePicker(
                         rangeTextStyle: TextStyle(color: WhiteColor),
                         toggleDaySelection: true,
-                        endRangeSelectionColor: Darkblue,
-                        startRangeSelectionColor: Darkblue,
+                        endRangeSelectionColor: yelloColor,
+                        startRangeSelectionColor: yelloColor,
                         monthCellStyle: DateRangePickerMonthCellStyle(
                             blackoutDateTextStyle: TextStyle(color: Darkblue)),
                         backgroundColor: notifire.getbgcolor,
                         onSelectionChanged: _onSelectionChanged,
                         selectionMode: DateRangePickerSelectionMode.range,
                         initialSelectedRange: PickerDateRange(
-                            DateTime.now().subtract(const Duration(days: 4)),
-                            DateTime.now().add(const Duration(days: 3))),
+                            DateTime.now().subtract(const Duration(days: 0)),
+                            DateTime.now().add(const Duration(days: 1))),
                       ),
                     ],
                   ),

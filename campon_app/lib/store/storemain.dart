@@ -8,7 +8,6 @@ import 'package:flutter/src/widgets/basic.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
-
 class StoreMain extends StatefulWidget {
   const StoreMain({super.key});
 
@@ -216,6 +215,35 @@ class _StoreMainState extends State<StoreMain> {
   Widget build(BuildContext context) {
     notifire = Provider.of<ColorNotifire>(context, listen: true);
     return Scaffold(
+      appBar: AppBar(
+        title: Image.asset(
+          "assets/images/logo2.png",
+          width: 110,
+          height: 60,
+        ),
+        centerTitle: true,
+        leading: GestureDetector(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 15.0, vertical: 15.0),
+            child: Icon(Icons.star),
+          ),
+          onTap: () {
+            // Navigator.push(context,
+            //     MaterialPageRoute(builder: (context) => ));
+          },
+        ),
+        actions: [
+          GestureDetector(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 15.0, vertical: 15.0),
+              child: Icon(Icons.shopping_cart),
+            ),
+            onTap: () {
+              print('test2.....');
+            },
+          ),
+        ],
+      ),
       backgroundColor: notifire.getbgcolor,
       body: CustomScrollView(slivers: <Widget>[
         SliverToBoxAdapter(
@@ -566,8 +594,7 @@ class _StoreMainState extends State<StoreMain> {
                     ),
                     Text(
                       '캠프온이 처음이신가요? 캠프온 이용 안내',
-                      style: TextStyle(
-                      ),
+                      style: TextStyle(),
                     ),
                     Divider(
                       color: notifire.getgreycolor,
@@ -701,21 +728,22 @@ class _StoreMainState extends State<StoreMain> {
                             height: 75,
                             width: 75,
                             child: ClipRRect(
-                              borderRadius: BorderRadius.circular(12),
-                              child: 
-                              // Image.asset(
-                              //   proReviewList[index]["prImg"]
-                              //           .toString()
-                              //           .startsWith('/')
-                              //       ? proReviewList[index]["prImg"]
-                              //           .toString()
-                              //           .substring(1)
-                              //       : proReviewList[index]["prImg"].toString(),
-                              //   fit: BoxFit.cover,
-                              // ),
-                              Image.network("http://10.0.2.2:8081/api/img?file=${proReviewList[index]['prImg'].toString()}", fit: BoxFit.cover,)
-
-                            ),
+                                borderRadius: BorderRadius.circular(12),
+                                child:
+                                    // Image.asset(
+                                    //   proReviewList[index]["prImg"]
+                                    //           .toString()
+                                    //           .startsWith('/')
+                                    //       ? proReviewList[index]["prImg"]
+                                    //           .toString()
+                                    //           .substring(1)
+                                    //       : proReviewList[index]["prImg"].toString(),
+                                    //   fit: BoxFit.cover,
+                                    // ),
+                                    Image.network(
+                                  "http://10.0.2.2:8081/api/img?file=${proReviewList[index]['prImg'].toString()}",
+                                  fit: BoxFit.cover,
+                                )),
                           ),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,

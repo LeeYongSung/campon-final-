@@ -4,6 +4,7 @@ import 'package:campon_app/example/Login&ExtraDesign/home.dart';
 import 'package:campon_app/example/Massage/massage.dart';
 import 'package:campon_app/example/Profile/profile.dart';
 import 'package:campon_app/example/Search/Search.dart';
+import 'package:campon_app/store/storemain.dart';
 import 'package:flutter/material.dart';
 
 int selectedIndex = 0;
@@ -24,8 +25,8 @@ class _CampMainScreenState extends State<CampMainScreen> {
     return _userAuth == 'user'
         ? [
             CampHomeScreen(),
+            StoreMain(),
             Search(),
-            massage(),
             profile(),
             CampFavoritesScreen(),
           ]

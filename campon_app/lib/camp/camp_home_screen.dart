@@ -506,16 +506,16 @@ class _CampHomeScreenState extends State<CampHomeScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               Container(
-                width: 100,
-                height: 100,
+                width: 130,
+                height: 130,
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(12),
                   child: Column(
                     children: [
                       Image.asset(
                         'assets/images/camp1-4.jpg',
-                        width: 100.0,
-                        height: 100.0,
+                        width: 130.0,
+                        height: 130.0,
                         fit: BoxFit.cover,
                       )
                     ],
@@ -523,16 +523,16 @@ class _CampHomeScreenState extends State<CampHomeScreen> {
                 ),
               ),
               Container(
-                width: 100,
-                height: 100,
+                width: 130,
+                height: 130,
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(12),
                   child: Column(
                     children: [
                       Image.asset(
                         'assets/images/camp1-4.jpg',
-                        width: 100.0,
-                        height: 100.0,
+                        width: 130.0,
+                        height: 130.0,
                         fit: BoxFit.cover,
                       )
                     ],
@@ -540,16 +540,16 @@ class _CampHomeScreenState extends State<CampHomeScreen> {
                 ),
               ),
               Container(
-                width: 100,
-                height: 100,
+                width: 130,
+                height: 130,
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(12),
                   child: Column(
                     children: [
                       Image.asset(
                         'assets/images/camp1-4.jpg',
-                        width: 100.0,
-                        height: 100.0,
+                        width: 130.0,
+                        height: 130.0,
                         fit: BoxFit.cover,
                       )
                     ],
@@ -565,16 +565,16 @@ class _CampHomeScreenState extends State<CampHomeScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               Container(
-                width: 100,
-                height: 100,
+                width: 130,
+                height: 130,
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(12),
                   child: Column(
                     children: [
                       Image.asset(
                         'assets/images/camp1-4.jpg',
-                        width: 100.0,
-                        height: 100.0,
+                        width: 130.0,
+                        height: 130.0,
                         fit: BoxFit.cover,
                       )
                     ],
@@ -582,16 +582,16 @@ class _CampHomeScreenState extends State<CampHomeScreen> {
                 ),
               ),
               Container(
-                width: 100,
-                height: 100,
+                width: 130,
+                height: 130,
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(12),
                   child: Column(
                     children: [
                       Image.asset(
                         'assets/images/camp1-4.jpg',
-                        width: 100.0,
-                        height: 100.0,
+                        width: 130.0,
+                        height: 130.0,
                         fit: BoxFit.cover,
                       )
                     ],
@@ -599,16 +599,16 @@ class _CampHomeScreenState extends State<CampHomeScreen> {
                 ),
               ),
               Container(
-                width: 100,
-                height: 100,
+                width: 130,
+                height: 130,
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(12),
                   child: Column(
                     children: [
                       Image.asset(
                         'assets/images/camp1-4.jpg',
-                        width: 100.0,
-                        height: 100.0,
+                        width: 130.0,
+                        height: 130.0,
                         fit: BoxFit.cover,
                       )
                     ],
@@ -637,16 +637,16 @@ class _CampHomeScreenState extends State<CampHomeScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               Container(
-                width: 100,
-                height: 100,
+                width: 130,
+                height: 130,
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(12),
                   child: Column(
                     children: [
                       Image.asset(
                         'assets/images/camp1-4.jpg',
-                        width: 100.0,
-                        height: 100.0,
+                        width: 130.0,
+                        height: 130.0,
                         fit: BoxFit.cover,
                       )
                     ],
@@ -654,16 +654,16 @@ class _CampHomeScreenState extends State<CampHomeScreen> {
                 ),
               ),
               Container(
-                width: 100,
-                height: 100,
+                width: 130,
+                height: 130,
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(12),
                   child: Column(
                     children: [
                       Image.asset(
                         'assets/images/camp1-4.jpg',
-                        width: 100.0,
-                        height: 100.0,
+                        width: 130.0,
+                        height: 130.0,
                         fit: BoxFit.cover,
                       )
                     ],
@@ -671,16 +671,16 @@ class _CampHomeScreenState extends State<CampHomeScreen> {
                 ),
               ),
               Container(
-                width: 100,
-                height: 100,
+                width: 130,
+                height: 130,
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(12),
                   child: Column(
                     children: [
                       Image.asset(
                         'assets/images/camp1-4.jpg',
-                        width: 100.0,
-                        height: 100.0,
+                        width: 130.0,
+                        height: 130.0,
                         fit: BoxFit.cover,
                       )
                     ],
@@ -696,16 +696,16 @@ class _CampHomeScreenState extends State<CampHomeScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               Container(
-                width: 100,
-                height: 100,
+                width: 130,
+                height: 130,
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(12),
                   child: Column(
                     children: [
                       Image.asset(
                         'assets/images/camp1-4.jpg',
-                        width: 100.0,
-                        height: 100.0,
+                        width: 130.0,
+                        height: 130.0,
                         fit: BoxFit.cover,
                       )
                     ],
@@ -713,16 +713,16 @@ class _CampHomeScreenState extends State<CampHomeScreen> {
                 ),
               ),
               Container(
-                width: 100,
-                height: 100,
+                width: 130,
+                height: 130,
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(12),
                   child: Column(
                     children: [
                       Image.asset(
                         'assets/images/camp1-4.jpg',
-                        width: 100.0,
-                        height: 100.0,
+                        width: 130.0,
+                        height: 130.0,
                         fit: BoxFit.cover,
                       )
                     ],
@@ -730,16 +730,16 @@ class _CampHomeScreenState extends State<CampHomeScreen> {
                 ),
               ),
               Container(
-                width: 100,
-                height: 100,
+                width: 130,
+                height: 130,
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(12),
                   child: Column(
                     children: [
                       Image.asset(
                         'assets/images/camp1-4.jpg',
-                        width: 100.0,
-                        height: 100.0,
+                        width: 130.0,
+                        height: 130.0,
                         fit: BoxFit.cover,
                       )
                     ],

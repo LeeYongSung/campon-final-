@@ -75,21 +75,22 @@ var categoryName = '텐트';
         leading: GestureDetector(
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 15.0, vertical: 15.0),
-            child: Icon(Icons.schedule_outlined),
+            child: Icon(Icons.arrow_back_ios),
           ),
           onTap: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => CampScheduleScreen()));
+            Navigator.pop(context);
           },
         ),
         actions: [
           GestureDetector(
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 15.0, vertical: 15.0),
-              child: Icon(Icons.search_outlined),
+              child: Icon(Icons.shopping_cart),
             ),
             onTap: () {
-              print('test2.....');
+              print('장바구니 클릭.....');
+              //TODO
+
             },
           ),
         ],

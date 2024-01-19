@@ -1,7 +1,9 @@
-import 'package:campon_app/loading/loading_screen.dart';
+// import 'package:campon_app/loading/loading_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'example/Utils/dark_lightmode.dart';
+
+import 'package:campon_app/store/productupdate.dart';
 
 void main() {
   runApp(
@@ -26,7 +28,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const LoadingScreen(),
+      home: ProductUpdate(),
     );
   }
 }

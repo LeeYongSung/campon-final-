@@ -4,6 +4,9 @@ import 'package:campon_app/common/footer_screen.dart';
 import 'package:flutter/material.dart';
 // import 'package:flutter_custom_carousel_slider/flutter_custom_carousel_slider.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'dart:math';
 
 class CampHomeScreen extends StatefulWidget {
   const CampHomeScreen({super.key});
@@ -31,48 +34,40 @@ class _CampHomeScreenState extends State<CampHomeScreen> {
     'assets/images/camp1.jpg',
   ];
 
-  List hotelList2 = [
-    {
-      "id": "1",
-      "title": "test",
-      "img": "assets/images/SwissHotel.jpg",
-      "price": "\￦100,000/",
-      "address": "재미지고 재미졌음",
-      "Night": "Night",
-      "review": "4.9",
-      "reviewCount": "(160 Reviews)"
-    },
-    {
-      "id": "2",
-      "title": "test",
-      "img": "assets/images/SwissHotel.jpg",
-      "price": "\￦100,000/",
-      "address": "재미지고 재미졌음",
-      "Night": "Night",
-      "review": "4.9",
-      "reviewCount": "(160 Reviews)"
-    },
-    {
-      "id": "3",
-      "title": "test",
-      "img": "assets/images/SwissHotel.jpg",
-      "price": "\￦100,000/",
-      "address": "재미지고 재미졌음",
-      "Night": "Night",
-      "review": "4.9",
-      "reviewCount": "(160 Reviews)"
-    },
-    {
-      "id": "4",
-      "title": "test",
-      "img": "assets/images/SwissHotel.jpg",
-      "price": "\￦100,000/",
-      "address": "재미지고 재미졌음",
-      "Night": "Night",
-      "review": "4.9",
-      "reviewCount": "(160 Reviews)"
-    },
-  ];
+  List newCampList = [];
+  List suggestList = [];
+  List newReviewList = [];
+
+  @override
+  void initState() {
+    super.initState();
+    newCamp();
+  }
+
+  Future newCamp() async {
+    print('newCamp...');
+    final url = Uri.parse('http://10.0.2.2:8081/api/camp/index');
+    try {
+      final response = await http.get(url);
+      if (response.statusCode == 200) {
+        setState(() {
+          var utf8Decoded = utf8.decode(response.bodyBytes);
+          var result = json.decode(utf8Decoded);
+          print('내부 newCamp...');
+          print(result);
+          newCampList = result['campnewList'];
+          suggestList = result['campHotList'];
+          newReviewList = result['newReviewList'];
+          print(newCampList);
+        });
+      } else {
+        print('Server returned status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('There was a problem with the network request: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -84,23 +79,29 @@ class _CampHomeScreenState extends State<CampHomeScreen> {
         ),
         centerTitle: true,
         leading: GestureDetector(
-          child: Padding(
+          child: const Padding(
             padding: EdgeInsets.symmetric(horizontal: 15.0, vertical: 15.0),
             child: Icon(Icons.schedule_outlined),
           ),
           onTap: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => CampScheduleScreen()));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const CampScheduleScreen()));
           },
         ),
         actions: [
           GestureDetector(
-            child: Padding(
+            child: const Padding(
               padding: EdgeInsets.symmetric(horizontal: 15.0, vertical: 15.0),
               child: Icon(Icons.search_outlined),
             ),
             onTap: () {
-              print('test2.....');
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          const CampProductsScreen(category: '0')));
             },
           ),
         ],
@@ -127,16 +128,22 @@ class _CampHomeScreenState extends State<CampHomeScreen> {
             ),
           ),
           Container(
+            width: double.infinity,
             child: Center(
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 50.0),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 10.0, vertical: 50.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     GestureDetector(
                       child: Column(
                         children: [
-                          Image.asset('assets/images/campicon1.png'),
+                          Image.asset(
+                            'assets/images/campicon1.png',
+                            width: 40.0,
+                            height: 40.0,
+                          ),
                           Text(category1)
                         ],
                       ),
@@ -145,13 +152,17 @@ class _CampHomeScreenState extends State<CampHomeScreen> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) =>
-                                    CampProductsScreen(category: category1)));
+                                    CampProductsScreen(category: '1')));
                       },
                     ),
                     GestureDetector(
                       child: Column(
                         children: [
-                          Image.asset('assets/images/campicon2.png'),
+                          Image.asset(
+                            'assets/images/campicon2.png',
+                            width: 40.0,
+                            height: 40.0,
+                          ),
                           Text(category2)
                         ],
                       ),
@@ -160,13 +171,17 @@ class _CampHomeScreenState extends State<CampHomeScreen> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) =>
-                                    CampProductsScreen(category: category2)));
+                                    CampProductsScreen(category: '2')));
                       },
                     ),
                     GestureDetector(
                       child: Column(
                         children: [
-                          Image.asset('assets/images/campicon3.png'),
+                          Image.asset(
+                            'assets/images/campicon3.png',
+                            width: 40.0,
+                            height: 40.0,
+                          ),
                           Text(category3)
                         ],
                       ),
@@ -175,13 +190,17 @@ class _CampHomeScreenState extends State<CampHomeScreen> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) =>
-                                    CampProductsScreen(category: category3)));
+                                    CampProductsScreen(category: '3')));
                       },
                     ),
                     GestureDetector(
                       child: Column(
                         children: [
-                          Image.asset('assets/images/campicon4.png'),
+                          Image.asset(
+                            'assets/images/campicon4.png',
+                            width: 40.0,
+                            height: 40.0,
+                          ),
                           Text(category4)
                         ],
                       ),
@@ -190,13 +209,17 @@ class _CampHomeScreenState extends State<CampHomeScreen> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) =>
-                                    CampProductsScreen(category: category4)));
+                                    CampProductsScreen(category: '4')));
                       },
                     ),
                     GestureDetector(
                       child: Column(
                         children: [
-                          Image.asset('assets/images/campicon5.png'),
+                          Image.asset(
+                            'assets/images/campicon5.png',
+                            width: 40.0,
+                            height: 40.0,
+                          ),
                           Text(category5)
                         ],
                       ),
@@ -205,7 +228,7 @@ class _CampHomeScreenState extends State<CampHomeScreen> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) =>
-                                    CampProductsScreen(category: category5)));
+                                    CampProductsScreen(category: '5')));
                       },
                     ),
                   ],
@@ -219,252 +242,229 @@ class _CampHomeScreenState extends State<CampHomeScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Column(
-                      children: [
-                        SizedBox(
-                          width: 500,
-                          height: 50,
-                          child: ElevatedButton(
-                            child: Text('날짜 선택'),
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.white,
-                                foregroundColor: Colors.black,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(0.0)),
-                                elevation: 2 // 그림자 효과
-                                ),
-                            // 버튼을 눌렀을 때 동작할 내용
-                            onPressed: () async {
-                              // 카카오 로그아웃 요청 - context => provider 가져와서 사용
-                              // var user = context.read<UserProvider>();
-                              // if(user.isLogin) {
-                              //   user.kakaoLogout();
-                              //   print('카카오 로그아웃 완료~!');
-                              // }
-                              // Navigator.pushReplacementNamed(context, "/login");
-                            },
+                    Expanded(
+                      child: Container(
+                        child: ElevatedButton(
+                          child: const Text('날짜 선택'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            foregroundColor: Colors.black,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(0.0)),
+                            elevation: 2, // 그림자 효과,
+                            minimumSize: const Size(100, 50),
+                            maximumSize: const Size(double.infinity, 50),
                           ),
+                          // 버튼을 눌렀을 때 동작할 내용
+                          onPressed: () async {},
                         ),
-                      ],
+                      ),
                     ),
                   ],
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10.0,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Column(
-                      children: [
-                        SizedBox(
-                          width: 500,
-                          height: 50,
-                          child: TextField(
-                            decoration: InputDecoration(
-                              filled: true,
-                              fillColor: Colors.white,
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(0.0),
-                                borderSide: BorderSide(
-                                    color: Color.fromRGBO(125, 125, 125, 0.2)),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(0.0),
-                                borderSide: BorderSide(
-                                    color: Color.fromRGBO(125, 125, 125, 0.6)),
-                              ),
-                              hintText: '검색명',
-                            ),
+                    Expanded(
+                      child: TextField(
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: Colors.white,
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(0.0),
+                            borderSide: const BorderSide(
+                                color: Color.fromRGBO(125, 125, 125, 0.2)),
                           ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(0.0),
+                            borderSide: const BorderSide(
+                                color: Color.fromRGBO(125, 125, 125, 0.6)),
+                          ),
+                          hintText: '검색명',
                         ),
-                      ],
+                      ),
                     ),
                   ],
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10.0,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Column(
-                      children: [
-                        SizedBox(
-                          width: 250,
-                          height: 50,
-                          child: ElevatedButton(
-                            child: Text('지역'),
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.white,
-                                foregroundColor: Colors.black,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(0.0)),
-                                elevation: 2 // 그림자 효과
-                                ),
-                            // 버튼을 눌렀을 때 동작할 내용
-                            onPressed: () async {
-                              // 카카오 로그아웃 요청 - context => provider 가져와서 사용
-                              // var user = context.read<UserProvider>();
-                              // if(user.isLogin) {
-                              //   user.kakaoLogout();
-                              //   print('카카오 로그아웃 완료~!');
-                              // }
-                              // Navigator.pushReplacementNamed(context, "/login");
-                            },
-                          ),
+                    Expanded(
+                      child: Container(
+                        height: 50,
+                        child: ElevatedButton(
+                          child: const Text('지역'),
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.white,
+                              foregroundColor: Colors.black,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(0.0)),
+                              elevation: 2 // 그림자 효과
+                              ),
+                          onPressed: () async {},
                         ),
-                      ],
+                      ),
                     ),
-                    Column(
-                      children: [
-                        SizedBox(
-                          width: 250,
-                          height: 50,
-                          child: ElevatedButton(
-                            child: Text('테마'),
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.white,
-                                foregroundColor: Colors.black,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(0.0)),
-                                elevation: 2 // 그림자 효과
-                                ),
-                            // 버튼을 눌렀을 때 동작할 내용
-                            onPressed: () async {
-                              // 카카오 로그아웃 요청 - context => provider 가져와서 사용
-                              // var user = context.read<UserProvider>();
-                              // if(user.isLogin) {
-                              //   user.kakaoLogout();
-                              //   print('카카오 로그아웃 완료~!');
-                              // }
-                              // Navigator.pushReplacementNamed(context, "/login");
-                            },
-                          ),
+                    Expanded(
+                      child: Container(
+                        height: 50,
+                        child: ElevatedButton(
+                          child: const Text('테마'),
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.white,
+                              foregroundColor: Colors.black,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(0.0)),
+                              elevation: 2 // 그림자 효과
+                              ),
+                          onPressed: () async {},
                         ),
-                      ],
+                      ),
                     ),
                   ],
                 ),
                 Padding(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 30.0, vertical: 5.0),
-                  child: Row(
-                    children: [
-                      Text('캠핑종류'),
-                      Checkbox(
-                        value: _isCheckAuto,
-                        onChanged: (value) {
-                          setState(() {
-                            _isCheckAuto = value!;
-                          });
-                        },
-                      ),
-                      Text("오토캠핑"),
-                      Checkbox(
-                        value: _isCheckGlam,
-                        onChanged: (value) {
-                          setState(() {
-                            _isCheckGlam = value!;
-                          });
-                        },
-                      ),
-                      Text("글램핑"),
-                      Checkbox(
-                        value: _isCheckKara,
-                        onChanged: (value) {
-                          setState(() {
-                            _isCheckKara = value!;
-                          });
-                        },
-                      ),
-                      Text("카라반"),
-                      Checkbox(
-                        value: _isCheckPen,
-                        onChanged: (value) {
-                          setState(() {
-                            _isCheckPen = value!;
-                          });
-                        },
-                      ),
-                      Text("펜션"),
-                      Checkbox(
-                        value: _isCheckCamp,
-                        onChanged: (value) {
-                          setState(() {
-                            _isCheckCamp = value!;
-                          });
-                        },
-                      ),
-                      Text("캠프닉"),
-                    ],
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 30.0, vertical: 5.0),
+                  child: Container(
+                    height: 50,
+                    child: ListView(
+                      scrollDirection: Axis.horizontal,
+                      children: [
+                        Center(
+                          child: const Text('캠핑종류'),
+                        ),
+                        Checkbox(
+                          value: _isCheckAuto,
+                          onChanged: (value) {
+                            setState(() {
+                              _isCheckAuto = value!;
+                            });
+                          },
+                        ),
+                        Center(
+                          child: const Text("오토캠핑"),
+                        ),
+                        Checkbox(
+                          value: _isCheckGlam,
+                          onChanged: (value) {
+                            setState(() {
+                              _isCheckGlam = value!;
+                            });
+                          },
+                        ),
+                        Center(
+                          child: const Text("글램핑"),
+                        ),
+                        Checkbox(
+                          value: _isCheckKara,
+                          onChanged: (value) {
+                            setState(() {
+                              _isCheckKara = value!;
+                            });
+                          },
+                        ),
+                        Center(
+                          child: const Text("카라반"),
+                        ),
+                        Checkbox(
+                          value: _isCheckPen,
+                          onChanged: (value) {
+                            setState(() {
+                              _isCheckPen = value!;
+                            });
+                          },
+                        ),
+                        Center(
+                          child: const Text("펜션"),
+                        ),
+                        Checkbox(
+                          value: _isCheckCamp,
+                          onChanged: (value) {
+                            setState(() {
+                              _isCheckCamp = value!;
+                            });
+                          },
+                        ),
+                        Center(
+                          child: const Text("캠프닉"),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10.0,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Column(
-                      children: [
-                        SizedBox(
-                          width: 500,
-                          height: 50,
-                          child: ElevatedButton(
-                            child: Text('검색하기'),
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.white,
-                                foregroundColor: Colors.black,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(0.0)),
-                                elevation: 2 // 그림자 효과
-                                ),
-                            // 버튼을 눌렀을 때 동작할 내용
-                            onPressed: () async {
-                              // 카카오 로그아웃 요청 - context => provider 가져와서 사용
-                              // var user = context.read<UserProvider>();
-                              // if(user.isLogin) {
-                              //   user.kakaoLogout();
-                              //   print('카카오 로그아웃 완료~!');
-                              // }
-                              // Navigator.pushReplacementNamed(context, "/login");
-                            },
-                          ),
+                    Expanded(
+                      child: Container(
+                        height: 50,
+                        child: ElevatedButton(
+                          child: const Text('검색하기'),
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.white,
+                              foregroundColor: Colors.black,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(0.0)),
+                              elevation: 2 // 그림자 효과
+                              ),
+                          onPressed: () async {},
                         ),
-                      ],
+                      ),
                     ),
                   ],
                 ),
               ],
             ),
           ),
-          SizedBox(height: 30.0),
-          Container(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Column(
-                  children: [
-                    Image.asset('assets/images/camp_ads.jpg'),
-                  ],
-                ),
-                Column(
-                  children: [
-                    Image.asset('assets/images/camp_ads.jpg'),
-                  ],
-                ),
-              ],
+          const SizedBox(height: 30.0),
+          Expanded(
+            child: Container(
+              height: 100,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Column(
+                    children: [
+                      Image.asset(
+                        'assets/images/camp_ads.jpg',
+                        width: 150,
+                        height: 80,
+                        fit: BoxFit.cover,
+                      ),
+                    ],
+                  ),
+                  Column(
+                    children: [
+                      Image.asset(
+                        'assets/images/camp_ads.jpg',
+                        width: 150,
+                        height: 80,
+                        fit: BoxFit.cover,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
-          SizedBox(height: 30.0),
+          const SizedBox(height: 30.0),
           Column(
             children: [
               SizedBox(
                 width: 500,
                 height: 50,
                 child: ElevatedButton(
-                  child: Text('캠프온이 처음이신가요? 캠프온 둘러보기'),
+                  child: const Text('캠프온이 처음이신가요? 캠프온 둘러보기'),
                   style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.yellow,
                       foregroundColor: Colors.black,
@@ -486,7 +486,7 @@ class _CampHomeScreenState extends State<CampHomeScreen> {
               ),
             ],
           ),
-          SizedBox(height: 30.0),
+          const SizedBox(height: 30.0),
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 10.0),
             child: Row(
@@ -499,125 +499,57 @@ class _CampHomeScreenState extends State<CampHomeScreen> {
               ],
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 10.0,
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+          Column(
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Container(
-                width: 130,
-                height: 130,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: Column(
-                    children: [
-                      Image.asset(
-                        'assets/images/camp1-4.jpg',
-                        width: 130.0,
-                        height: 130.0,
-                        fit: BoxFit.cover,
-                      )
-                    ],
+              AspectRatio(
+                aspectRatio: 1, // 가로 세로 비율을 1로 설정
+                child: GridView.builder(
+                  physics: NeverScrollableScrollPhysics(),
+                  padding: EdgeInsets.all(10),
+                  itemCount: min(
+                      newCampList.length, 6), // 6과 hotelList2.length 중 작은 값을 사용
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3, // 가로에 표시할 항목 수
+                    crossAxisSpacing: 10, // 가로 간격
+                    mainAxisSpacing: 10, // 세로 간격
+                    childAspectRatio: 1, // 항목의 가로 세로 비율
                   ),
-                ),
-              ),
-              Container(
-                width: 130,
-                height: 130,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: Column(
-                    children: [
-                      Image.asset(
-                        'assets/images/camp1-4.jpg',
-                        width: 130.0,
-                        height: 130.0,
-                        fit: BoxFit.cover,
-                      )
-                    ],
-                  ),
-                ),
-              ),
-              Container(
-                width: 130,
-                height: 130,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: Column(
-                    children: [
-                      Image.asset(
-                        'assets/images/camp1-4.jpg',
-                        width: 130.0,
-                        height: 130.0,
-                        fit: BoxFit.cover,
-                      )
-                    ],
-                  ),
+                  itemBuilder: (BuildContext context, int index) {
+                    return InkWell(
+                      onTap: () {
+                        // Navigator.of(context).push(MaterialPageRoute(
+                        //     builder: (context) =>
+                        //         const hoteldetailpage()));
+                      },
+                      child: Container(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: Column(
+                            children: [
+                              Image.asset(
+                                newCampList[index]['cpiUrl'].toString(),
+                                width: 100.0,
+                                height: 100.0,
+                                fit: BoxFit.cover,
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ),
             ],
           ),
-          SizedBox(
+          const SizedBox(
             height: 20.0,
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Container(
-                width: 130,
-                height: 130,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: Column(
-                    children: [
-                      Image.asset(
-                        'assets/images/camp1-4.jpg',
-                        width: 130.0,
-                        height: 130.0,
-                        fit: BoxFit.cover,
-                      )
-                    ],
-                  ),
-                ),
-              ),
-              Container(
-                width: 130,
-                height: 130,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: Column(
-                    children: [
-                      Image.asset(
-                        'assets/images/camp1-4.jpg',
-                        width: 130.0,
-                        height: 130.0,
-                        fit: BoxFit.cover,
-                      )
-                    ],
-                  ),
-                ),
-              ),
-              Container(
-                width: 130,
-                height: 130,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: Column(
-                    children: [
-                      Image.asset(
-                        'assets/images/camp1-4.jpg',
-                        width: 130.0,
-                        height: 130.0,
-                        fit: BoxFit.cover,
-                      )
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 60.0),
+          // const SizedBox(height: 60.0),
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 10.0),
             child: Row(
@@ -630,125 +562,57 @@ class _CampHomeScreenState extends State<CampHomeScreen> {
               ],
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 10.0,
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+          Column(
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Container(
-                width: 130,
-                height: 130,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: Column(
-                    children: [
-                      Image.asset(
-                        'assets/images/camp1-4.jpg',
-                        width: 130.0,
-                        height: 130.0,
-                        fit: BoxFit.cover,
-                      )
-                    ],
+              AspectRatio(
+                aspectRatio: 1, // 가로 세로 비율을 1로 설정
+                child: GridView.builder(
+                  physics: NeverScrollableScrollPhysics(),
+                  padding: EdgeInsets.all(10),
+                  itemCount: min(
+                      suggestList.length, 6), // 6과 hotelList2.length 중 작은 값을 사용
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3, // 가로에 표시할 항목 수
+                    crossAxisSpacing: 10, // 가로 간격
+                    mainAxisSpacing: 10, // 세로 간격
+                    childAspectRatio: 1, // 항목의 가로 세로 비율
                   ),
-                ),
-              ),
-              Container(
-                width: 130,
-                height: 130,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: Column(
-                    children: [
-                      Image.asset(
-                        'assets/images/camp1-4.jpg',
-                        width: 130.0,
-                        height: 130.0,
-                        fit: BoxFit.cover,
-                      )
-                    ],
-                  ),
-                ),
-              ),
-              Container(
-                width: 130,
-                height: 130,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: Column(
-                    children: [
-                      Image.asset(
-                        'assets/images/camp1-4.jpg',
-                        width: 130.0,
-                        height: 130.0,
-                        fit: BoxFit.cover,
-                      )
-                    ],
-                  ),
+                  itemBuilder: (BuildContext context, int index) {
+                    return InkWell(
+                      onTap: () {
+                        // Navigator.of(context).push(MaterialPageRoute(
+                        //     builder: (context) =>
+                        //         const hoteldetailpage()));
+                      },
+                      child: Container(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: Column(
+                            children: [
+                              Image.asset(
+                                suggestList[index]['cpiUrl'].toString(),
+                                width: 100.0,
+                                height: 100.0,
+                                fit: BoxFit.cover,
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ),
             ],
           ),
-          SizedBox(
+          const SizedBox(
             height: 20.0,
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Container(
-                width: 130,
-                height: 130,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: Column(
-                    children: [
-                      Image.asset(
-                        'assets/images/camp1-4.jpg',
-                        width: 130.0,
-                        height: 130.0,
-                        fit: BoxFit.cover,
-                      )
-                    ],
-                  ),
-                ),
-              ),
-              Container(
-                width: 130,
-                height: 130,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: Column(
-                    children: [
-                      Image.asset(
-                        'assets/images/camp1-4.jpg',
-                        width: 130.0,
-                        height: 130.0,
-                        fit: BoxFit.cover,
-                      )
-                    ],
-                  ),
-                ),
-              ),
-              Container(
-                width: 130,
-                height: 130,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: Column(
-                    children: [
-                      Image.asset(
-                        'assets/images/camp1-4.jpg',
-                        width: 130.0,
-                        height: 130.0,
-                        fit: BoxFit.cover,
-                      )
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 30.0),
+          const SizedBox(height: 30.0),
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 10.0),
             child: Row(
@@ -761,14 +625,14 @@ class _CampHomeScreenState extends State<CampHomeScreen> {
               ],
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 10.0,
           ),
           ListView.builder(
             shrinkWrap: true,
             padding: EdgeInsets.zero,
             physics: const NeverScrollableScrollPhysics(),
-            itemCount: hotelList2.length,
+            itemCount: newReviewList.length,
             itemBuilder: (BuildContext context, int index) {
               return InkWell(
                 onTap: () {
@@ -782,117 +646,83 @@ class _CampHomeScreenState extends State<CampHomeScreen> {
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(15),
                       color: Colors.white),
-                  child: Row(
-                    children: [
-                      Container(
-                        margin: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 12),
-                        height: 75,
-                        width: 75,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(12),
-                          child: Image.asset(
-                            hotelList2[index]["img"].toString(),
-                            fit: BoxFit.fill,
-                          ),
-                        ),
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            hotelList2[index]["title"].toString(),
-                            style: TextStyle(
-                                fontSize: 15,
-                                fontFamily: "Gilroy Bold",
-                                color: Colors.grey),
-                          ),
-                          // const SizedBox(height: 6),
-                          SizedBox(
-                              height:
-                                  MediaQuery.of(context).size.height * 0.006),
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.65,
-                            child: Text(
-                              hotelList2[index]["address"].toString(),
-                              style: TextStyle(
-                                  fontSize: 13,
-                                  color: Colors.grey,
-                                  fontFamily: "Gilroy Medium",
-                                  overflow: TextOverflow.ellipsis),
+                  child: Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: Row(
+                      children: [
+                        Container(
+                          height: 75,
+                          width: 75,
+                          margin: const EdgeInsets.only(right: 12),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: Image.asset(
+                              newReviewList[index]["reviewImg"].toString(),
+                              fit: BoxFit.fill,
                             ),
                           ),
-                          SizedBox(
-                              height:
-                                  MediaQuery.of(context).size.height * 0.01),
-                          Row(
+                        ),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              Text(
+                                newReviewList[index]["campName"].toString(),
+                                style: const TextStyle(
+                                    fontSize: 15,
+                                    fontFamily: "Gilroy Bold",
+                                    color: Colors.grey),
+                              ),
+                              SizedBox(
+                                  height: MediaQuery.of(context).size.height *
+                                      0.006),
+                              Text(
+                                newReviewList[index]["reviewCon"].toString(),
+                                style: const TextStyle(
+                                    fontSize: 13,
+                                    color: Colors.grey,
+                                    fontFamily: "Gilroy Medium",
+                                    overflow: TextOverflow.ellipsis),
+                              ),
+                              SizedBox(
+                                  height: MediaQuery.of(context).size.height *
+                                      0.01),
                               Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    hotelList2[index]["price"].toString(),
-                                    style: TextStyle(
-                                        fontSize: 16,
+                                    newReviewList[index]["cpdtName"].toString(),
+                                    style: const TextStyle(
+                                        fontSize: 13,
                                         color: Colors.grey,
                                         fontFamily: "Gilroy Bold"),
                                   ),
                                   Text(
-                                    hotelList2[index]["Night"].toString(),
-                                    style: TextStyle(
-                                        fontSize: 16,
-                                        color: Colors.grey,
-                                        fontFamily: "Gilroy Medium"),
+                                    newReviewList[index]["regDate"].toString(),
+                                    style: const TextStyle(
+                                        fontSize: 9,
+                                        color: Colors.blue,
+                                        fontWeight: FontWeight.bold),
                                   ),
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  const SizedBox(width: 12),
-                                  Image.asset(
-                                    "assets/images/star.png",
-                                    height: 20,
-                                  ),
-                                  const SizedBox(width: 2),
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 4),
-                                    child: Row(
-                                      children: [
-                                        Text(
-                                          hotelList2[index]["review"]
-                                              .toString(),
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              color: Colors.blue,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                        Text(
-                                          hotelList2[index]["reviewCount"]
-                                              .toString(),
-                                          style: TextStyle(
-                                              fontSize: 14,
-                                              color: Colors.grey,
-                                              fontFamily: "Gilroy Medium"),
-                                        ),
-                                      ],
-                                    ),
-                                  )
                                 ],
                               ),
                             ],
-                          )
-                        ],
-                      ),
-                    ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               );
             },
           ),
+
           const SizedBox(
             height: 30.0,
           ),
-          FooterScreen(),
-          SizedBox(
+          const FooterScreen(),
+          const SizedBox(
             height: 20.0,
           )
         ],

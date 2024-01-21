@@ -1,6 +1,8 @@
 import 'package:campon_app/common/footer_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:expansion_tile_card/expansion_tile_card.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class CampProductsScreen extends StatefulWidget {
   final String category;
@@ -19,109 +21,12 @@ class _CampProductsScreenState extends State<CampProductsScreen> {
   bool _isCheckKara = false;
   bool _isCheckPen = false;
   bool _isCheckCamp = false;
-  List items = [
-    {
-      "id": "1",
-      "title": "Grand Park City Hotel",
-      "img": "assets/images/SwissHotel.jpg",
-      "price": "\$26/",
-      "address": "155 Rajadamri Road, Bangkok 10330 Thailand",
-      "Night": "Night",
-      "review": "4.9",
-      "reviewCount": "(160 Reviews)"
-    },
-    {
-      "id": "2",
-      "title": "The Leela hotel",
-      "img": "assets/images/TheLeelaHotel.jpg",
-      "price": "\$28/",
-      "address": "Chao Anou Road, 112 Vat Chan Village, Chanthabouly District",
-      "Night": "Night",
-      "review": "4.8",
-      "reviewCount": "(150 Reviews)"
-    },
-    {
-      "id": "3",
-      "title": "Mandarin Oriental",
-      "img": "assets/images/NationalHotel.jpg",
-      "price": "\$30/",
-      "address": "1091/336 New Petchburi Road, 10400 Bangkok, Thailand",
-      "Night": "Night",
-      "review": "4.7",
-      "reviewCount": "(140 Reviews)"
-    },
-    {
-      "id": "4",
-      "title": "Anantara Siam hotel",
-      "img": "assets/images/dubaiHotel.jpg",
-      "price": "\$32/",
-      "address": "87 Wireless Road, Phatumwan, 10330, Bangkok",
-      "Night": "Night",
-      "review": "4.6",
-      "reviewCount": "(130 Reviews)"
-    },
-    {
-      "id": "5",
-      "title": "Boutique Hotel",
-      "img": "assets/images/AnticipatedHotel.jpg",
-      "price": "\$34/",
-      "address": "Sheikh Mohammed Bin Rashed Boulevard, Downtown Dubai",
-      "Night": "Night",
-      "review": "4.5",
-      "reviewCount": "(120 Reviews)"
-    },
-    {
-      "id": "6",
-      "title": "Sterling Hotel",
-      "img": "assets/images/IntercontinentalHotel.jpg",
-      "price": "\$36/",
-      "address": "103 River Street, Ballina, Ballina, Australia",
-      "Night": "Night",
-      "review": "4.4",
-      "reviewCount": "(110 Reviews)"
-    },
-    {
-      "id": "7",
-      "title": "Royal Fort Hotel",
-      "img": "assets/images/StateHotel.jpg",
-      "price": "\$38/",
-      "address": "449 Sainte-Hélène St Montréal, Quebec, H2Y 2K9 Canada",
-      "Night": "Night",
-      "review": "4.3",
-      "reviewCount": "(100 Reviews)"
-    },
-    {
-      "id": "8",
-      "title": "Singapore Hotel",
-      "img": "assets/images/vishakhapatnamHotel.jpg",
-      "price": "\$40/",
-      "address": "1, Voznesensky Avenue",
-      "Night": "Night",
-      "review": "4.2",
-      "reviewCount": "(90 Reviews)"
-    },
-    {
-      "id": "9",
-      "title": "Hyatt Hotel",
-      "img": "assets/images/hotel.jpg",
-      "price": "\$42/",
-      "address":
-          "Bandra Kurla Complex Vicinity, Mumbai, Maharashtra, India, 400 055",
-      "Night": "Night",
-      "review": "4.1",
-      "reviewCount": "(80 Reviews)"
-    },
-    {
-      "id": "10",
-      "title": "Luxury Hotel",
-      "img": "assets/images/SagamoreResort.jpg",
-      "price": "\$44/",
-      "address": "14, Moyka river embankment.",
-      "Night": "Night",
-      "review": "3.8",
-      "reviewCount": "(70 Reviews)"
-    },
-  ];
+
+  late String category;
+
+  List items = [];
+  // List<String> campType = [];
+  List<String> campType = ["1", "2", "3", "4", "5"];
 
   final ScrollController _controller = ScrollController();
 
@@ -132,8 +37,9 @@ class _CampProductsScreenState extends State<CampProductsScreen> {
   void initState() {
     super.initState();
 
+    category = widget.category ?? '0';
     // 처음 데이터
-    // fetch();
+    fetch();
 
     // 다음 페이지 (스크롤)
     _controller.addListener(() {
@@ -148,38 +54,73 @@ class _CampProductsScreenState extends State<CampProductsScreen> {
     });
   }
 
-  // Future fetch() async {
-  //   print('fetch...');
-  //   // http
-  //   // 1. URL 인코딩
-  //   // 2. GET 방식 요청
-  //   final url = Uri.parse('http://10.0.2.2:8080/board?page=${_page}');
-  //   final response = await http.get(url);
+  Future fetch() async {
+    print('fetch...');
+    print(category);
+    print(campType);
+    // http
+    // 1. URL 인코딩
+    // 2. GET 방식 요청
+    if (category == '0') {
+      final url = Uri.parse('http://10.0.2.2:8081/api/camp/campSearch');
+      final response = await http.post(url,
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({
+            'keyword': '',
+            'searchDate': '2024-01-21',
+            'regionNo': category,
+            'checkBoxList': campType,
+          }));
+      print(response.statusCode);
 
-  //   if (response.statusCode == 200) {
-  //     setState(() {
-  //       // items.addAll(['New']);
-  //       // JSON 문자열 ➡ List<>
-  //       var utf8Decoded = utf8.decode(response.bodyBytes);
-  //       var result = json.decode(utf8Decoded);
-  //       final page = result['page'];
-  //       final List list = result['list'];
-  //       // final List newData = json.decode(utf8Decoded);
-  //       print('page : ');
-  //       print(page);
-  //       _pageObj = page;
+      if (response.statusCode == 200) {
+        print('여긴?');
+        setState(() {
+          // items.addAll(['New']);
+          // JSON 문자열 ➡ List<>
+          var utf8Decoded = utf8.decode(response.bodyBytes);
+          var result = json.decode(utf8Decoded);
 
-  //       items.addAll(list.map<String>((item) {
-  //         // Map<String, ?> : 요소 접근 - item.['key']
-  //         // Item (id, title, body)
-  //         final boardNo = item['boardNo'];
-  //         final title = item['title'];
-  //         return 'Item $boardNo - $title';
-  //       }));
-  //       _page++;
-  //     });
-  //   }
-  // }
+          print(result);
+
+          items = result;
+        });
+      }
+    } else {
+      final url =
+          Uri.parse('http://10.0.2.2:8081/api/camp/campproducts/$category');
+      final response = await http.get(url);
+      print(response.statusCode);
+
+      if (response.statusCode == 200) {
+        print('여긴?');
+        setState(() {
+          // items.addAll(['New']);
+          // JSON 문자열 ➡ List<>
+          var utf8Decoded = utf8.decode(response.bodyBytes);
+          var result = json.decode(utf8Decoded);
+
+          print(result);
+          items = result;
+          // final page = result['page'];
+          // final List list = result['list'];
+          // // final List newData = json.decode(utf8Decoded);
+          // print('page : ');
+          // print(page);
+          // _pageObj = page;
+
+          //   items.addAll(list.map<String>((item) {
+          //     // Map<String, ?> : 요소 접근 - item.['key']
+          //     // Item (id, title, body)
+          //     final campNo = item['campNo'];
+          //     final campName = item['campName'];
+          //     return 'Item $campNo - $campName';
+          //   }));
+          //   _page++;
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -258,39 +199,33 @@ class _CampProductsScreenState extends State<CampProductsScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Column(
-                              children: [
-                                SizedBox(
-                                  width: 200,
-                                  height: 50,
-                                  child: ElevatedButton(
-                                    onPressed: () {},
-                                    child: Text('날짜'),
-                                    style: ElevatedButton.styleFrom(
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(5.0)),
-                                    ),
+                            Expanded(
+                              child: SizedBox(
+                                height: 50,
+                                child: ElevatedButton(
+                                  onPressed: () {},
+                                  child: Text('날짜'),
+                                  style: ElevatedButton.styleFrom(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(5.0)),
                                   ),
                                 ),
-                              ],
+                              ),
                             ),
-                            Column(
-                              children: [
-                                SizedBox(
-                                  width: 200,
-                                  height: 50,
-                                  child: ElevatedButton(
-                                    onPressed: () {},
-                                    child: Text('지역'),
-                                    style: ElevatedButton.styleFrom(
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(5.0)),
-                                    ),
+                            Expanded(
+                              child: SizedBox(
+                                height: 50,
+                                child: ElevatedButton(
+                                  onPressed: () {},
+                                  child: Text('지역'),
+                                  style: ElevatedButton.styleFrom(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(5.0)),
                                   ),
                                 ),
-                              ],
+                              ),
                             ),
                           ],
                         ),
@@ -303,55 +238,63 @@ class _CampProductsScreenState extends State<CampProductsScreen> {
                   child: Padding(
                     padding:
                         EdgeInsets.symmetric(horizontal: 30.0, vertical: 5.0),
-                    child: Row(
-                      children: [
-                        Text('캠핑종류'),
-                        Checkbox(
-                          value: _isCheckAuto,
-                          onChanged: (value) {
-                            setState(() {
-                              _isCheckAuto = value!;
-                            });
-                          },
-                        ),
-                        Text("오토캠핑"),
-                        Checkbox(
-                          value: _isCheckGlam,
-                          onChanged: (value) {
-                            setState(() {
-                              _isCheckGlam = value!;
-                            });
-                          },
-                        ),
-                        Text("글램핑"),
-                        Checkbox(
-                          value: _isCheckKara,
-                          onChanged: (value) {
-                            setState(() {
-                              _isCheckKara = value!;
-                            });
-                          },
-                        ),
-                        Text("카라반"),
-                        Checkbox(
-                          value: _isCheckPen,
-                          onChanged: (value) {
-                            setState(() {
-                              _isCheckPen = value!;
-                            });
-                          },
-                        ),
-                        Text("펜션"),
-                        Checkbox(
-                          value: _isCheckCamp,
-                          onChanged: (value) {
-                            setState(() {
-                              _isCheckCamp = value!;
-                            });
-                          },
-                        ),
-                        Text("캠프닉"),
-                      ],
+                    child: Container(
+                      height: 50,
+                      child: ListView(
+                        scrollDirection: Axis.horizontal,
+                        children: [
+                          Row(
+                            children: [
+                              Text('캠핑종류'),
+                              Checkbox(
+                                value: _isCheckAuto,
+                                onChanged: (value) {
+                                  setState(() {
+                                    _isCheckAuto = value!;
+                                  });
+                                },
+                              ),
+                              Text("오토캠핑"),
+                              Checkbox(
+                                value: _isCheckGlam,
+                                onChanged: (value) {
+                                  setState(() {
+                                    _isCheckGlam = value!;
+                                  });
+                                },
+                              ),
+                              Text("글램핑"),
+                              Checkbox(
+                                value: _isCheckKara,
+                                onChanged: (value) {
+                                  setState(() {
+                                    _isCheckKara = value!;
+                                  });
+                                },
+                              ),
+                              Text("카라반"),
+                              Checkbox(
+                                value: _isCheckPen,
+                                onChanged: (value) {
+                                  setState(() {
+                                    _isCheckPen = value!;
+                                  });
+                                },
+                              ),
+                              Text("펜션"),
+                              Checkbox(
+                                value: _isCheckCamp,
+                                onChanged: (value) {
+                                  setState(() {
+                                    _isCheckCamp = value!;
+                                  });
+                                },
+                              ),
+                              Text("캠프닉"),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -423,7 +366,7 @@ class _CampProductsScreenState extends State<CampProductsScreen> {
                                         topLeft: Radius.circular(12),
                                         topRight: Radius.circular(12)),
                                     child: Image.asset(
-                                      items[index]["img"].toString(),
+                                      items[index]["cpiUrl"].toString(),
                                       fit: BoxFit.fill,
                                     ),
                                   ),
@@ -443,8 +386,8 @@ class _CampProductsScreenState extends State<CampProductsScreen> {
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceEvenly,
                                         children: [
-                                          Image.asset("assets/images/star.png",
-                                              height: 17),
+                                          // Image.asset("assets/images/star.png",
+                                          //     height: 17),
                                           Padding(
                                             padding:
                                                 const EdgeInsets.only(top: 4),
@@ -473,7 +416,7 @@ class _CampProductsScreenState extends State<CampProductsScreen> {
                                         MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
-                                        items[index]["title"].toString(),
+                                        items[index]["campName"].toString(),
                                         style: TextStyle(
                                             fontSize: 16,
                                             color: Colors.grey,
@@ -500,7 +443,7 @@ class _CampProductsScreenState extends State<CampProductsScreen> {
                                                     .width *
                                                 0.60,
                                             child: Text(
-                                              items[index]["address"]
+                                              items[index]["campAddress"]
                                                   .toString(),
                                               style: TextStyle(
                                                   fontSize: 14,
@@ -515,7 +458,7 @@ class _CampProductsScreenState extends State<CampProductsScreen> {
                                       Row(
                                         children: [
                                           Text(
-                                            "Per Night",
+                                            items[index]["campOpen"],
                                             style: TextStyle(
                                                 fontSize: 16,
                                                 color: Colors.grey,

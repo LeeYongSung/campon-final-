@@ -80,7 +80,7 @@ class FooterScreen extends StatelessWidget {
               Column(
                 children: [
                   Image.asset(
-                    'images/SNS/Instagram.png',
+                    'assets/images/SNS/Instagram.png',
                     width: 30,
                     height: 30,
                   ),
@@ -89,7 +89,7 @@ class FooterScreen extends StatelessWidget {
               Column(
                 children: [
                   Image.asset(
-                    'images/SNS/Google.png',
+                    'assets/images/SNS/Google.png',
                     width: 30,
                     height: 30,
                   ),
@@ -98,7 +98,7 @@ class FooterScreen extends StatelessWidget {
               Column(
                 children: [
                   Image.asset(
-                    'images/SNS/TikTok.png',
+                    'assets/images/SNS/TikTok.png',
                     width: 30,
                     height: 30,
                   ),
@@ -107,16 +107,16 @@ class FooterScreen extends StatelessWidget {
               Column(
                 children: [
                   Image.asset(
-                    'images/SNS/Vector.png',
-                    width: 30,
-                    height: 30,
+                    'assets/images/SNS/Vector.png',
+                    width: 25,
+                    height: 25,
                   ),
                 ],
               ),
               Column(
                 children: [
                   Image.asset(
-                    'images/SNS/YouTube.png',
+                    'assets/images/SNS/YouTube.png',
                     width: 30,
                     height: 30,
                   ),
@@ -130,63 +130,68 @@ class FooterScreen extends StatelessWidget {
         ),
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 70.0),
-          child: Row(
-            children: [
-              Column(
-                children: [
-                  SizedBox(
-                    width: 120,
-                    height: 60,
-                    child: ElevatedButton(
-                      onPressed: () {},
-                      child: Text('고객센터\n연결하기'),
-                      style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5.0)),
+          child: Expanded(
+            child: Row(
+              children: [
+                Column(
+                  children: [
+                    SizedBox(
+                      width: 90,
+                      height: 40,
+                      child: ElevatedButton(
+                        onPressed: () {},
+                        child: Text(
+                          '고객센터\n연결하기',
+                          style: TextStyle(fontSize: 10.0),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(5.0)),
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(left: 5.0),
-                    child: Row(
-                      children: [
-                        Text(
-                          '고객센터 번호 : 032-000-0000',
-                          style: TextStyle(fontSize: 9.0),
-                        ),
-                      ],
+                  ],
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(left: 5.0),
+                      child: Row(
+                        children: [
+                          Text(
+                            '번호 : 032-000-0000',
+                            style: TextStyle(fontSize: 9.0),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(left: 5.0),
-                    child: Row(
-                      children: [
-                        Text(
-                          '고객센터 메일 : campon@campon.com',
-                          style: TextStyle(fontSize: 9.0),
-                        ),
-                      ],
+                    Padding(
+                      padding: EdgeInsets.only(left: 5.0),
+                      child: Row(
+                        children: [
+                          Text(
+                            '메일 : campon@campon.com',
+                            style: TextStyle(fontSize: 9.0),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(left: 5.0),
-                    child: Row(
-                      children: [
-                        Text(
-                          '고객센터 문의시간 : 09:00 ~ 18:00',
-                          style: TextStyle(fontSize: 9.0),
-                        )
-                      ],
+                    Padding(
+                      padding: EdgeInsets.only(left: 5.0),
+                      child: Row(
+                        children: [
+                          Text(
+                            '문의시간 : 09:00 ~ 18:00',
+                            style: TextStyle(fontSize: 9.0),
+                          )
+                        ],
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            ],
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
         SizedBox(
@@ -195,10 +200,14 @@ class FooterScreen extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Center(
-              child: Text(
-                '캠프온은 통신판매 중개자로서 통신판매의 당사자가 아니며 당사의 상품 대여 고객지원을 제외한 캠핑장 예약,\n이용 등과 관련한 의무와 책임 등 모든 거래에 대한 책음은 가맹점에게 있습니다.',
-                style: TextStyle(fontSize: 9.0),
+            Flexible(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 10.0),
+                child: Text(
+                  '캠프온은 통신판매 중개자로서 통신판매의 당사자가 아니며 당사의 상품 대여 고객지원을 제외한 캠핑장 예약, 이용 등과 관련한 의무와 책임 등 모든 거래에 대한 책음은 가맹점에게 있습니다.',
+                  style: TextStyle(fontSize: 9.0),
+                  softWrap: true,
+                ),
               ),
             ),
           ],

@@ -1,5 +1,7 @@
 import 'package:campon_app/common/footer_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class CampScheduleScreen extends StatefulWidget {
   const CampScheduleScreen({super.key});
@@ -9,121 +11,20 @@ class CampScheduleScreen extends StatefulWidget {
 }
 
 class _CampScheduleScreenState extends State<CampScheduleScreen> {
-  List items = [
-    {
-      "id": "1",
-      "title": "Grand Park City Hotel",
-      "img": "assets/images/SwissHotel.jpg",
-      "price": "\$26/",
-      "address": "155 Rajadamri Road, Bangkok 10330 Thailand",
-      "Night": "Night",
-      "review": "4.9",
-      "reviewCount": "(160 Reviews)"
-    },
-    {
-      "id": "2",
-      "title": "The Leela hotel",
-      "img": "assets/images/TheLeelaHotel.jpg",
-      "price": "\$28/",
-      "address": "Chao Anou Road, 112 Vat Chan Village, Chanthabouly District",
-      "Night": "Night",
-      "review": "4.8",
-      "reviewCount": "(150 Reviews)"
-    },
-    {
-      "id": "3",
-      "title": "Mandarin Oriental",
-      "img": "assets/images/NationalHotel.jpg",
-      "price": "\$30/",
-      "address": "1091/336 New Petchburi Road, 10400 Bangkok, Thailand",
-      "Night": "Night",
-      "review": "4.7",
-      "reviewCount": "(140 Reviews)"
-    },
-    {
-      "id": "4",
-      "title": "Anantara Siam hotel",
-      "img": "assets/images/dubaiHotel.jpg",
-      "price": "\$32/",
-      "address": "87 Wireless Road, Phatumwan, 10330, Bangkok",
-      "Night": "Night",
-      "review": "4.6",
-      "reviewCount": "(130 Reviews)"
-    },
-    {
-      "id": "5",
-      "title": "Boutique Hotel",
-      "img": "assets/images/AnticipatedHotel.jpg",
-      "price": "\$34/",
-      "address": "Sheikh Mohammed Bin Rashed Boulevard, Downtown Dubai",
-      "Night": "Night",
-      "review": "4.5",
-      "reviewCount": "(120 Reviews)"
-    },
-    {
-      "id": "6",
-      "title": "Sterling Hotel",
-      "img": "assets/images/IntercontinentalHotel.jpg",
-      "price": "\$36/",
-      "address": "103 River Street, Ballina, Ballina, Australia",
-      "Night": "Night",
-      "review": "4.4",
-      "reviewCount": "(110 Reviews)"
-    },
-    {
-      "id": "7",
-      "title": "Royal Fort Hotel",
-      "img": "assets/images/StateHotel.jpg",
-      "price": "\$38/",
-      "address": "449 Sainte-Hélène St Montréal, Quebec, H2Y 2K9 Canada",
-      "Night": "Night",
-      "review": "4.3",
-      "reviewCount": "(100 Reviews)"
-    },
-    {
-      "id": "8",
-      "title": "Singapore Hotel",
-      "img": "assets/images/vishakhapatnamHotel.jpg",
-      "price": "\$40/",
-      "address": "1, Voznesensky Avenue",
-      "Night": "Night",
-      "review": "4.2",
-      "reviewCount": "(90 Reviews)"
-    },
-    {
-      "id": "9",
-      "title": "Hyatt Hotel",
-      "img": "assets/images/hotel.jpg",
-      "price": "\$42/",
-      "address":
-          "Bandra Kurla Complex Vicinity, Mumbai, Maharashtra, India, 400 055",
-      "Night": "Night",
-      "review": "4.1",
-      "reviewCount": "(80 Reviews)"
-    },
-    {
-      "id": "10",
-      "title": "Luxury Hotel",
-      "img": "assets/images/SagamoreResort.jpg",
-      "price": "\$44/",
-      "address": "14, Moyka river embankment.",
-      "Night": "Night",
-      "review": "3.8",
-      "reviewCount": "(70 Reviews)"
-    },
-  ];
+  List items = [];
 
   final ScrollController _controller = ScrollController();
 
   int _page = 1;
   Map<String, dynamic> _pageObj = {'last': 0};
+  var today = '';
 
   @override
   void initState() {
     super.initState();
 
     // 처음 데이터
-    // fetch();
+    fetch();
 
     // 다음 페이지 (스크롤)
     _controller.addListener(() {
@@ -136,6 +37,26 @@ class _CampScheduleScreenState extends State<CampScheduleScreen> {
       //   fetch();
       // }
     });
+  }
+
+  Future fetch() async {
+    print('fetch...');
+
+    final url = Uri.parse('http://10.0.2.2:8081/api/camp/schedule');
+    final response = await http.get(url);
+    print(response.statusCode);
+
+    if (response.statusCode == 200) {
+      print('여긴?');
+      setState(() {
+        var utf8Decoded = utf8.decode(response.bodyBytes);
+        var result = json.decode(utf8Decoded);
+
+        print(result);
+        items = result['campschedule'];
+        today = result['startDate'];
+      });
+    }
   }
 
   @override
@@ -164,7 +85,7 @@ class _CampScheduleScreenState extends State<CampScheduleScreen> {
             color: Colors.grey,
             child: Center(
               child: Text(
-                '현재날짜',
+                '$today',
                 textAlign: TextAlign.center,
               ),
             ),
@@ -206,7 +127,7 @@ class _CampScheduleScreenState extends State<CampScheduleScreen> {
                                         topLeft: Radius.circular(12),
                                         topRight: Radius.circular(12)),
                                     child: Image.asset(
-                                      items[index]["img"].toString(),
+                                      items[index]["cpiUrl"].toString(),
                                       fit: BoxFit.fill,
                                     ),
                                   ),
@@ -256,7 +177,7 @@ class _CampScheduleScreenState extends State<CampScheduleScreen> {
                                         MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
-                                        items[index]["title"].toString(),
+                                        items[index]["campName"].toString(),
                                         style: TextStyle(
                                             fontSize: 16,
                                             color: Colors.grey,
@@ -283,7 +204,7 @@ class _CampScheduleScreenState extends State<CampScheduleScreen> {
                                                     .width *
                                                 0.60,
                                             child: Text(
-                                              items[index]["address"]
+                                              items[index]["campAddress"]
                                                   .toString(),
                                               style: TextStyle(
                                                   fontSize: 14,
@@ -298,7 +219,7 @@ class _CampScheduleScreenState extends State<CampScheduleScreen> {
                                       Row(
                                         children: [
                                           Text(
-                                            "Per Night",
+                                            items[index]["campOpen"],
                                             style: TextStyle(
                                                 fontSize: 16,
                                                 color: Colors.grey,

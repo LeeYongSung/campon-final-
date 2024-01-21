@@ -9,7 +9,6 @@ import 'package:flutter/src/widgets/basic.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
-
 class StoreMain extends StatefulWidget {
   const StoreMain({super.key});
 
@@ -152,7 +151,6 @@ class _StoreMainState extends State<StoreMain> {
       }
       proReviewList = proReviewList2;
     } else {
-
       throw Exception('Failed to load product hot list');
     }
   }
@@ -160,15 +158,15 @@ class _StoreMainState extends State<StoreMain> {
   //이미지 에 대한 서버 접근 가능한지에 대한 여부 함수
   Future<Widget> checkUrlAccessibility(String url, int index) async {
     // try {
-      final response = await http.get(Uri.parse(url));
-      if (response == 200) {
-        print('서버 접근 가능');
-        return Image.network(
-          // "http://10.0.2.2:8081/api/img?file=${proReviewList[index]['prImg'].toString()}",
-          url,
-          fit: BoxFit.cover,
-        );
-      }
+    final response = await http.get(Uri.parse(url));
+    if (response == 200) {
+      print('서버 접근 가능');
+      return Image.network(
+        // "http://10.0.2.2:8081/api/img?file=${proReviewList[index]['prImg'].toString()}",
+        url,
+        fit: BoxFit.cover,
+      );
+    }
     //   } else {
     //     return Image.asset("img/product/11.png", fit: BoxFit.cover);
     //   }
@@ -244,6 +242,35 @@ class _StoreMainState extends State<StoreMain> {
   Widget build(BuildContext context) {
     notifire = Provider.of<ColorNotifire>(context, listen: true);
     return Scaffold(
+      appBar: AppBar(
+        title: Image.asset(
+          "assets/images/logo2.png",
+          width: 110,
+          height: 60,
+        ),
+        centerTitle: true,
+        leading: GestureDetector(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 15.0, vertical: 15.0),
+            child: Icon(Icons.star),
+          ),
+          onTap: () {
+            // Navigator.push(context,
+            //     MaterialPageRoute(builder: (context) => ));
+          },
+        ),
+        actions: [
+          GestureDetector(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 15.0, vertical: 15.0),
+              child: Icon(Icons.shopping_cart),
+            ),
+            onTap: () {
+              print('test2.....');
+            },
+          ),
+        ],
+      ),
       backgroundColor: notifire.getbgcolor,
       body: CustomScrollView(slivers: <Widget>[
         SliverToBoxAdapter(
@@ -265,7 +292,10 @@ class _StoreMainState extends State<StoreMain> {
                         Expanded(
                           child: InkWell(
                             onTap: () {
-                               Navigator.push(context, MaterialPageRoute(builder: (context)=> Category()));
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => Category()));
                             },
                             child: Column(
                               children: [
@@ -560,10 +590,8 @@ class _StoreMainState extends State<StoreMain> {
                                             ],
                                           ),
                                           const SizedBox(height: 6),
-                                          Text("${productHotList[index]
-                                                    ["productPrice"]
-                                                .toString()}원"
-                                            ,
+                                          Text(
+                                            "${productHotList[index]["productPrice"].toString()}원",
                                             style: TextStyle(
                                                 fontSize: 14,
                                                 color: notifire.getgreycolor,
@@ -596,8 +624,7 @@ class _StoreMainState extends State<StoreMain> {
                     ),
                     Text(
                       '캠프온이 처음이신가요? 캠프온 이용 안내',
-                      style: TextStyle(
-                      ),
+                      style: TextStyle(),
                     ),
                     Divider(
                       color: notifire.getgreycolor,
@@ -732,28 +759,28 @@ class _StoreMainState extends State<StoreMain> {
                             width: 75,
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(12),
-                              child: 
-                              connected ? 
-                              Image.network(
-                                "http://10.0.2.2:8081/api/img?file=${proReviewList[index]['prImg'].toString()}", 
-                                
-                                errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
-                                  return const CircularProgressIndicator();
-                                },
-                                fit: BoxFit.cover,
-                              )
-                              :
-                              Image.asset(
-                                proReviewList[index]["prImg"]
-                                        .toString()
-                                        .startsWith('/')
-                                    ? proReviewList[index]["prImg"]
-                                        .toString()
-                                        .substring(1)
-                                    : proReviewList[index]["prImg"].toString(),
-                                fit: BoxFit.cover,
-                              ),
-                              
+                              child: connected
+                                  ? Image.network(
+                                      "http://10.0.2.2:8081/api/img?file=${proReviewList[index]['prImg'].toString()}",
+                                      errorBuilder: (BuildContext context,
+                                          Object exception,
+                                          StackTrace? stackTrace) {
+                                        return const CircularProgressIndicator();
+                                      },
+                                      fit: BoxFit.cover,
+                                    )
+                                  : Image.asset(
+                                      proReviewList[index]["prImg"]
+                                              .toString()
+                                              .startsWith('/')
+                                          ? proReviewList[index]["prImg"]
+                                              .toString()
+                                              .substring(1)
+                                          : proReviewList[index]["prImg"]
+                                              .toString(),
+                                      fit: BoxFit.cover,
+                                    ),
+
                               // FutureBuilder<Widget?>(
                               //     future: checkUrlAccessibility(
                               //         "http://10.0.2.2:8081/api/img?file=${proReviewList[index]['prImg'].toString()}",
@@ -772,7 +799,6 @@ class _StoreMainState extends State<StoreMain> {
                               //       }
                               //     },
                               //   ),
-
                             ),
                           ),
                           Column(

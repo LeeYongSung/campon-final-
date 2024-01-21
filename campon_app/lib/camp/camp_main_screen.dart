@@ -1,9 +1,11 @@
 import 'package:campon_app/camp/camp_favorites_screen.dart';
 import 'package:campon_app/camp/camp_home_screen.dart';
+import 'package:campon_app/camp/camp_products_screen.dart';
 import 'package:campon_app/example/Login&ExtraDesign/home.dart';
 import 'package:campon_app/example/Massage/massage.dart';
 import 'package:campon_app/example/Profile/profile.dart';
 import 'package:campon_app/example/Search/Search.dart';
+import 'package:campon_app/store/storemain.dart';
 import 'package:flutter/material.dart';
 
 int selectedIndex = 0;
@@ -23,11 +25,11 @@ class _CampMainScreenState extends State<CampMainScreen> {
   List<Widget> get _pageOption {
     return _userAuth == 'user'
         ? [
-            CampHomeScreen(),
-            Search(),
-            massage(),
-            profile(),
-            CampFavoritesScreen(),
+            CampHomeScreen(), // 캠핑장 메인
+            StoreMain(), // 상품 메인
+            CampProductsScreen(category: '0'), // 검색
+            CampFavoritesScreen(), // 리뷰게시판
+            profile(), // 마이페이지
           ]
         : [];
   }

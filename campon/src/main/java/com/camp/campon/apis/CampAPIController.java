@@ -21,6 +21,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.Model;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -128,6 +129,7 @@ public class CampAPIController {
     //캠핑장 목록 페이지
     @GetMapping(value="/campproducts/{campTypeNo}")
     public ResponseEntity<?> campproducts(@PathVariable Integer campTypeNo, Integer[] campTypeNos, Camp camp){
+        log.info(campTypeNo + "");
         try{
         List<Camp> campselect = null;
         campTypeNo = campTypeNo == null ? 0 : campTypeNo;
@@ -138,13 +140,13 @@ public class CampAPIController {
             for (int i = 0; i < campTypeNos.length; i++) {
                 checkBoxList.add(campTypeNos[i] + "");
             }
-
+            
             if(campTypeNos != null && campTypeNos.length == 0) campTypeNo = -1;
-
+            
             camp.setCheckBoxList(checkBoxList);
             camp.setSearchDate(new Date());
             camp.setCampTypeNo(campTypeNo);
-
+            
             campselect = campService.campSearch(camp);
         } else {
             campselect = campService.campSelect(campTypeNo);
@@ -363,6 +365,7 @@ public class CampAPIController {
             Map<String, Object> map = new HashMap<>();
             map.put("campschedule", campschedule);
             map.put("startDate", startDate);
+            log.info("map : " + map);
 
             return new ResponseEntity<>(map, HttpStatus.OK);
         }catch(Exception e){
@@ -376,6 +379,9 @@ public class CampAPIController {
     @PostMapping(value="/campSearch")
     public ResponseEntity<?> campSearch(@RequestBody Camp camp) throws Exception {
         // log.info("테스트 : " + camp);
+        log.info("camp : " + camp);
+        log.info("여기 아냐?");
+
         try{
             log.info("keywordValue : " + camp.getKeyword());
             log.info("dateValue : " + camp.getSearchDate());
@@ -384,23 +390,25 @@ public class CampAPIController {
             
             // log.info(""+camp);
             List<String> checkBoxList = camp.getCheckBoxList();
+
             
             log.info("checkBoxList : " + checkBoxList);
 
             if( checkBoxList != null )
             for(int i = 0; i < checkBoxList.size(); i++) {
                 // Integer[] campTypeNo = checkBoxList.get(i).split(',');
-                log.info("캠프타입번호 : " + checkBoxList.get(i));
-            }
-
-            if( checkBoxList.isEmpty() )  {
-                // log.info("들어옴");
+                log.info("캠프타입번호는 : " + checkBoxList.get(i));
+            } 
+            
+            if( checkBoxList == null )  {
+                log.info("들어옴");
                 camp.setCampTypeNo(-1);
                 camp.setCheckBoxList(new ArrayList<>());
             }
             
+            log.info("넘어감");
             camp.setSearchDate(new Date());
-            log.info("camp : "+camp);
+            log.info("camp : " + camp);
             List<Camp> campList = campService.campSearch(camp);
             
             log.info("campList : "+campList);

@@ -851,10 +851,13 @@ class _StoreMainState extends State<StoreMain> {
                     );
                   },
                 ),
+                SizedBox(
+                  height: 30.0,
+                ),
+                const FooterScreen()
               ],
             ),
           ),
-          const FooterScreen(),
         ],
       ), //CustomScrollView 끝
     );

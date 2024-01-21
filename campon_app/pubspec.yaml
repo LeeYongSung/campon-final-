@@ -60,8 +60,7 @@ dependencies:
   http: ^1.2.0
   # intl: ^0.19.0
   intl: ^0.18.0
-  image_picker: ^1.0.7
-  multi_image_picker: ^4.8.01
+  image_picker: ^0.8.5+3
 
 dev_dependencies:
   flutter_test:

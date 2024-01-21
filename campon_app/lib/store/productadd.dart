@@ -2,7 +2,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:campon_app/common/footer_screen.dart';
-import 'package:multi_image_picker/multi_image_picker.dart';
 
 class ProductAdd extends StatefulWidget {
   const ProductAdd({Key? key}) : super(key: key);
@@ -310,7 +309,7 @@ class _ProductAddState extends State<ProductAdd> {
 
   Future<File?> _pickImage(ImageSource source) async {
     final picker = ImagePicker();
-    final pickedImage = await picker.pickImage(source: source);
+    final pickedImage = await picker.getImage(source: source);
     if (pickedImage != null) {
       return File(pickedImage.path);
     }
@@ -319,7 +318,7 @@ class _ProductAddState extends State<ProductAdd> {
 
   Future<List<File>?> _pickMultipleImages() async {
     final picker = ImagePicker();
-    final pickedImages = await picker.pickMultiImage();
+    final pickedImages = await picker.getMultiImage();
     if (pickedImages != null) {
       return pickedImages.map((pickedImage) => File(pickedImage.path)).toList();
     }

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:multi_image_picker/multi_image_picker.dart';
 
 class ProductUpdate extends StatefulWidget {
   const ProductUpdate({Key? key}) : super(key: key);
@@ -303,7 +304,7 @@ class _ProductUpdateState extends State<ProductUpdate> {
 
   Future<File?> _pickImage() async {
     final picker = ImagePicker();
-    final pickedImage = await picker.getImage(source: ImageSource.gallery);
+    final pickedImage = await picker.pickImage(source: ImageSource.gallery);
     if (pickedImage != null) {
       return File(pickedImage.path);
     }
@@ -312,7 +313,7 @@ class _ProductUpdateState extends State<ProductUpdate> {
 
   Future<List<File>?> _pickMultipleImages() async {
     final picker = ImagePicker();
-    final pickedImages = await picker.getMultiImage();
+    final pickedImages = await picker.pickMultiImage();
     if (pickedImages != null) {
       return pickedImages.map((image) => File(image.path)).toList();
     }

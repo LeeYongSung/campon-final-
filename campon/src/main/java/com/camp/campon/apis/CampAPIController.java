@@ -107,7 +107,7 @@ public class CampAPIController {
             String userId = "user"; // 임시값 로그인 완료시 삭제
             Users users = userService.selectById(userId);
             userNo = users.getUserNo();
-            log.info("userNo : " + userNo);
+            // log.info("userNo : " + userNo);
             List<Camp> favoritesList = campService.favoritesList(userNo);
             log.info("favoritesList : " + favoritesList);
             return new ResponseEntity<>(favoritesList, HttpStatus.OK);
@@ -116,11 +116,13 @@ public class CampAPIController {
         }
     }
     //즐겨찾기 항목 삭제
-    @PreAuthorize("hasRole('ROLE_USER')")
+    // @PreAuthorize("hasRole('ROLE_USER')")
     @DeleteMapping(value="/favorites/{no}")
     public ResponseEntity<?> favoriteDelete(@PathVariable Integer no) throws Exception {
+        log.info("no : " + no);
         try{
             int result = campService.favoriteDelete(no);
+            log.info("result : " + result);
             if( result > 0 )
                 return new ResponseEntity<>("항목 삭제 완료", HttpStatus.OK); 
             else

@@ -56,7 +56,7 @@ class _CampProductsScreenState extends State<CampProductsScreen> {
 
     category = widget.category ?? '0';
     keyword = widget.keyword ?? '';
-    if (checkBoxList == null) {
+    if (checkBoxList == null && checkBoxList.isEmpty) {
       checkBoxList = ["1", "2", "3", "4", "5"];
       print(checkBoxList);
     } else {

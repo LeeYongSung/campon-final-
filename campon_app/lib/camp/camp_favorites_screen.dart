@@ -13,7 +13,29 @@ class CampFavoritesScreen extends StatefulWidget {
 class _CampFavoritesScreenState extends State<CampFavoritesScreen> {
   List items = [];
   DateTime today = DateTime.now();
-  String exampleImg = "img/camp/example.jpg";
+  String exampleImg = "img/camp/example.png";
+
+  void _favoritesDelete(int favoritesNo) async {
+    print(favoritesNo);
+
+    final url =
+        Uri.parse("http://10.0.2.2:8081/api/camp/favorites/$favoritesNo");
+    final response = await http.delete(url);
+
+    print(response.statusCode);
+
+    if (response.statusCode == 200) {
+      final snackBar = SnackBar(content: Text('성공적으로 삭제되었습니다.'));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
+      setState(() {
+        fetch();
+      });
+    } else {
+      final snackBar = SnackBar(content: Text('삭제에 실패했습니다.'));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
+  }
 
   @override
   void initState() {
@@ -103,7 +125,7 @@ class _CampFavoritesScreenState extends State<CampFavoritesScreen> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text(items[index]["regDate"],
+                                  Text(items[index]["regDate"] ?? today,
                                       style: TextStyle(
                                           fontSize: 15,
                                           color: Colors.grey,
@@ -129,7 +151,7 @@ class _CampFavoritesScreenState extends State<CampFavoritesScreen> {
                               Row(
                                 children: [
                                   Image.asset(
-                                    items[index]["cpiUrl"],
+                                    items[index]["cpiUrl"] ?? exampleImg,
                                     height: 75,
                                   ),
                                   const SizedBox(width: 10),
@@ -143,7 +165,7 @@ class _CampFavoritesScreenState extends State<CampFavoritesScreen> {
                                               color: Colors.white,
                                               fontFamily: "Gilroy Bold")),
                                       const SizedBox(height: 6),
-                                      Text("4 Guests, 2 Room",
+                                      Text(items[index]["campName"],
                                           style: TextStyle(
                                               fontSize: 15,
                                               color: Colors.grey)),
@@ -157,8 +179,7 @@ class _CampFavoritesScreenState extends State<CampFavoritesScreen> {
                                 text2: items[index]["campAddress"],
                                 buttontext: "삭제",
                                 onClick: () {
-                                  // Navigator.of(context).push(MaterialPageRoute(
-                                  //     builder: (context) => Favourite()));
+                                  _favoritesDelete(items[index]["favoritesNo"]);
                                 },
                               ),
                             ],

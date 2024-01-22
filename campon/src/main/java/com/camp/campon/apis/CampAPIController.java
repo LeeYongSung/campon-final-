@@ -160,6 +160,7 @@ public class CampAPIController {
     //캠핑장 상세 페이지
     @GetMapping(value="/campproduct/{no}")
     public ResponseEntity<?> campproduct(@PathVariable Integer no){
+        log.info("no : " + no);
         try{
             List<Camp> productsimg = campService.productsimg(no);
             Camp productsproducts = campService.productsproducts(no);
@@ -179,6 +180,8 @@ public class CampAPIController {
             map.put("productsreview", productsreview);
             map.put("productsfacility", productsfacility);
             map.put("productsproductlist", productsproductlist);
+
+            log.info("map : " + map);
 
             return new ResponseEntity<>(map, HttpStatus.OK);
         }catch(Exception e){

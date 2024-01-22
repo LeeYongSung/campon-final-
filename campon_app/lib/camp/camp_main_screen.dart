@@ -5,8 +5,10 @@ import 'package:campon_app/example/Login&ExtraDesign/home.dart';
 import 'package:campon_app/example/Massage/massage.dart';
 import 'package:campon_app/example/Profile/profile.dart';
 import 'package:campon_app/example/Search/Search.dart';
+import 'package:campon_app/models/camp.dart';
 import 'package:campon_app/store/storemain.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 int selectedIndex = 0;
 
@@ -19,6 +21,12 @@ class CampMainScreen extends StatefulWidget {
 
 class _CampMainScreenState extends State<CampMainScreen> {
   var _userAuth = 'user';
+  Camp camp = Camp();
+  DateTime today = DateTime.now();
+  var todaySearch;
+  List<String> checkBoxList = ["1", "2", "3", "4", "5"];
+  String? keyword;
+
   // 각 페이지 연결
   // 로그인 기능 완료 시 각 권한 별 체크
 
@@ -27,7 +35,11 @@ class _CampMainScreenState extends State<CampMainScreen> {
         ? [
             CampHomeScreen(), // 캠핑장 메인
             StoreMain(), // 상품 메인
-            CampProductsScreen(category: '0'), // 검색
+            CampProductsScreen(
+                category: '0',
+                keyword: keyword,
+                searchDate: todaySearch,
+                checkBoxList: checkBoxList), // 검색
             CampFavoritesScreen(), // 리뷰게시판
             profile(), // 마이페이지
           ]
@@ -36,6 +48,11 @@ class _CampMainScreenState extends State<CampMainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    initState() {
+      todaySearch = DateFormat('yyyy-MM-dd').format(today);
+      keyword = camp.keyword;
+    }
+
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,

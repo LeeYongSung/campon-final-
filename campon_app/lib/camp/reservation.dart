@@ -1,12 +1,19 @@
 // ignore_for_file: file_names
 
 // ignore: unused_import
+import 'dart:convert';
+
+import 'package:campon_app/camp/camp_home_screen.dart';
 import 'package:campon_app/example/Profile/Favourite.dart';
 import 'package:campon_app/example/Utils/customwidget%20.dart';
 import 'package:campon_app/example/Utils/dark_lightmode.dart';
+import 'package:campon_app/models/camp.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
+
 
 class Reservation extends StatefulWidget {
   const Reservation({super.key});
@@ -16,10 +23,69 @@ class Reservation extends StatefulWidget {
 }
 
 class _ReservationState extends State<Reservation> {
+
+  List<Camp> camp = [];
+
   @override
   void initState() {
     getdarkmodepreviousstate();
     super.initState();
+
+    getData().then((data){
+      setState((){
+        camp = data['campList'];
+      });
+    });
+  }
+
+  Future<Map<String, dynamic>> getData() async{
+    var url = 'http://10.0.2.2:8081/api/camp/reservation';
+    var response = await http.get(Uri.parse(url));
+      
+      if (response.statusCode == 200){
+      var utf8Decoded = utf8.decode(response.bodyBytes);
+      Map<String, dynamic> data = jsonDecode(utf8Decoded);
+
+      // List<Product> productList = List<Product>.from(data['productList'].map((item) => Product.fromJson(item)));
+      List<Camp> reservationList = List<Camp>.from(data['reservationList'].map((item) => Camp.fromJson(item)));
+      
+      List<Camp>? campList = [];
+      for(var i = 0; i < reservationList.length; i++){
+        campList.add(Camp(
+          campName: reservationList[i].campName,
+          cpdtName: reservationList[i].cpdtName,
+          reservationNo: reservationList[i].reservationNo,
+          userName: reservationList[i].userName,
+          reservationNop: reservationList[i].reservationNop,
+          reservationDate: reservationList[i].reservationDate,
+          reservationStart: reservationList[i].reservationStart,
+          reservationEnd: reservationList[i].reservationEnd,
+          campTel: reservationList[i].campTel,
+          cpiUrl: reservationList[i].cpiUrl,
+        ));
+      }
+
+      return {
+        'campList': campList,
+        // 'proudctList' : productList,
+      };
+    }else{
+      print("서버 문제");
+      return {};
+    }
+  }
+
+  Future<void> campdelete(int no) async {
+    var url = 'http://10.0.2.2:8081/api/camp/reservation/$no';
+    var response = await http.delete(Uri.parse(url));
+
+    if(response.statusCode == 200){
+      print("삭제 성공");
+
+    }else{
+      print("삭제 실패 ${response.statusCode}");
+    }
+
   }
 
   late ColorNotifire notifire;
@@ -32,10 +98,18 @@ class _ReservationState extends State<Reservation> {
         centerTitle: true,
         backgroundColor: notifire.getbgcolor,
         leading: BackButton(color: notifire.getwhiteblackcolor),
-        title: Image.asset(
-          "assets/images/logo2.png",
-          width: 110,
-          height: 60,
+        title: 
+        GestureDetector(
+          onTap: () {
+            Navigator.of(context).push(MaterialPageRoute(
+                                   builder: (context) =>
+                                       CampHomeScreen()));
+          },
+          child: Image.asset(
+            "assets/images/logo2.png",
+            width: 110,
+            height: 60,
+          ),
         ),
       ),
       backgroundColor: notifire.getbgcolor,
@@ -55,7 +129,7 @@ class _ReservationState extends State<Reservation> {
                   physics: const NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
                   padding: EdgeInsets.zero,
-                  itemCount: 3,
+                  itemCount: camp.length,
                   itemBuilder: (BuildContext context, int index) {
                     return Padding(
                       padding: const EdgeInsets.symmetric(vertical: 6),
@@ -83,16 +157,25 @@ class _ReservationState extends State<Reservation> {
                                     Row(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        Image.asset(
-                                          "assets/images/Rimuru.png",
+                                        Container(
                                           height: 75,
+                                          width: 75,
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(15),
+                                            color: notifire.getdarkmodecolor,
+                                          ),
+                                          child: ClipRRect(
+                                            borderRadius: BorderRadius.circular(10),
+                                            child:
+                                                Image.asset(camp[index].cpiUrl ?? "assets/images/Confidiantehotel.png"),
+                                          ),
                                         ),
                                         const SizedBox(width: 10),
                                         Column(
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                              "캠핑장명",
+                                              camp[index].campName ?? "캠핑장명",
                                               style: TextStyle(
                                                 fontSize: 16,
                                                 color: notifire.getwhiteblackcolor,
@@ -101,14 +184,14 @@ class _ReservationState extends State<Reservation> {
                                             ),
                                             const SizedBox(height: 6),
                                             Text(
-                                              "캠핑상품명",
+                                              camp[index].cpdtName ?? "캠핑상품명",
                                               style: TextStyle(
                                                 fontSize: 15,
                                                 color: notifire.getgreycolor,
                                               ),
                                             ),
                                             Text(
-                                              "예약번호",
+                                              "예약번호 : ${camp[index].reservationNo ?? '0'}",
                                               style: TextStyle(
                                                 fontSize: 15,
                                                 color: notifire.getgreycolor,
@@ -143,14 +226,37 @@ class _ReservationState extends State<Reservation> {
                                     Column(
                                       crossAxisAlignment: CrossAxisAlignment.end,
                                       children: [
-                                        Icon(Icons.delete),
+                                        GestureDetector(
+                                          onTap: () {
+                                            showDialog(context: context, builder: (BuildContext context){
+                                              return AlertDialog(
+                                                content: Text("예약내역을 삭제하시겠습니까?"),
+                                                actions: [
+                                                  TextButton(onPressed: (){Navigator.of(context).pop();}, child: Text("취소")),
+                                                  TextButton(onPressed: (){
+                                                    campdelete(camp[index].reservationNo ?? 0);
+                                                    setState(() {
+                                                      camp.removeAt(index); 
+                                                    });   
+                                                    Navigator.of(context).pop();
+                                                  }, child: Text("삭제")),
+                                                ],
+                                              );
+                                            });
+                                            
+                                          },
+                                          child: const Icon(
+                                            Icons.delete,
+                                            color: Colors.black
+                                          ),
+                                        ),
                                         SizedBox(height: 10,),
-                                        Text("21"),
-                                        Text("홍길동"),
-                                        Text("2명"),
-                                        Text("2일"),
-                                        Text("2024-01-01 ~ 2024-01-02"),
-                                        Text("010-1010-1010"),
+                                        Text("${camp[index].reservationNo ?? "0"}"),
+                                        Text(camp[index].userName ?? "예약자명"),
+                                        Text("${camp[index].reservationNop ?? '0' } 명"),
+                                        Text("${camp[index].reservationDate ?? '0' } 일"),
+                                        Text("${DateFormat('yyyy-MM-dd').format(camp[index].reservationStart ?? DateTime.now())} ~ ${DateFormat('yyyy-MM-dd').format(camp[index].reservationEnd ?? DateTime.now())}"),
+                                        Text(camp[index].campTel ?? '캠핑장연락처'),
                                       ],
                                     ),
                                   ]),
@@ -244,7 +350,11 @@ class _ReservationState extends State<Reservation> {
               Container(
                       width: 150,
                     child:ElevatedButton(
-                      onPressed: (){},
+                      onPressed: (){
+                        Navigator.of(context).push(MaterialPageRoute(
+                                   builder: (context) =>
+                                       CampHomeScreen()));
+                      },
                       style: ButtonStyle(
                           backgroundColor: MaterialStateProperty.all<Color>(Colors.orange), // 배경색 설정
                           shape: MaterialStateProperty.all<OutlinedBorder>(

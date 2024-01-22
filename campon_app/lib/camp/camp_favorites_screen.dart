@@ -1,5 +1,7 @@
 import 'package:campon_app/common/footer_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class CampFavoritesScreen extends StatefulWidget {
   const CampFavoritesScreen({super.key});
@@ -9,6 +11,58 @@ class CampFavoritesScreen extends StatefulWidget {
 }
 
 class _CampFavoritesScreenState extends State<CampFavoritesScreen> {
+  List items = [];
+  DateTime today = DateTime.now();
+  String exampleImg = "img/camp/example.png";
+
+  void _favoritesDelete(int favoritesNo) async {
+    print(favoritesNo);
+
+    final url =
+        Uri.parse("http://10.0.2.2:8081/api/camp/favorites/$favoritesNo");
+    final response = await http.delete(url);
+
+    print(response.statusCode);
+
+    if (response.statusCode == 200) {
+      final snackBar = SnackBar(content: Text('성공적으로 삭제되었습니다.'));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
+      setState(() {
+        fetch();
+      });
+    } else {
+      final snackBar = SnackBar(content: Text('삭제에 실패했습니다.'));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    fetch();
+  }
+
+  Future fetch() async {
+    print("favorites...");
+    final url = Uri.parse("http://10.0.2.2:8081/api/camp/favorites");
+    final response = await http.get(url);
+
+    print(response.statusCode);
+
+    if (response.statusCode == 200) {
+      setState(() {
+        var utf8Decoded = utf8.decode(response.bodyBytes);
+        var result = json.decode(utf8Decoded);
+
+        print(result);
+
+        items = result;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,7 +97,7 @@ class _CampFavoritesScreenState extends State<CampFavoritesScreen> {
                   physics: const NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
                   padding: EdgeInsets.zero,
-                  itemCount: 5,
+                  itemCount: items.length,
                   itemBuilder: (BuildContext context, int index) {
                     return Padding(
                       padding: const EdgeInsets.symmetric(vertical: 6),
@@ -71,7 +125,7 @@ class _CampFavoritesScreenState extends State<CampFavoritesScreen> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text("28 Mar 2022, Thu",
+                                  Text(items[index]["regDate"] ?? today,
                                       style: TextStyle(
                                           fontSize: 15,
                                           color: Colors.grey,
@@ -84,7 +138,7 @@ class _CampFavoritesScreenState extends State<CampFavoritesScreen> {
                                         color: Colors.green[50]),
                                     child: const Center(
                                       child: Text(
-                                        "Finished",
+                                        "예약하기",
                                         style: TextStyle(
                                             fontSize: 14,
                                             color: Colors.black,
@@ -97,7 +151,7 @@ class _CampFavoritesScreenState extends State<CampFavoritesScreen> {
                               Row(
                                 children: [
                                   Image.asset(
-                                    "assets/images/Rimuru.png",
+                                    items[index]["cpiUrl"] ?? exampleImg,
                                     height: 75,
                                   ),
                                   const SizedBox(width: 10),
@@ -111,7 +165,7 @@ class _CampFavoritesScreenState extends State<CampFavoritesScreen> {
                                               color: Colors.white,
                                               fontFamily: "Gilroy Bold")),
                                       const SizedBox(height: 6),
-                                      Text("4 Guests, 2 Room",
+                                      Text(items[index]["campName"],
                                           style: TextStyle(
                                               fontSize: 15,
                                               color: Colors.grey)),
@@ -121,12 +175,11 @@ class _CampFavoritesScreenState extends State<CampFavoritesScreen> {
                               ),
                               const SizedBox(height: 8),
                               cupon(
-                                text1: "Total Price",
-                                text2: "\$274",
+                                text1: "위치",
+                                text2: items[index]["campAddress"],
                                 buttontext: "삭제",
                                 onClick: () {
-                                  // Navigator.of(context).push(MaterialPageRoute(
-                                  //     builder: (context) => Favourite()));
+                                  _favoritesDelete(items[index]["favoritesNo"]);
                                 },
                               ),
                             ],

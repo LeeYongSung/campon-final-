@@ -96,27 +96,33 @@ public class CampAPIController {
     }
     
     //즐겨찾기 페이지
-    @PreAuthorize("hasRole('ROLE_USER')")
+    // @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping(value="/favorites")
     public ResponseEntity<?> favorites() {
         int userNo = 0;
         try{
-            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            String userId = auth.getName();
+            // Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            // log.info("auth" + auth);
+            // String userId = auth.getName();
+            String userId = "user"; // 임시값 로그인 완료시 삭제
             Users users = userService.selectById(userId);
             userNo = users.getUserNo();
+            // log.info("userNo : " + userNo);
             List<Camp> favoritesList = campService.favoritesList(userNo);
+            log.info("favoritesList : " + favoritesList);
             return new ResponseEntity<>(favoritesList, HttpStatus.OK);
         }catch(Exception e){
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
     //즐겨찾기 항목 삭제
-    @PreAuthorize("hasRole('ROLE_USER')")
+    // @PreAuthorize("hasRole('ROLE_USER')")
     @DeleteMapping(value="/favorites/{no}")
     public ResponseEntity<?> favoriteDelete(@PathVariable Integer no) throws Exception {
+        log.info("no : " + no);
         try{
             int result = campService.favoriteDelete(no);
+            log.info("result : " + result);
             if( result > 0 )
                 return new ResponseEntity<>("항목 삭제 완료", HttpStatus.OK); 
             else

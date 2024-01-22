@@ -1,3 +1,4 @@
+import 'package:campon_app/user/join_user.dart';
 import 'package:flutter/material.dart';
 import 'package:campon_app/example/Utils/dark_lightmode.dart';
 import 'package:provider/provider.dart';
@@ -86,6 +87,7 @@ class _JoinIntroState extends State<JoinIntro> {
                 InkWell(
                   onTap: () {
                     print('일반 회원 클릭');
+                    Navigator.push(context, MaterialPageRoute<void>(builder: (BuildContext context)=>JoinUser(role: 'ROLE_USER')));
                   },
                   child: Container(
                       height: 100,
@@ -115,6 +117,7 @@ class _JoinIntroState extends State<JoinIntro> {
                 InkWell(
                   onTap: () {
                     print('기업 회원 클릭');
+                      Navigator.push(context, MaterialPageRoute<void>(builder: (BuildContext context)=>JoinUser(role: 'ROLE_SELL')));
                   },
                   child: Container(
                       height: 100,

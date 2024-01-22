@@ -96,16 +96,20 @@ public class CampAPIController {
     }
     
     //즐겨찾기 페이지
-    @PreAuthorize("hasRole('ROLE_USER')")
+    // @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping(value="/favorites")
     public ResponseEntity<?> favorites() {
         int userNo = 0;
         try{
-            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            String userId = auth.getName();
+            // Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            // log.info("auth" + auth);
+            // String userId = auth.getName();
+            String userId = "user"; // 임시값 로그인 완료시 삭제
             Users users = userService.selectById(userId);
             userNo = users.getUserNo();
+            log.info("userNo : " + userNo);
             List<Camp> favoritesList = campService.favoritesList(userNo);
+            log.info("favoritesList : " + favoritesList);
             return new ResponseEntity<>(favoritesList, HttpStatus.OK);
         }catch(Exception e){
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

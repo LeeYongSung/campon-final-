@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:campon_app/camp/camp_home_screen.dart';
 import 'package:campon_app/camp/reservate.dart';
 import 'package:campon_app/example/Login&ExtraDesign/chackout.dart';
 import 'package:campon_app/example/Login&ExtraDesign/hoteldetail.dart';
@@ -119,10 +120,17 @@ class _CampDetailState extends State<CampDetail> {
                   padding: const EdgeInsets.only(top: 12),
                   child: Row(
                     children: [
-                      Image.asset(
-                        "assets/images/logo2.png",
-                        width: 110,
-                        height: 60,
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                                                builder: (context) =>
+                                                    CampHomeScreen()));
+                        },
+                        child: Image.asset(
+                          "assets/images/logo2.png",
+                          width: 110,
+                          height: 60,
+                        ),
                       ),
                       const SizedBox(width: 20),
                       CircleAvatar(

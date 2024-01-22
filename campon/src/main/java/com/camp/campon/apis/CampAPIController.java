@@ -225,7 +225,7 @@ public class CampAPIController {
         }
     }
     //캠핑 예약 처리
-    @PreAuthorize("hasRole('ROLE_USER')")
+    // @PreAuthorize("hasRole('ROLE_USER')")
     @PostMapping(value="/reservate")
     public ResponseEntity<?> campReservatePay(@RequestBody Camp camp) {
         try{
@@ -301,17 +301,18 @@ public class CampAPIController {
         }
     }
     //예약현황 페이지
-    @PreAuthorize("hasRole('ROLE_USER')")
+    // @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping(value="/reservation")
-    public ResponseEntity<?> campReservation( Principal principal){
+    // public ResponseEntity<?> campReservation( Principal principal){
+    public ResponseEntity<?> campReservation(){
         try{
             int userNo = 2;
-            if (principal == null){ userNo = 1000;}
-            else {
-                String userId = principal.getName();
-                Users users = userService.selectById(userId);
-                userNo = users.getUserNo();
-            }
+            // if (principal == null){ userNo = 1000;}
+            // else {
+            //     String userId = principal.getName();
+            //     Users users = userService.selectById(userId);
+            //     userNo = users.getUserNo();
+            // }
             List<Product> productList = productService.reservedProduct(userNo);
             List<Camp> reservationList = campService.reservation(userNo);
             
@@ -325,7 +326,7 @@ public class CampAPIController {
         }
     }
     //예약현황 삭제
-    @PreAuthorize("hasRole('ROLE_USER')")
+    // @PreAuthorize("hasRole('ROLE_USER')")
     @DeleteMapping("/reservation/{no}")
     public ResponseEntity<?> reservationdelete(@PathVariable Integer no) {
         log.info("주소 : /reservation/{no}");

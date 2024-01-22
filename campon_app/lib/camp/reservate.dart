@@ -3,6 +3,7 @@
 import 'dart:convert';
 
 import 'package:campon_app/camp/Calander.dart';
+import 'package:campon_app/camp/camp_home_screen.dart';
 import 'package:campon_app/camp/campdetail.dart';
 import 'package:campon_app/camp/complete.dart';
 import 'package:campon_app/example/Login&ExtraDesign/homepage.dart';
@@ -29,7 +30,7 @@ class Reservate extends StatefulWidget {
 
 class _ReservateState extends State<Reservate> {
   int _counter1 = 0;
-  int selectedValue = 1;
+  String selectedValue = 'card';
 
   Camp camp = Camp();
   Users user = Users();
@@ -62,6 +63,7 @@ class _ReservateState extends State<Reservate> {
       Users users = Users.fromJson(data['user']);
       
       Camp camp = Camp(
+        campNo: productintro.campNo,
         cpdtNo: productintro.cpdtNo,
         cpdiUrl: productintro.cpdiUrl,
         campName: productintro.campName,
@@ -74,6 +76,7 @@ class _ReservateState extends State<Reservate> {
       );
 
       Users user = Users(
+        userNo: users.userNo,
         userName: users.userName,
         userTel: users.userTel,
       );
@@ -89,6 +92,62 @@ class _ReservateState extends State<Reservate> {
     }
   }
 
+  Future<void> reserve() async {
+
+    Map<String, dynamic> data = {
+      'campNo' : camp.campNo,
+      'cpdtNo' : camp.cpdtNo,
+      'userNo' : user.userNo,
+      'reservationNop' : _counter1,
+      'reservationStart' : DateFormat('yyyy-MM-dd').format(widget.date.reservationStart ?? DateTime.now()),
+      'reservationEnd' : DateFormat('yyyy-MM-dd').format(widget.date.reservationEnd ?? DateTime.now()),
+      'reservationDate' : widget.date.reservationDate,
+      'campPaymentType' : selectedValue,
+    };
+    print(data);
+
+    if(widget.date.reservationDate != null ){
+    if(widget.date.reservationDate! > 0 && _counter1 > 0){
+    var url = 'http://10.0.2.2:8081/api/camp/reservate';
+    var response = await http.post(
+      Uri.parse(url),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(data)
+    );
+      if (response.statusCode == 201) {
+        print('성공');
+        Navigator.of(context).push(MaterialPageRoute(
+                                   builder: (context) =>
+                                       Complete()));
+      } else {
+        print('실패 ${response.statusCode}');
+      }
+    }else{
+      print("정보입력이부족");
+      showDialog(context: context, builder: (BuildContext context){
+                                              return AlertDialog(
+                                                content: Text("날짜와 인원을 다시 확인해주세요"),
+                                                actions: [
+                                                  TextButton(onPressed: (){Navigator.of(context).pop();}, child: Text("확인")),
+                                                ],
+                                              );
+                                            });
+    }}else {
+      print('Value is null.');
+      showDialog(context: context, builder: (BuildContext context){
+                                              return AlertDialog(
+                                                content: Text("날짜와 인원을 다시 확인해주세요"),
+                                                actions: [
+                                                  TextButton(onPressed: (){Navigator.of(context).pop();}, child: Text("확인")),
+                                                ],
+                                              );
+                                            });
+    } 
+  }
+
+
   late ColorNotifire notifire;
   @override
   Widget build(BuildContext context) {
@@ -96,20 +155,20 @@ class _ReservateState extends State<Reservate> {
     return Scaffold(
       backgroundColor: notifire.getbgcolor,
       appBar: AppBar(
-        // leading: IconButton(
-        //   icon: Icon(Icons.arrow_back),
-        //   onPressed: () {
-        //     Navigator.of(context).push(MaterialPageRoute(
-        //                           builder: (context) =>
-        //                               CampDetail(cpdtNo: widget.cpdtNo)));
-        //       },
-        // ),
         backgroundColor: notifire.getbgcolor,
-        title: Image.asset(
-                        "assets/images/logo2.png",
-                        width: 110,
-                        height: 60,
-              ),
+        title: 
+        GestureDetector(
+          onTap: () {
+            Navigator.of(context).push(MaterialPageRoute(
+                                   builder: (context) =>
+                                       CampHomeScreen()));
+          },
+          child: Image.asset(
+            "assets/images/logo2.png",
+            width: 110,
+            height: 60,
+          ),
+        ),
         centerTitle: true,
       ),
       
@@ -276,22 +335,22 @@ class _ReservateState extends State<Reservate> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Radio(
-                    value: 1,
+                    value: 'card',
                     groupValue: selectedValue,
                     onChanged: (value) {
                       setState(() {
-                        selectedValue = value as int;
+                        selectedValue = value.toString();
                       });
                     },
                   ),
                   Text('카드'),
 
                   Radio(
-                    value: 2,
+                    value: 'bankbook',
                     groupValue: selectedValue,
                     onChanged: (value) {
                       setState(() {
-                        selectedValue = value as int;
+                        selectedValue = value.toString();
                       });
                     },
                   ),
@@ -316,8 +375,7 @@ class _ReservateState extends State<Reservate> {
                   const SizedBox(height: 40),
                   InkWell(
                     onTap: (){
-                      Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => const Complete()));
+                      reserve();
                     },
                     child: Container(
                       height: 50,

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:campon_app/camp/camp_home_screen.dart';
 import 'package:campon_app/camp/campdetail.dart';
 import 'package:campon_app/common/footer_screen.dart';
 import 'package:campon_app/example/Login&ExtraDesign/chackout.dart';
@@ -63,6 +64,7 @@ class _CampProductState extends State<CampProduct> {
   }
 
   Future<Map<String, dynamic>> getCamp() async{
+    Board productsreview;
     // try{
     var url = 'http://10.0.2.2:8081/api/camp/campproduct/12';
     var response = await http.get(Uri.parse(url));
@@ -76,7 +78,13 @@ class _CampProductState extends State<CampProduct> {
       int productsreserve = data['productsreserve'];
       Users productsseller = Users.fromJson(data['productsseller']);
       List<Camp> productsenvironment = List<Camp>.from(data['productsenvironment'].map((item) => Camp.fromJson(item)));
-      Board productsreview = Board.fromJson(data['productsreview']);
+      if (data['productsreview'] is Map<String, dynamic>) {
+        productsreview = Board.fromJson(data['productsreview']);
+      } else {
+        // 데이터가 유효하지 않은 경우 처리
+        // 예: 기본값 설정 또는 다른 처리 방법
+        productsreview = Board(); // 기본값으로 초기화
+      }
 
       List<Camp> productsfacility = List<Camp>.from(data['productsfacility'].map((item) => Camp.fromJson(item)));
       List<Camp> productsproductlist = List<Camp>.from(data['productsproductlist'].map((item) => Camp.fromJson(item)));
@@ -105,6 +113,7 @@ class _CampProductState extends State<CampProduct> {
         ));
       }
       Board review = Board(
+          reviewNo: productsreview.reviewNo,
           userName: productsreview.userName,
           campName: productsreview.campName,
           reviewImg: productsreview.reviewImg,
@@ -193,10 +202,17 @@ class _CampProductState extends State<CampProduct> {
               padding: const EdgeInsets.only(top: 12),
               child: Row(
                 children: [
-                  Image.asset(
-                    "assets/images/logo2.png",
-                    width: 110,
-                    height: 60,
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                                            builder: (context) =>
+                                                CampHomeScreen()));
+                    },
+                    child: Image.asset(
+                      "assets/images/logo2.png",
+                      width: 110,
+                      height: 60,
+                    ),
                   ),
                   const SizedBox(width: 20),
                   CircleAvatar(
@@ -531,14 +547,14 @@ class _CampProductState extends State<CampProduct> {
                       ],
                     ),
                     Container(
-                      child: 
+                      child: campreview.reviewNo != null ?
                               InkWell(
                                 onTap: () {
                                   Navigator.of(context).push(MaterialPageRoute(
                                       builder: (context) =>
                                           const review()));
                                 },
-                              child: Container(
+                              child:  Container(
                                 margin: const EdgeInsets.symmetric(vertical: 5),
                                 decoration: BoxDecoration(
                                   border: Border.all(
@@ -551,6 +567,7 @@ class _CampProductState extends State<CampProduct> {
                                 child: Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
+                                    
                                         Container(
                                           margin: EdgeInsets.all(10.0),
                                           child: Column(
@@ -600,8 +617,9 @@ class _CampProductState extends State<CampProduct> {
                                         ),
                                       ],
                                 ),
-                              ))                                       
-                    ),
+                              ) ) : Text("등록된 리뷰가 없습니다.")
+                              ),
+                        
                         Divider(),
                         const SizedBox(height: 10),
                         Text(

@@ -1,5 +1,6 @@
 import 'package:campon_app/camp/camp_products_screen.dart';
 import 'package:campon_app/camp/camp_schedule_screen.dart';
+import 'package:campon_app/camp/campproduct.dart';
 import 'package:campon_app/common/footer_screen.dart';
 import 'package:flutter/material.dart';
 // import 'package:flutter_custom_carousel_slider/flutter_custom_carousel_slider.dart';
@@ -7,6 +8,11 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:math';
+import 'package:campon_app/models/camp.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:syncfusion_flutter_datepicker/datepicker.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class CampHomeScreen extends StatefulWidget {
   const CampHomeScreen({super.key});
@@ -21,6 +27,7 @@ class _CampHomeScreenState extends State<CampHomeScreen> {
   String category3 = '카라반';
   String category4 = '펜션';
   String category5 = '캠프닉';
+  String exampleImg = "img/camp/exampleImg.png";
 
   bool _isCheckAuto = false;
   bool _isCheckGlam = false;
@@ -37,11 +44,77 @@ class _CampHomeScreenState extends State<CampHomeScreen> {
   List newCampList = [];
   List suggestList = [];
   List newReviewList = [];
+  List<String> checkBoxList = [];
+
+  DateTime? today = DateTime.now();
+  late String todays;
+
+  Camp? date = Camp();
+  String? searchTitle;
+  String? searchDate;
+
+  void _onSelectionChanged(DateRangePickerSelectionChangedArgs args) {
+    if (args.value is DateTime) {
+      setState(() {
+        // 수정한 부분
+        if (args.value != null) {
+          DateTime selectedDate = args.value;
+          print('선택한 날짜: ${DateFormat('yyyy-MM-dd').format(selectedDate)}');
+          date = Camp(reservationStart: selectedDate);
+          searchDate = date.toString();
+        }
+
+        // date 변수에 선택한 날짜를 저장
+      });
+    }
+  }
+
+  void _showModalBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (builder) {
+        return Container(
+          height: 450, // 모달의 높이 설정
+          color: Colors.white, // 모달의 배경색 설정
+          child: Column(
+            children: [
+              SizedBox(height: MediaQuery.of(context).size.height * 0.07),
+              Flexible(
+                child: SfDateRangePicker(
+                  rangeTextStyle: TextStyle(color: Colors.white),
+                  toggleDaySelection: true,
+                  endRangeSelectionColor: Colors.yellow,
+                  startRangeSelectionColor: Colors.yellow,
+                  monthCellStyle: DateRangePickerMonthCellStyle(
+                      blackoutDateTextStyle: TextStyle(color: Colors.blueGrey)),
+                  backgroundColor: Colors.white,
+                  onSelectionChanged: _onSelectionChanged,
+                  selectionMode: DateRangePickerSelectionMode.single,
+                  initialSelectedDate: DateTime.now(),
+                ),
+              ),
+              Container(
+                height: 50.0,
+                width: double.infinity, // 'Container' 위젯의 가로 길이를 최대로 설정
+                child: ElevatedButton(
+                  child: const Text('선택하기'),
+                  onPressed: () {
+                    Navigator.of(context).pop(); // 모달 닫기
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 
   @override
   void initState() {
     super.initState();
     newCamp();
+    todays = DateFormat('yyyy-MM-dd').format(today!);
   }
 
   Future newCamp() async {
@@ -100,8 +173,12 @@ class _CampHomeScreenState extends State<CampHomeScreen> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) =>
-                          const CampProductsScreen(category: '0')));
+                      builder: (context) => CampProductsScreen(
+                          category: '0',
+                          keyword: searchTitle = searchTitle ?? "",
+                          searchDate: searchDate = searchDate ?? todays,
+                          checkBoxList:
+                              checkBoxList.isEmpty ? [] : checkBoxList)));
             },
           ),
         ],
@@ -151,8 +228,14 @@ class _CampHomeScreenState extends State<CampHomeScreen> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) =>
-                                    CampProductsScreen(category: '1')));
+                                builder: (context) => CampProductsScreen(
+                                    category: '1',
+                                    keyword: searchTitle = searchTitle ?? "",
+                                    searchDate: searchDate =
+                                        searchDate ?? todays,
+                                    checkBoxList: checkBoxList.isEmpty
+                                        ? []
+                                        : checkBoxList)));
                       },
                     ),
                     GestureDetector(
@@ -170,8 +253,14 @@ class _CampHomeScreenState extends State<CampHomeScreen> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) =>
-                                    CampProductsScreen(category: '2')));
+                                builder: (context) => CampProductsScreen(
+                                    category: '2',
+                                    keyword: searchTitle = searchTitle ?? "",
+                                    searchDate: searchDate =
+                                        searchDate ?? todays,
+                                    checkBoxList: checkBoxList.isEmpty
+                                        ? []
+                                        : checkBoxList)));
                       },
                     ),
                     GestureDetector(
@@ -189,8 +278,14 @@ class _CampHomeScreenState extends State<CampHomeScreen> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) =>
-                                    CampProductsScreen(category: '3')));
+                                builder: (context) => CampProductsScreen(
+                                    category: '3',
+                                    keyword: searchTitle = searchTitle ?? "",
+                                    searchDate: searchDate =
+                                        searchDate ?? todays,
+                                    checkBoxList: checkBoxList.isEmpty
+                                        ? []
+                                        : checkBoxList)));
                       },
                     ),
                     GestureDetector(
@@ -208,8 +303,14 @@ class _CampHomeScreenState extends State<CampHomeScreen> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) =>
-                                    CampProductsScreen(category: '4')));
+                                builder: (context) => CampProductsScreen(
+                                    category: '4',
+                                    keyword: searchTitle = searchTitle ?? "",
+                                    searchDate: searchDate =
+                                        searchDate ?? todays,
+                                    checkBoxList: checkBoxList.isEmpty
+                                        ? []
+                                        : checkBoxList)));
                       },
                     ),
                     GestureDetector(
@@ -227,8 +328,14 @@ class _CampHomeScreenState extends State<CampHomeScreen> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) =>
-                                    CampProductsScreen(category: '5')));
+                                builder: (context) => CampProductsScreen(
+                                    category: '5',
+                                    keyword: searchTitle = searchTitle ?? "",
+                                    searchDate: searchDate =
+                                        searchDate ?? todays,
+                                    checkBoxList: checkBoxList.isEmpty
+                                        ? []
+                                        : checkBoxList)));
                       },
                     ),
                   ],
@@ -245,7 +352,9 @@ class _CampHomeScreenState extends State<CampHomeScreen> {
                     Expanded(
                       child: Container(
                         child: ElevatedButton(
-                          child: const Text('날짜 선택'),
+                          child: Text(date!.reservationStart != null
+                              ? '${DateFormat('yyyy-MM-dd').format(date!.reservationStart!)}'
+                              : '날짜 선택'),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.white,
                             foregroundColor: Colors.black,
@@ -256,7 +365,9 @@ class _CampHomeScreenState extends State<CampHomeScreen> {
                             maximumSize: const Size(double.infinity, 50),
                           ),
                           // 버튼을 눌렀을 때 동작할 내용
-                          onPressed: () async {},
+                          onPressed: () async {
+                            _showModalBottomSheet(context);
+                          },
                         ),
                       ),
                     ),
@@ -270,6 +381,11 @@ class _CampHomeScreenState extends State<CampHomeScreen> {
                   children: [
                     Expanded(
                       child: TextField(
+                        onChanged: (value) {
+                          print("value : " + value);
+                          searchTitle = value;
+                          print(searchTitle);
+                        },
                         decoration: InputDecoration(
                           filled: true,
                           fillColor: Colors.white,
@@ -345,6 +461,15 @@ class _CampHomeScreenState extends State<CampHomeScreen> {
                           onChanged: (value) {
                             setState(() {
                               _isCheckAuto = value!;
+                              if (_isCheckAuto == true) {
+                                checkBoxList.add('1');
+                                checkBoxList.sort();
+                                print(checkBoxList);
+                              } else {
+                                checkBoxList.remove("1");
+                                checkBoxList.sort();
+                                print(checkBoxList);
+                              }
                             });
                           },
                         ),
@@ -356,6 +481,15 @@ class _CampHomeScreenState extends State<CampHomeScreen> {
                           onChanged: (value) {
                             setState(() {
                               _isCheckGlam = value!;
+                              if (_isCheckGlam == true) {
+                                checkBoxList.add('2');
+                                checkBoxList.sort();
+                                print(checkBoxList);
+                              } else {
+                                checkBoxList.remove("2");
+                                checkBoxList.sort();
+                                print(checkBoxList);
+                              }
                             });
                           },
                         ),
@@ -367,6 +501,15 @@ class _CampHomeScreenState extends State<CampHomeScreen> {
                           onChanged: (value) {
                             setState(() {
                               _isCheckKara = value!;
+                              if (_isCheckKara == true) {
+                                checkBoxList.add('3');
+                                checkBoxList.sort();
+                                print(checkBoxList);
+                              } else {
+                                checkBoxList.remove("3");
+                                checkBoxList.sort();
+                                print(checkBoxList);
+                              }
                             });
                           },
                         ),
@@ -378,6 +521,15 @@ class _CampHomeScreenState extends State<CampHomeScreen> {
                           onChanged: (value) {
                             setState(() {
                               _isCheckPen = value!;
+                              if (_isCheckPen == true) {
+                                checkBoxList.add('4');
+                                checkBoxList.sort();
+                                print(checkBoxList);
+                              } else {
+                                checkBoxList.remove("4");
+                                checkBoxList.sort();
+                                print(checkBoxList);
+                              }
                             });
                           },
                         ),
@@ -389,6 +541,15 @@ class _CampHomeScreenState extends State<CampHomeScreen> {
                           onChanged: (value) {
                             setState(() {
                               _isCheckCamp = value!;
+                              if (_isCheckCamp == true) {
+                                checkBoxList.add('5');
+                                checkBoxList.sort();
+                                print(checkBoxList);
+                              } else {
+                                checkBoxList.remove("5");
+                                checkBoxList.sort();
+                                print(checkBoxList);
+                              }
                             });
                           },
                         ),
@@ -417,7 +578,21 @@ class _CampHomeScreenState extends State<CampHomeScreen> {
                                   borderRadius: BorderRadius.circular(0.0)),
                               elevation: 2 // 그림자 효과
                               ),
-                          onPressed: () async {},
+                          onPressed: () async {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => CampProductsScreen(
+                                    category: "0",
+                                    keyword: searchTitle = searchTitle ?? "",
+                                    searchDate: searchDate =
+                                        searchDate ?? todays,
+                                    checkBoxList: checkBoxList.isEmpty
+                                        ? []
+                                        : checkBoxList),
+                              ),
+                            );
+                          },
                         ),
                       ),
                     ),
@@ -436,7 +611,7 @@ class _CampHomeScreenState extends State<CampHomeScreen> {
                   Column(
                     children: [
                       Image.asset(
-                        'assets/images/camp_ads.jpg',
+                        'assets/images/camp_ads.jpg' ?? exampleImg,
                         width: 150,
                         height: 80,
                         fit: BoxFit.cover,
@@ -446,7 +621,7 @@ class _CampHomeScreenState extends State<CampHomeScreen> {
                   Column(
                     children: [
                       Image.asset(
-                        'assets/images/camp_ads.jpg',
+                        'assets/images/camp_ads.jpg' ?? exampleImg,
                         width: 150,
                         height: 80,
                         fit: BoxFit.cover,
@@ -521,9 +696,11 @@ class _CampHomeScreenState extends State<CampHomeScreen> {
                   itemBuilder: (BuildContext context, int index) {
                     return InkWell(
                       onTap: () {
-                        // Navigator.of(context).push(MaterialPageRoute(
-                        //     builder: (context) =>
-                        //         const hoteldetailpage()));
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => CampProduct(
+                                    campNo: newCampList[index]['campNo'])));
                       },
                       child: Container(
                         child: ClipRRect(
@@ -531,7 +708,8 @@ class _CampHomeScreenState extends State<CampHomeScreen> {
                           child: Column(
                             children: [
                               Image.asset(
-                                newCampList[index]['cpiUrl'].toString(),
+                                newCampList[index]['cpiUrl'].toString() ??
+                                    exampleImg,
                                 width: 100.0,
                                 height: 100.0,
                                 fit: BoxFit.cover,
@@ -575,7 +753,7 @@ class _CampHomeScreenState extends State<CampHomeScreen> {
                   padding: EdgeInsets.all(10),
                   itemCount: min(
                       suggestList.length, 6), // 6과 hotelList2.length 중 작은 값을 사용
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 3, // 가로에 표시할 항목 수
                     crossAxisSpacing: 10, // 가로 간격
                     mainAxisSpacing: 10, // 세로 간격
@@ -584,9 +762,11 @@ class _CampHomeScreenState extends State<CampHomeScreen> {
                   itemBuilder: (BuildContext context, int index) {
                     return InkWell(
                       onTap: () {
-                        // Navigator.of(context).push(MaterialPageRoute(
-                        //     builder: (context) =>
-                        //         const hoteldetailpage()));
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => CampProduct(
+                                    campNo: suggestList[index]['campNo'])));
                       },
                       child: Container(
                         child: ClipRRect(
@@ -594,7 +774,8 @@ class _CampHomeScreenState extends State<CampHomeScreen> {
                           child: Column(
                             children: [
                               Image.asset(
-                                suggestList[index]['cpiUrl'].toString(),
+                                suggestList[index]['cpiUrl'].toString() ??
+                                    exampleImg,
                                 width: 100.0,
                                 height: 100.0,
                                 fit: BoxFit.cover,
@@ -657,7 +838,8 @@ class _CampHomeScreenState extends State<CampHomeScreen> {
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(12),
                             child: Image.asset(
-                              newReviewList[index]["reviewImg"].toString(),
+                              newReviewList[index]["reviewImg"].toString() ??
+                                  exampleImg,
                               fit: BoxFit.fill,
                             ),
                           ),

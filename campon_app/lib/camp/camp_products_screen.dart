@@ -1,12 +1,24 @@
+import 'package:campon_app/camp/campproduct.dart';
 import 'package:campon_app/common/footer_screen.dart';
+import 'package:campon_app/models/camp.dart';
 import 'package:flutter/material.dart';
 import 'package:expansion_tile_card/expansion_tile_card.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'package:intl/intl.dart';
+
 class CampProductsScreen extends StatefulWidget {
   final String category;
-  const CampProductsScreen({super.key, required this.category});
+  final String? keyword;
+  final String? searchDate;
+  final List<String> checkBoxList;
+  const CampProductsScreen(
+      {super.key,
+      required this.category,
+      required this.keyword,
+      required this.searchDate,
+      required this.checkBoxList});
 
   @override
   State<CampProductsScreen> createState() => _CampProductsScreenState();
@@ -26,7 +38,12 @@ class _CampProductsScreenState extends State<CampProductsScreen> {
 
   List items = [];
   // List<String> campType = [];
-  List<String> campType = ["1", "2", "3", "4", "5"];
+  late String keyword = "";
+  late DateTime dateType = DateTime.now();
+  late String searchDate = "";
+  late List<String> checkBoxList = [];
+
+  // List<String> campType = [];
 
   final ScrollController _controller = ScrollController();
 
@@ -38,6 +55,20 @@ class _CampProductsScreenState extends State<CampProductsScreen> {
     super.initState();
 
     category = widget.category ?? '0';
+    keyword = widget.keyword ?? '';
+    if (checkBoxList == null) {
+      checkBoxList = ["1", "2", "3", "4", "5"];
+      print(checkBoxList);
+    } else {
+      checkBoxList = widget.checkBoxList;
+      print(checkBoxList);
+    }
+
+    if (keyword != "") {
+      print(keyword);
+    }
+
+    searchDate = DateFormat('yyyy-MM-dd').format(dateType).toString();
     // 처음 데이터
     fetch();
 
@@ -57,7 +88,9 @@ class _CampProductsScreenState extends State<CampProductsScreen> {
   Future fetch() async {
     print('fetch...');
     print(category);
-    print(campType);
+    print(keyword);
+    print(searchDate);
+    print(checkBoxList);
     // http
     // 1. URL 인코딩
     // 2. GET 방식 요청
@@ -66,10 +99,10 @@ class _CampProductsScreenState extends State<CampProductsScreen> {
       final response = await http.post(url,
           headers: {'Content-Type': 'application/json'},
           body: jsonEncode({
-            'keyword': '',
-            'searchDate': '2024-01-21',
+            'keyword': keyword,
+            'searchDate': searchDate,
             'regionNo': category,
-            'checkBoxList': campType,
+            'checkBoxList': checkBoxList,
           }));
       print(response.statusCode);
 
@@ -341,162 +374,174 @@ class _CampProductsScreenState extends State<CampProductsScreen> {
                   return Padding(
                       padding: const EdgeInsets.symmetric(vertical: 6),
                       child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(15),
-                          color: Colors.white,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.5),
-                              spreadRadius: 5,
-                              blurRadius: 7,
-                              offset:
-                                  Offset(0, 3), // changes position of shadow
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          children: [
-                            Stack(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(15),
+                            color: Colors.white,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.5),
+                                spreadRadius: 5,
+                                blurRadius: 7,
+                                offset:
+                                    Offset(0, 3), // changes position of shadow
+                              ),
+                            ],
+                          ),
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: ((context) => CampProduct(
+                                          campNo: items[index]["campNo"]))));
+                            },
+                            child: Column(
                               children: [
-                                Container(
-                                  height: 200,
-                                  width: double.infinity,
-                                  child: ClipRRect(
-                                    borderRadius: const BorderRadius.only(
-                                        topLeft: Radius.circular(12),
-                                        topRight: Radius.circular(12)),
-                                    child: Image.asset(
-                                      items[index]["cpiUrl"].toString(),
-                                      fit: BoxFit.fill,
+                                Stack(
+                                  children: [
+                                    Container(
+                                      height: 200,
+                                      width: double.infinity,
+                                      child: ClipRRect(
+                                        borderRadius: const BorderRadius.only(
+                                            topLeft: Radius.circular(12),
+                                            topRight: Radius.circular(12)),
+                                        child: Image.asset(
+                                          items[index]["cpiUrl"].toString(),
+                                          fit: BoxFit.fill,
+                                        ),
+                                      ),
                                     ),
-                                  ),
+                                    Align(
+                                      alignment: Alignment.topRight,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Container(
+                                          height: 30,
+                                          width: 60,
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(50),
+                                              color: Colors.grey),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceEvenly,
+                                            children: [
+                                              // Image.asset("assets/images/star.png",
+                                              //     height: 17),
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    top: 4),
+                                                child: Text(
+                                                  items[index]["review"]
+                                                      .toString(),
+                                                  style: TextStyle(
+                                                      fontSize: 13,
+                                                      color: Colors.white,
+                                                      fontFamily:
+                                                          "Gilroy Bold"),
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                  ],
                                 ),
-                                Align(
-                                  alignment: Alignment.topRight,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Container(
-                                      height: 30,
-                                      width: 60,
-                                      decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(50),
-                                          color: Colors.grey),
-                                      child: Row(
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10, vertical: 10),
+                                  child: Column(
+                                    children: [
+                                      Row(
                                         mainAxisAlignment:
-                                            MainAxisAlignment.spaceEvenly,
-                                        children: [
-                                          // Image.asset("assets/images/star.png",
-                                          //     height: 17),
-                                          Padding(
-                                            padding:
-                                                const EdgeInsets.only(top: 4),
-                                            child: Text(
-                                              items[index]["review"].toString(),
-                                              style: TextStyle(
-                                                  fontSize: 13,
-                                                  color: Colors.white,
-                                                  fontFamily: "Gilroy Bold"),
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              ],
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 10, vertical: 10),
-                              child: Column(
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        items[index]["campName"].toString(),
-                                        style: TextStyle(
-                                            fontSize: 16,
-                                            color: Colors.grey,
-                                            fontFamily: "Gilroy Bold"),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 6),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Image.asset(
-                                            "assets/images/location.png",
-                                            height: 20,
-                                            color: Colors.deepOrange,
-                                          ),
-                                          const SizedBox(width: 10),
-                                          SizedBox(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.60,
-                                            child: Text(
-                                              items[index]["campAddress"]
-                                                  .toString(),
-                                              style: TextStyle(
-                                                  fontSize: 14,
-                                                  color: Colors.grey,
-                                                  fontFamily: "Gilroy Medium",
-                                                  overflow:
-                                                      TextOverflow.ellipsis),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Row(
+                                            MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text(
-                                            items[index]["campOpen"],
+                                            items[index]["campName"].toString(),
                                             style: TextStyle(
                                                 fontSize: 16,
                                                 color: Colors.grey,
-                                                fontFamily: "Gilroy Medium"),
+                                                fontFamily: "Gilroy Bold"),
                                           ),
                                         ],
                                       ),
+                                      const SizedBox(height: 6),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Image.asset(
+                                                "assets/images/location.png",
+                                                height: 20,
+                                                color: Colors.deepOrange,
+                                              ),
+                                              const SizedBox(width: 10),
+                                              SizedBox(
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.60,
+                                                child: Text(
+                                                  items[index]["campAddress"]
+                                                      .toString(),
+                                                  style: TextStyle(
+                                                      fontSize: 14,
+                                                      color: Colors.grey,
+                                                      fontFamily:
+                                                          "Gilroy Medium",
+                                                      overflow: TextOverflow
+                                                          .ellipsis),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          Row(
+                                            children: [
+                                              Text(
+                                                items[index]["campOpen"],
+                                                style: TextStyle(
+                                                    fontSize: 16,
+                                                    color: Colors.grey,
+                                                    fontFamily:
+                                                        "Gilroy Medium"),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                      Divider(color: Colors.grey),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          hotelsystem(
+                                              image: "assets/images/Bed.png",
+                                              text: "2 Beds",
+                                              radi: 3),
+                                          hotelsystem(
+                                              image: "assets/images/wifi.png",
+                                              text: "Wifi",
+                                              radi: 3),
+                                          hotelsystem(
+                                              image: "assets/images/gym.png",
+                                              text: "Gym",
+                                              radi: 3),
+                                          hotelsystem(
+                                              image: "assets/images/Frame.png",
+                                              text: "Breakfast",
+                                              radi: 0),
+                                        ],
+                                      )
                                     ],
                                   ),
-                                  Divider(color: Colors.grey),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      hotelsystem(
-                                          image: "assets/images/Bed.png",
-                                          text: "2 Beds",
-                                          radi: 3),
-                                      hotelsystem(
-                                          image: "assets/images/wifi.png",
-                                          text: "Wifi",
-                                          radi: 3),
-                                      hotelsystem(
-                                          image: "assets/images/gym.png",
-                                          text: "Gym",
-                                          radi: 3),
-                                      hotelsystem(
-                                          image: "assets/images/Frame.png",
-                                          text: "Breakfast",
-                                          radi: 0),
-                                    ],
-                                  )
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                      ));
+                          )));
                 }
                 // index : 20
                 else if ((_page - 1) > 1 && _page < _pageObj['last']!) {

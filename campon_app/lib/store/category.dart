@@ -10,17 +10,21 @@ import 'package:campon_app/example/Utils/customwidget%20.dart';
 import 'package:http/http.dart' as http;
 
 class Category extends StatefulWidget {
-  const Category({super.key});
+  final categoryName;
+  const Category({super.key, required this.categoryName});
 
   @override
   State<Category> createState() => _CategoryState();
 }
 
 class _CategoryState extends State<Category> {
+  late String categoryName = widget.categoryName;
   late ColorNotifire notifire;
+
 
   List category = [
     {
+      "productNo" : "1",
       "productThumnail": "img/product/11.png",
       "productCategory": "텐트",
       "productName": "상품이름",
@@ -28,6 +32,7 @@ class _CategoryState extends State<Category> {
       "productPrice": "3000",
     },
     {
+       "productNo" : "2",
       "productThumnail": "img/product/12.png",
       "productCategory": "텐트2",
       "productName": "상품이름2",
@@ -36,10 +41,7 @@ class _CategoryState extends State<Category> {
     },
   ];
 
-//TODO 하드코딩
-  var categoryName = '텐트';
   //카테고리 상품 가져오는 함수
-
   Future<void> getCatProList() async {
     final response = await http.get(Uri.parse(
         'http://10.0.2.2:8081/api/product/productList?category=${categoryName}'));
@@ -115,7 +117,9 @@ class _CategoryState extends State<Category> {
       ),
       backgroundColor: notifire.getbgcolor,
       body: SingleChildScrollView(
-        child: Column(
+        child: 
+        
+        Column(
           children: [
             Text('카테고리'),
             SizedBox(
@@ -466,7 +470,7 @@ class _CategoryState extends State<Category> {
                                                       .push(MaterialPageRoute(
                                                           builder: (context) =>
                                                               //TODO 수정예정
-                                                              const ProductDetail()));
+                                                              ProductDetail(productNo: '${category[index]["productNo"]}')));
                                                 }),
                                           ),
 

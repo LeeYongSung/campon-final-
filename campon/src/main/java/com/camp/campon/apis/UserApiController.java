@@ -92,6 +92,7 @@ public class UserApiController {
         log.info(request.getParameter("userPw"));
         log.info("user : #############################");
         log.info(user.toString());
+        log.info(request.getHeaderNames().toString() +"  회원가입 처리부분의 헤더");
         int result = userService.insert(user);
         log.info(result + "회원가입성공");
         // 회원 가입 성공 시, 바로 로그인

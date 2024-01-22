@@ -1,5 +1,6 @@
 import 'package:campon_app/common/footer_screen.dart';
 import 'package:campon_app/store/category.dart';
+import 'package:campon_app/store/productdetail.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
@@ -23,6 +24,53 @@ class _StoreMainState extends State<StoreMain> {
 
   int _current = 0;
   final CarouselController _controller = CarouselController();
+
+  //카테고리명, 이미지 등..
+  List<dynamic> categories = [
+    {
+      "name" : "텐트", 
+      "image" : "img/product/product1.png"
+    },
+    {
+      "name" : "테이블", 
+      "image" : "img/product/product2.png"
+    },
+    {
+      "name" : "체어", 
+      "image" : "img/product/product3.png"
+    },
+    {
+      "name" : "매트", 
+      "image" : "img/product/product4.png"
+    },
+    {
+      "name" : "조명", 
+      "image" : "img/product/product5.png"
+    },
+    {
+      "name" : "화로대", 
+      "image" : "img/product/product6.png"
+    },
+    {
+      "name" : "타프", 
+      "image" : "img/product/product7.png"
+    },
+    {
+      "name" : "수납", 
+      "image" : "img/product/product8.png"
+    },
+    {
+      "name" : "캠핑가전", 
+      "image" : "img/product/product9.png"
+    },
+    {
+      "name" : "주방용품", 
+      "image" : "img/product/product10.png"
+    },
+
+    
+  ];
+
   List<String> imgList = [
     'img/product/store_banner.png',
     'img/product/store_banner2.png',
@@ -283,21 +331,27 @@ class _StoreMainState extends State<StoreMain> {
                   height: 300,
                   child: Stack(children: [sliderWidget(), sliderIndicator()]),
                 ), // 상단 광고 끝 ( 이미지 슬라이드 )
+
+
+
                 Padding(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                  child: Column(
+                  child: 
+                  Column(
                     children: [
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
+
+                          
                           Expanded(
                             child: InkWell(
                               onTap: () {
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => Category()));
+                                        builder: (context) => Category(categoryName : '텐트')));
                               },
                               child: Column(
                                 children: [
@@ -317,7 +371,12 @@ class _StoreMainState extends State<StoreMain> {
                           ),
                           Expanded(
                             child: InkWell(
-                              onTap: () {},
+                              onTap: () {
+                                 Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => Category(categoryName : '테이블')));
+                              },
                               child: Column(
                                 children: [
                                   Image.asset(
@@ -336,7 +395,12 @@ class _StoreMainState extends State<StoreMain> {
                           ),
                           Expanded(
                             child: InkWell(
-                              onTap: () {},
+                              onTap: () {
+                                 Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => Category(categoryName : '체어')));
+                              },
                               child: Column(
                                 children: [
                                   Image.asset(
@@ -355,7 +419,12 @@ class _StoreMainState extends State<StoreMain> {
                           ),
                           Expanded(
                             child: InkWell(
-                              onTap: () {},
+                              onTap: () {
+                                 Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => Category(categoryName : '매트')));
+                              },
                               child: Column(
                                 children: [
                                   Image.asset(
@@ -374,7 +443,12 @@ class _StoreMainState extends State<StoreMain> {
                           ),
                           Expanded(
                             child: InkWell(
-                                onTap: () {},
+                                onTap: () {
+                                   Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => Category(categoryName : '조명')));
+                                },
                                 child: Column(
                                   children: [
                                     Image.asset(
@@ -397,7 +471,12 @@ class _StoreMainState extends State<StoreMain> {
                         children: [
                           Expanded(
                             child: InkWell(
-                              onTap: () {},
+                              onTap: () {
+                                 Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => Category(categoryName : '화로대')));
+                              },
                               child: Column(
                                 children: [
                                   Image.asset(
@@ -416,7 +495,12 @@ class _StoreMainState extends State<StoreMain> {
                           ),
                           Expanded(
                             child: InkWell(
-                              onTap: () {},
+                              onTap: () {
+                                 Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => Category(categoryName : '타프')));
+                              },
                               child: Column(
                                 children: [
                                   Image.asset(
@@ -435,7 +519,12 @@ class _StoreMainState extends State<StoreMain> {
                           ),
                           Expanded(
                             child: InkWell(
-                              onTap: () {},
+                              onTap: () {
+                                 Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => Category(categoryName : '수납')));
+                              },
                               child: Column(
                                 children: [
                                   Image.asset(
@@ -454,7 +543,12 @@ class _StoreMainState extends State<StoreMain> {
                           ),
                           Expanded(
                             child: InkWell(
-                              onTap: () {},
+                              onTap: () {
+                                 Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => Category(categoryName : '캠핑가전')));
+                              },
                               child: Column(
                                 children: [
                                   Image.asset(
@@ -473,7 +567,12 @@ class _StoreMainState extends State<StoreMain> {
                           ),
                           Expanded(
                             child: InkWell(
-                                onTap: () {},
+                                onTap: () {
+                                   Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => Category(categoryName : '주방용품')));
+                                },
                                 child: Column(
                                   children: [
                                     Image.asset(
@@ -491,6 +590,9 @@ class _StoreMainState extends State<StoreMain> {
                           ),
                         ],
                       ), //한 Row 끝
+
+
+
 
                       SizedBox(
                           height: MediaQuery.of(context).size.height * 0.04),
@@ -523,7 +625,13 @@ class _StoreMainState extends State<StoreMain> {
                         ),
                         itemBuilder: (BuildContext context, int index) {
                           return InkWell(
-                              onTap: () {},
+                              onTap: () {
+                                 Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => ProductDetail(productNo : '${productHotList[index]
+                                                        ["productNo"]}')));
+                              },
                               child: Container(
                                 decoration: BoxDecoration(
                                   color: Colors.white,
@@ -544,7 +652,9 @@ class _StoreMainState extends State<StoreMain> {
                                           borderRadius: const BorderRadius.only(
                                               topLeft: Radius.circular(12),
                                               topRight: Radius.circular(12)),
-                                          child: Image.asset(
+                                          child: 
+                                          ! connected ? 
+                                          Image.asset(
                                             productHotList[index]
                                                         ["productThumnail"]
                                                     .toString()
@@ -557,7 +667,7 @@ class _StoreMainState extends State<StoreMain> {
                                                         ["productThumnail"]
                                                     .toString(),
                                             fit: BoxFit.cover,
-                                          ),
+                                          ) : Image.network('http://10.0.2.2:8081/api/img?file=${productHotList[index]["productThumnail"]}'),
                                         ),
                                       ),
                                       //   ],
@@ -619,6 +729,8 @@ class _StoreMainState extends State<StoreMain> {
                     ],
                   ),
                 ),
+
+                
                 SizedBox(height: MediaQuery.of(context).size.height * 0.01),
 
                 //캠프온이 처음이신가요?

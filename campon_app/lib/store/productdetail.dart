@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:readmore/readmore.dart';
@@ -13,61 +15,26 @@ import 'package:intl/intl.dart';
 import 'dart:convert';
 
 class ProductDetail extends StatefulWidget {
-  const ProductDetail({super.key});
+  final String productNo;
+  const ProductDetail({super.key, required this.productNo});
 
   @override
   State<ProductDetail> createState() => _ProductDetailState();
 }
 
 class _ProductDetailState extends State<ProductDetail> {
+  var connected = false;
+  late String productNo = widget.productNo;
   int _current = 0;
   final CarouselController _controller = CarouselController();
-  List<String> imgList = [
+
+  List<dynamic> imgList = [
     'img/product/11.png',
     'img/product/12.png',
     'img/product/13.png',
     'img/product/14.png',
     'img/product/15.png',
   ];
-
-
-  //이미지 에 대한 서버 접근 가능한지에 대한 여부 함수
-  Future<Widget> checkUrlAccessibility(String url, int index) async {
-    try {
-      final response = await http.get(Uri.parse(url));
-      if (response == 200) {
-        print('서버 접근 가능');
-        return Image.network(
-          "http://10.0.2.2:8081/api/img?file=${proReviewList[index]['prImg'].toString()}",
-          fit: BoxFit.cover,
-        );
-      } else {
-        return Image.asset("img/product/11.png", fit: BoxFit.cover);
-      }
-    } catch (e) {
-      print('서버 접근 불가');
-      return Image.asset("img/product/11.png", fit: BoxFit.cover);
-    }
-  }
-
-
-//상세이미지의 높이를 받아오는 방법
-  GlobalKey _imageKey = GlobalKey();
-  double _imageHeight = 10;
-  void _updateImageHeight() {
-    final BuildContext? context = _imageKey.currentContext;
-    print('이미지하이트는? ${_imageHeight}');
-    if (context != null) {
-      // findRenderObject가 널이 아닌 RenderObject를 반환할 것이라는 것을 보장한 후에,
-      // RenderBox로 캐스팅합니다.
-      RenderBox renderBox = context.findRenderObject() as RenderBox;
-      setState(() {
-        _imageHeight = renderBox.size.height;
-        print('이미지하이트는? ${_imageHeight}');
-      });
-      print('이미지하이트는? ${_imageHeight}');
-    }
-  }
 
   late ColorNotifire notifire;
   bool _pinned = true;
@@ -117,7 +84,7 @@ class _ProductDetailState extends State<ProductDetail> {
     },
   ];
 
-  int productNo = 1; //하드코딩 (TODO)
+  // int productNo = 1; //하드코딩 (TODO)
   int reviewCount = 10;
   //리뷰 비동기 요청
   Future<void> getReviewList(productNo) async {
@@ -137,10 +104,17 @@ class _ProductDetailState extends State<ProductDetail> {
       }
 
       setState(() {
+        connected = true;
         proReviewList = productReview2;
         print('proReviewList는? ${proReviewList}');
         product = product2;
         print('product는? ${product}');
+        // product는? {productNo: 9, productName: 9, productThumnail: /img/product/e2d875ad-a365-4d9e-af4e-8df0a9141a7b_20231115_113435.png, productCon: 상품9, productIntro: 상품설명9, productCategory: 캠핑가전, productPrice: 90000000, regDate: 2023-11-01T07:28:23.000+00:00, updDate: 2023-11-01T07:28:23.000+00:00, userNo: null, productimgNo: null, productimgUrl: null, productImgsUrlList: [/img/productdetai1.jpg, /img/productdetai2.jpg, /img/productdetai3.jpg, /img/productdetai4.jpg, /img/productdetai5.jpg], productThmFile: null, productConFile: null, productImgs: null, cartNo: null, cartCnt: null, productsaveNo: 0, wishlistNo: 0, orderCnt: 0, sum: null, orderNo: 0}
+
+        //이미지 슬라이드
+        imgList = product["productImgsUrlList"];
+        print('imgList는? ${imgList}');
+
         reviewCount = reviewCount2;
         print('reviewCount? ${reviewCount}');
       });
@@ -186,6 +160,7 @@ class _ProductDetailState extends State<ProductDetail> {
     }
   }
 
+//이미지 슬라이드
   Widget sliderWidget() {
     return CarouselSlider(
         carouselController: _controller,
@@ -196,7 +171,11 @@ class _ProductDetailState extends State<ProductDetail> {
                 width: MediaQuery.of(context).size.width,
                 child: Image(
                   fit: BoxFit.cover,
-                  image: AssetImage(imgLink),
+                  image: connected
+                      ? NetworkImage(
+                              'http://10.0.2.2:8081/api/img?file=${imgLink}')
+                          as ImageProvider<Object>
+                      : AssetImage(imgLink),
                 ),
               );
             },
@@ -244,13 +223,22 @@ class _ProductDetailState extends State<ProductDetail> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _updateImageHeight());
     getReviewList(productNo);
+    print('productNo은 ? ${productNo}');
   }
 
   @override
   Widget build(BuildContext context) {
     notifire = Provider.of<ColorNotifire>(context, listen: true);
+
+//상세이미지의 높이 알아내기
+    Image image = Image.network('https://i.stack.imgur.com/lkd0a.png');
+    Completer<ui.Image> completer = Completer<ui.Image>();
+    image.image.resolve(ImageConfiguration()).addListener(
+      ImageStreamListener((ImageInfo info, bool isSync) {
+        completer.complete(info.image);
+      }),
+    );
 
     return Scaffold(
         backgroundColor: notifire.getbgcolor,
@@ -370,31 +358,28 @@ class _ProductDetailState extends State<ProductDetail> {
                     ),
 
                     //상세 이미지
+
                     AnimatedContainer(
-                      height: isExpanded
-                          ? _imageHeight *
-                              // (MediaQuery.of(context).size.width )
-                              70
-                          : 150, // isExpanded가 true일 때 전체 이미지를 보여주고, false일 때는 높이를 제한합니다.
+                      height: isExpanded ? 1000 : 150,
                       width: MediaQuery.of(context).size.width,
                       child: Container(
                         width: MediaQuery.of(context).size.width,
                         height: 100,
-                        // child: Image.asset(
-                        //   "${product['productConFile']}", //
-
-                        //   key: _imageKey,
-                        //   fit: BoxFit.cover, // 이미지가 컨테이너를 꽉 채우도록 설정합니다.
-                        // ),
-
-                        // child:Image.network("http://10.0.2.2:8081/api/img?file=${product['productCon']}", key: _imageKey,fit: BoxFit.cover,)
-                        child: Image.asset("img/product/detailproduct.jpg", fit: BoxFit.cover,),
+                        child: connected
+                            ? Image.network(
+                                "http://10.0.2.2:8081/api/img?file=${product['productCon']}",
+                                fit: BoxFit.cover,
+                              )
+                            : Image.asset(
+                                "img/product/detailproduct.jpg",
+                                fit: BoxFit.fitWidth,
+                              ),
                       ),
-
                       duration:
                           Duration(milliseconds: 500), // 애니메이션 효과 시간을 설정합니다.
                       curve: Curves.fastOutSlowIn, // 애니메이션 효과를 설정합니다.
                     ),
+
                     TextButton(
                       child: Text(isExpanded
                           ? '접기'
@@ -444,44 +429,14 @@ class _ProductDetailState extends State<ProductDetail> {
                                   width: 75,
                                   child: ClipRRect(
                                     borderRadius: BorderRadius.circular(12),
-                                    child:
-                                        // Image.asset(
-                                        //   proReviewList[index]["prImg"]
-                                        //           .toString()
-                                        //           .startsWith('/')
-                                        //       ? proReviewList[index]["prImg"]
-                                        //           .toString()
-                                        //           .substring(1)
-                                        //       : proReviewList[index]["prImg"]
-                                        //           .toString(),
-                                        //   fit: BoxFit.cover,
-                                        // ),
-                                      //   Image.network(
-                                      // "http://10.0.2.2:8081/api/img?file=${proReviewList[index]['prImg']}",
-                                      // fit: BoxFit.cover,
-                                    // ),
-                                    FutureBuilder<Widget?>(
-                                  future: checkUrlAccessibility(
-                                      "http://10.0.2.2:8081/api/img?file=${proReviewList[index]['prImg'].toString()}",
-                                      index),
-                                  builder: (context, snapshot) {
-                                    if (snapshot.connectionState ==
-                                        ConnectionState.waiting) {
-                                      // 데이터 로딩 중에 보여줄 위젯
-                                      return Image.asset("img/product/11.png", fit: BoxFit.cover);
-                                    } else if (snapshot.hasError) {
-                                      // 에러가 발생했을 때 보여줄 위젯
-                                      return Image.asset("img/product/11.png", fit: BoxFit.cover);
-                                    } else {
-                                      // 데이터가 성공적으로 로드되었을 때 보여줄 위젯
-                                      return snapshot.data ??
-                                         Image.network("http://10.0.2.2:8081/api/img?file=${proReviewList[index]['prImg'].toString()}", fit: BoxFit.cover);
-                                    }
-                                  },
-                                ),
-                                    // Image.asset(
-                                    //   "img/product/detailproduct.jpg"
-                                    // ),
+                                    child: connected
+                                        ?
+                                        //상품후기 이미지
+                                        Image.network(
+                                            "http://10.0.2.2:8081/api/img?file=${proReviewList[index]['prImg']}",
+                                            fit: BoxFit.cover,
+                                          )
+                                        : Image.asset("img/product/review.png"),
                                   ),
                                 ),
                                 Column(
@@ -495,13 +450,18 @@ class _ProductDetailState extends State<ProductDetail> {
                                           color: notifire.getwhiteblackcolor,
                                           fontFamily: "Gilroy Bold"),
                                     ),
-                                    Text(
-                                      proReviewList[index]["prCon"].toString(),
-                                      style: TextStyle(
-                                          fontSize: 13,
-                                          color: notifire.getgreycolor,
-                                          fontFamily: "Gilroy Medium",
-                                          overflow: TextOverflow.ellipsis),
+                                    //텍스트가 넘쳐서 컨테이너 속성을 줌
+                                    Container(
+                                      width: 250,
+                                      child: Text(
+                                        proReviewList[index]["prCon"]
+                                            .toString(),
+                                        style: TextStyle(
+                                            fontSize: 13,
+                                            color: notifire.getgreycolor,
+                                            fontFamily: "Gilroy Medium",
+                                            overflow: TextOverflow.ellipsis),
+                                      ),
                                     ),
                                     Text(
                                       proReviewList[index]["formattedDate"]
@@ -511,6 +471,7 @@ class _ProductDetailState extends State<ProductDetail> {
                                           color: notifire.getgreycolor,
                                           fontFamily: "Gilroy Medium",
                                           overflow: TextOverflow.ellipsis),
+                                      maxLines: 2,
                                     ),
                                     Text(
                                       proReviewList[index]["userId"].toString(),

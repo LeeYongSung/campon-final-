@@ -99,7 +99,9 @@ public class ProductApiController {
     public ResponseEntity<?> productDetail(Integer productNo) {
         log.info("productDetail 들어갔음" );
         try {
-            Product product = productService.selectWImg(productNo);
+            // Product product = productService.selectWImg(productNo);
+            Product product = productService.selectUpd(productNo);
+            // List<Product> product = productService.selectWImg(productNo);
             List<Productreview> proReviewList = productService.getReviewListByNoLim(productNo);
             for (Productreview productreview : proReviewList) {
                 log.info(productreview.getPrNo() + "리뷰넘버");

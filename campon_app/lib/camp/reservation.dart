@@ -25,6 +25,7 @@ class Reservation extends StatefulWidget {
 class _ReservationState extends State<Reservation> {
 
   List<Camp> camp = [];
+  List<dynamic> product = [];
 
   @override
   void initState() {
@@ -44,9 +45,12 @@ class _ReservationState extends State<Reservation> {
       
       if (response.statusCode == 200){
       var utf8Decoded = utf8.decode(response.bodyBytes);
-      Map<String, dynamic> data = jsonDecode(utf8Decoded);
+      final data = jsonDecode(utf8Decoded);
 
-      // List<Product> productList = List<Product>.from(data['productList'].map((item) => Product.fromJson(item)));
+      final productList = data['productList'];
+      product = productList;
+      print(product);
+
       List<Camp> reservationList = List<Camp>.from(data['reservationList'].map((item) => Camp.fromJson(item)));
       
       List<Camp>? campList = [];
@@ -86,6 +90,10 @@ class _ReservationState extends State<Reservation> {
       print("삭제 실패 ${response.statusCode}");
     }
 
+  }
+
+  Future<void> productdelete(int no) async {
+    // var url = 'http:/10.0.2.2:8081/api/'
   }
 
   late ColorNotifire notifire;
@@ -180,6 +188,7 @@ class _ReservationState extends State<Reservation> {
                                                 fontSize: 16,
                                                 color: notifire.getwhiteblackcolor,
                                                 fontFamily: "Gilroy Bold",
+                                                overflow: TextOverflow.ellipsis
                                               ),
                                             ),
                                             const SizedBox(height: 6),
@@ -188,6 +197,7 @@ class _ReservationState extends State<Reservation> {
                                               style: TextStyle(
                                                 fontSize: 15,
                                                 color: notifire.getgreycolor,
+                                                overflow: TextOverflow.ellipsis
                                               ),
                                             ),
                                             Text(
@@ -195,10 +205,35 @@ class _ReservationState extends State<Reservation> {
                                               style: TextStyle(
                                                 fontSize: 15,
                                                 color: notifire.getgreycolor,
+                                                overflow: TextOverflow.ellipsis
                                               ),
                                             ),
                                           ],
                                         ),
+                                  // GestureDetector(
+                                  //         onTap: () {
+                                  //           showDialog(context: context, builder: (BuildContext context){
+                                  //             return AlertDialog(
+                                  //               content: Text("리뷰쓰러가기"),
+                                  //               actions: [
+                                  //                 TextButton(onPressed: (){Navigator.of(context).pop();}, child: Text("취소")),
+                                  //                 TextButton(onPressed: (){
+                                  //                   // productdelete(product[index]['orderNo']);
+                                  //                   // setState(() {
+                                  //                   //   product.removeAt(index); 
+                                  //                   // });   
+                                  //                   Navigator.of(context).pop();
+                                  //                 }, child: Text("확인")),
+                                  //               ],
+                                  //             );
+                                  //           });
+                                            
+                                  //         },
+                                  //         child: const Icon(
+                                  //           Icons.edit,
+                                  //           color: Colors.black
+                                  //         ),
+                                  // ),
                                       ],
                                     ),
                                   ],
@@ -251,12 +286,12 @@ class _ReservationState extends State<Reservation> {
                                           ),
                                         ),
                                         SizedBox(height: 10,),
-                                        Text("${camp[index].reservationNo ?? "0"}"),
-                                        Text(camp[index].userName ?? "예약자명"),
-                                        Text("${camp[index].reservationNop ?? '0' } 명"),
-                                        Text("${camp[index].reservationDate ?? '0' } 일"),
-                                        Text("${DateFormat('yyyy-MM-dd').format(camp[index].reservationStart ?? DateTime.now())} ~ ${DateFormat('yyyy-MM-dd').format(camp[index].reservationEnd ?? DateTime.now())}"),
-                                        Text(camp[index].campTel ?? '캠핑장연락처'),
+                                        Text("${camp[index].reservationNo ?? "0"}",overflow: TextOverflow.ellipsis),
+                                        Text(camp[index].userName ?? "예약자명",overflow: TextOverflow.ellipsis),
+                                        Text("${camp[index].reservationNop ?? '0' } 명",overflow: TextOverflow.ellipsis),
+                                        Text("${camp[index].reservationDate ?? '0' } 일",overflow: TextOverflow.ellipsis),
+                                        Text("${DateFormat('yyyy-MM-dd').format(camp[index].reservationStart ?? DateTime.now())} ~ ${DateFormat('yyyy-MM-dd').format(camp[index].reservationEnd ?? DateTime.now())}",overflow: TextOverflow.ellipsis),
+                                        Text(camp[index].campTel ?? '캠핑장연락처',overflow: TextOverflow.ellipsis),
                                       ],
                                     ),
                                   ]),
@@ -285,7 +320,7 @@ class _ReservationState extends State<Reservation> {
                   physics: const NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
                   padding: EdgeInsets.zero,
-                  itemCount: 2,
+                  itemCount: product.length,
                   itemBuilder: (BuildContext context, int index) {
                     return Padding(
                       padding: const EdgeInsets.symmetric(vertical: 6),
@@ -302,44 +337,100 @@ class _ReservationState extends State<Reservation> {
                                 children: [
                                   Row(
                                     crossAxisAlignment: CrossAxisAlignment.start,
-                                  children:[Image.asset(
-                                    "assets/images/Rimuru.png",
-                                    height: 75,
-                                  ),
+                                  children:[
+                                  Container(
+                                          height: 75,
+                                          width: 75,
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(15),
+                                            color: notifire.getdarkmodecolor,
+                                          ),
+                                          child: ClipRRect(
+                                            borderRadius: BorderRadius.circular(10),
+                                            child:
+                                                Image.asset(product[index]["productThumnail"].toString(),),
+                                          ),
+                                        ),
+                                  
                                   const SizedBox(width: 10),
                                   Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Text("대여상품명",
+                                      SizedBox(
+                                        width: MediaQuery.of(context).size.width * 0.6,
+                                        child: Text(
+                                          product[index]["productName"].toString(),
                                           style: TextStyle(
-                                              fontSize: 16,
-                                              color:
-                                                  notifire.getwhiteblackcolor,
-                                              fontFamily: "Gilroy Bold")),
-                                      const SizedBox(height: 6),
-                                      Text("상품 기본 정보",
+                                            fontSize: 16,
+                                            color:notifire.getwhiteblackcolor,
+                                            fontFamily: "Gilroy Bold",
+                                            overflow: TextOverflow.ellipsis),
+                                        ),
+                                      ),
+                                      Text(product[index]["productCategory"].toString(),
                                           style: TextStyle(
                                               fontSize: 15,
                                               color: notifire.getgreycolor)),
-                                      Text("개수 / 가격",
+                                      Text("${product[index]["productPrice"].toString()}원 * ${product[index]["orderCnt"].toString()}개",
                                           style: TextStyle(
                                               fontSize: 15,
                                               color: notifire.getgreycolor)),
                                     ],
                                   ),]),
-                                  Container(
-                                    height: 40,
-                                    width: 70,
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(50),
-                                        color: notifire.getlightblackcolor.withAlpha(0)),
-                                    child: const Center(
-                                      child: Icon(Icons.delete)
-                                    ),
+                                  Column(
+                                  children: [
+                                  GestureDetector(
+                                          onTap: () {
+                                            showDialog(context: context, builder: (BuildContext context){
+                                              return AlertDialog(
+                                                content: Text("리뷰쓰러가기"),
+                                                actions: [
+                                                  TextButton(onPressed: (){Navigator.of(context).pop();}, child: Text("취소")),
+                                                  TextButton(onPressed: (){
+                                                    // productdelete(product[index]['orderNo']);
+                                                    // setState(() {
+                                                    //   product.removeAt(index); 
+                                                    // });   
+                                                    Navigator.of(context).pop();
+                                                  }, child: Text("확인")),
+                                                ],
+                                              );
+                                            });
+                                            
+                                          },
+                                          child: const Icon(
+                                            Icons.edit,
+                                            color: Colors.black
+                                          ),
+                                  ),
+                                  SizedBox(height: 20,),
+                                  GestureDetector(
+                                          onTap: () {
+                                            showDialog(context: context, builder: (BuildContext context){
+                                              return AlertDialog(
+                                                content: Text("대여내역을 삭제하시겠습니까?"),
+                                                actions: [
+                                                  TextButton(onPressed: (){Navigator.of(context).pop();}, child: Text("취소")),
+                                                  TextButton(onPressed: (){
+                                                    // productdelete(product[index]['orderNo']);
+                                                    setState(() {
+                                                      product.removeAt(index); 
+                                                    });   
+                                                    Navigator.of(context).pop();
+                                                  }, child: Text("삭제")),
+                                                ],
+                                              );
+                                            });
+                                            
+                                          },
+                                          child: const Icon(
+                                            Icons.delete,
+                                            color: Colors.black
+                                          ),
                                   ),
                                 ],
-                              ),                           
+                              ),                                  ],)                           
                         ),
                       ),
                     );

@@ -41,15 +41,16 @@ public class BoardApiController {
     @GetMapping(value = "/index")
     // public ResponseEntity<?> index(@AuthenticationPrincipal CustomUser customUser) throws Exception {
     // public ResponseEntity<?> index(Authentication authentication) throws Exception {
-    public ResponseEntity<?> index(@AuthenticationPrincipal CustomUser customUser) throws Exception {
+    // public ResponseEntity<?> index(@AuthenticationPrincipal CustomUser customUser) throws Exception {
+    public ResponseEntity<?> index() throws Exception {
         
-        log.info("customUser는?", customUser);
+        // log.info("customUser는?", customUser);
 
-        Users user = customUser.getUser();
-        log.info("user는?", user);
-        String auth = user.getAuth();
-        log.info("auth는? ", auth);
-        int userNo = user.getUserNo();
+        // Users user = customUser.getUser();
+        // log.info("user는?", user);
+        // String auth = user.getAuth();
+        // log.info("auth는? ", auth);
+        // int userNo = user.getUserNo();
         // List<Board> newReviewList = new ArrayList<>();
         // List<Board> crlist = new ArrayList<>();
         // if (auth == "ROLE_ADMIN") {

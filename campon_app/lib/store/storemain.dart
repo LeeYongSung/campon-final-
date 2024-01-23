@@ -1,4 +1,5 @@
 import 'package:campon_app/common/footer_screen.dart';
+import 'package:campon_app/store/cart.dart';
 import 'package:campon_app/store/category.dart';
 import 'package:campon_app/store/productdetail.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -315,7 +316,8 @@ class _StoreMainState extends State<StoreMain> {
               child: Icon(Icons.shopping_cart),
             ),
             onTap: () {
-              print('test2.....');
+              print('장바구니 클릭');
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>Cart()));
             },
           ),
         ],

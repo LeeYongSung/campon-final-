@@ -51,7 +51,7 @@ public interface ProductMapper {
     public List<Product> cartList(int userNo) throws Exception;
     
     // 중복 검사
-    public int dupliCateTest(int productNo) throws Exception;
+    public int dupliCateTest(Product product) throws Exception;
     //장바구니 등록
     public int addCart(Product product) throws Exception;
     //장바구니 업뎃

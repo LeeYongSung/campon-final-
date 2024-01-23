@@ -345,6 +345,8 @@ class _homeState extends State<home> {
                       ),
                       SizedBox(
                           height: MediaQuery.of(context).size.height * 0.01),
+
+                          //가져오기~
                       ListView.builder(
                         shrinkWrap: true,
                         padding: EdgeInsets.zero,

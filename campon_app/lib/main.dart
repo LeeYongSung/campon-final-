@@ -1,4 +1,8 @@
 import 'package:campon_app/loading/loading_screen.dart';
+import 'package:campon_app/store/cart.dart';
+import 'package:campon_app/store/payment.dart';
+import 'package:campon_app/store/storemain.dart';
+import 'package:campon_app/user/login.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'example/Utils/dark_lightmode.dart';
@@ -26,7 +30,10 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: LoadingScreen(),
+      // home: LoadingScreen(),
+      // home: Payment(),
+      home: StoreMain(),
+      // home: Login(),
     );
   }
 }

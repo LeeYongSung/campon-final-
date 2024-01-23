@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:campon_app/camp/camp_schedule_screen.dart';
+import 'package:campon_app/store/cart.dart';
 import 'package:campon_app/store/productdetail.dart';
 import 'package:flutter/material.dart';
 import 'package:campon_app/example/Utils/dark_lightmode.dart';
@@ -21,6 +22,53 @@ class _CategoryState extends State<Category> {
   late String categoryName = widget.categoryName;
   late ColorNotifire notifire;
 
+  bool connected = false;
+
+
+  //카테고리명, 이미지 등..
+  List<dynamic> categories = [
+    {
+      "name" : "텐트", 
+      "image" : "img/product/product1.png"
+    },
+    {
+      "name" : "테이블", 
+      "image" : "img/product/product2.png"
+    },
+    {
+      "name" : "체어", 
+      "image" : "img/product/product3.png"
+    },
+    {
+      "name" : "매트", 
+      "image" : "img/product/product4.png"
+    },
+    {
+      "name" : "조명", 
+      "image" : "img/product/product5.png"
+    },
+    {
+      "name" : "화로대", 
+      "image" : "img/product/product6.png"
+    },
+    {
+      "name" : "타프", 
+      "image" : "img/product/product7.png"
+    },
+    {
+      "name" : "수납", 
+      "image" : "img/product/product8.png"
+    },
+    {
+      "name" : "캠핑가전", 
+      "image" : "img/product/product9.png"
+    },
+    {
+      "name" : "주방용품", 
+      "image" : "img/product/product10.png"
+    },
+  ];
+  
 
   List category = [
     {
@@ -51,6 +99,7 @@ class _CategoryState extends State<Category> {
       //카테고리2는? [{productNo: 1, productName: 1, productThumnail: /img/product/3d5486f7-470c-496f-a5ef-707ff8d29c1a_20231115_103134.png, productCon: C:/upload/f463b7a9-fe3c-4221-a72e-4adab7eea70f_camp1-5.jpg, productIntro: 상품설명1, productCategory: 텐트, productPrice: 10000000, regDate: 2023-11-01T07:28:23.000+00:00, updDate: 2023-11-01T07:28:23.000+00:00, userNo: null, productimgNo: null, productimgUrl: null, productImgsUrlList: null, productThmFile: null, productConFile: null, productImgs: null, cartNo: null, cartCnt: null, productsaveNo: 0, wishlistNo: 0, orderCnt: 0, sum: null, orderNo: 0}]
       setState(() {
         category = category2;
+        connected = true;
       });
     }
   }
@@ -72,6 +121,84 @@ class _CategoryState extends State<Category> {
       print('서버 접근 불가');
       return Image.asset("img/product/11.png", fit: BoxFit.cover);
     }
+  }
+
+  //장바구니 클릭 시 실행될 함수
+  Future<void> addCart (String productNo) async {
+    int userNo = 2; //TODO 하드코딩
+    try {
+      var response = await http.get(Uri.parse("http://10.0.2.2:8081/api/product/addProductsaveAjax?productNo=${productNo}&userNo=${userNo}"));
+      var result = response.body;
+      if (result == "SUCCESS"){
+        print("장바구니에 담기기 성공");
+        //위젯
+        showCartDialogS();
+      } else {
+        print("이미 장바구니에 담긴 상품");
+        showCartDialogF();
+      }
+    } catch (e) {
+      print("장바구니에 담기 실패.. 서버에러 ${e}");
+      showCartDialogE();
+    }
+  }
+
+  void showCartDialogS() {
+    showDialog(context: context, builder: (context) {
+      return AlertDialog(
+        title : Text("장바구니에 담겼습니다!"),
+        content: Text("장바구니로 이동하시겠습니까?"),
+        actions: [
+          TextButton(onPressed: 
+          (){
+            //TODO 장바구니 페이지로 이동
+                Navigator.pushReplacement(
+                    context, MaterialPageRoute(builder: (context) => Cart()));
+          }
+          , child: Text("이동")),
+          TextButton(onPressed: (){
+            Navigator.pop(context);
+          }, child: Text("취소")),
+        ],
+
+      );
+    },);
+  }
+
+  void showCartDialogF() {
+    showDialog(context: context, builder: (context) {
+      return AlertDialog(
+        title : Text("이미 장바구니에 담긴 상품입니다!"),
+        content: Text("장바구니로 이동하시겠습니까?"),
+        actions: [
+          TextButton(onPressed: 
+          (){
+            //TODO 장바구니 페이지로 이동
+            Navigator.pop(context);
+          }
+          , child: Text("이동")),
+          TextButton(onPressed: (){
+            Navigator.pop(context);
+          }, child: Text("취소")),
+        ],
+
+      );
+    },);
+  }
+
+  void showCartDialogE() {
+    showDialog(context: context, builder: (context) {
+      return AlertDialog(
+        title : Text("장바구니에 담기 실패!"),
+        content: Text("다시 시도해보세요"),
+        actions: [
+          TextButton(onPressed: (){
+            Navigator.pop(context);
+          }, child: Text("확인")),
+        ],
+
+      );
+    },);
   }
 
   @override
@@ -125,21 +252,28 @@ class _CategoryState extends State<Category> {
             SizedBox(
               height: 100,
               width: MediaQuery.of(context).size.width * 5,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: [
-                  Container(
+
+              child: ListView.builder(
+                 scrollDirection: Axis.horizontal,
+                itemCount: categories.length,
+                itemBuilder: (context, index) {
+                  return    Container(
                     width: 85,
                     child: InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => Category(categoryName : "${categories[index]["name"]}")));
+                      },
                       child: Column(
                         children: [
                           Image.asset(
-                            "img/product/product1.png",
+                             "${categories[index]["image"]}",
                             height: 60,
                           ),
                           Text(
-                            "텐트",
+                            "${categories[index]["name"]}",
                             style: TextStyle(
                               fontSize: 15,
                               fontFamily: "Gilroy Medium",
@@ -148,198 +282,14 @@ class _CategoryState extends State<Category> {
                         ],
                       ),
                     ),
-                  ),
-                  Container(
-                    width: 85,
-                    child: InkWell(
-                      onTap: () {},
-                      child: Column(
-                        children: [
-                          Image.asset(
-                            "img/product/product2.png",
-                            height: 60,
-                          ),
-                          Text(
-                            "테이블",
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontFamily: "Gilroy Medium",
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Container(
-                    width: 85,
-                    child: InkWell(
-                      onTap: () {},
-                      child: Column(
-                        children: [
-                          Image.asset(
-                            "img/product/product3.png",
-                            height: 60,
-                          ),
-                          Text(
-                            "체어",
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontFamily: "Gilroy Medium",
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Container(
-                    width: 85,
-                    child: InkWell(
-                      onTap: () {},
-                      child: Column(
-                        children: [
-                          Image.asset(
-                            "img/product/product4.png",
-                            height: 60,
-                          ),
-                          Text(
-                            "매트",
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontFamily: "Gilroy Medium",
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Container(
-                    width: 85,
-                    child: InkWell(
-                      onTap: () {},
-                      child: Column(
-                        children: [
-                          Image.asset(
-                            "img/product/product5.png",
-                            height: 60,
-                          ),
-                          Text(
-                            "조명",
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontFamily: "Gilroy Medium",
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Container(
-                    width: 85,
-                    child: InkWell(
-                      onTap: () {},
-                      child: Column(
-                        children: [
-                          Image.asset(
-                            "img/product/product6.png",
-                            height: 60,
-                          ),
-                          Text(
-                            "화로대",
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontFamily: "Gilroy Medium",
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Container(
-                    width: 85,
-                    child: InkWell(
-                      onTap: () {},
-                      child: Column(
-                        children: [
-                          Image.asset(
-                            "img/product/product7.png",
-                            height: 60,
-                          ),
-                          Text(
-                            "타프",
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontFamily: "Gilroy Medium",
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Container(
-                    width: 85,
-                    child: InkWell(
-                      onTap: () {},
-                      child: Column(
-                        children: [
-                          Image.asset(
-                            "img/product/product8.png",
-                            height: 60,
-                          ),
-                          Text(
-                            "수납",
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontFamily: "Gilroy Medium",
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Container(
-                    width: 85,
-                    child: InkWell(
-                      onTap: () {},
-                      child: Column(
-                        children: [
-                          Image.asset(
-                            "img/product/product9.png",
-                            height: 60,
-                          ),
-                          Text(
-                            "캠핑가전",
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontFamily: "Gilroy Medium",
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Container(
-                    width: 85,
-                    child: InkWell(
-                      onTap: () {},
-                      child: Column(
-                        children: [
-                          Image.asset(
-                            "img/product/product10.png",
-                            height: 60,
-                          ),
-                          Text(
-                            "주방용품",
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontFamily: "Gilroy Medium",
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
+                  );
+                  
+                },
+              
               ),
+
+
+
             ),
 
             SizedBox(
@@ -358,8 +308,9 @@ class _CategoryState extends State<Category> {
             //카페고리 상품 목록 출력
             Padding(
               padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-              child: Expanded(
+              child: Container(
                 child: ListView.builder(
+                   physics: const NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
                   itemCount: category.length,
                   itemBuilder: (context, index) {
@@ -378,32 +329,15 @@ class _CategoryState extends State<Category> {
                                 borderRadius: const BorderRadius.only(
                                     topLeft: Radius.circular(12),
                                     topRight: Radius.circular(12)),
-                                child: FutureBuilder<Widget?>(
-                                  future: checkUrlAccessibility(
-                                      "http://10.0.2.2:8081/api/img?file=${category[index]["productThumnail"].toString()}",
-                                      index),
-                                  builder: (context, snapshot) {
-                                    if (snapshot.connectionState ==
-                                        ConnectionState.waiting) {
-                                      // 데이터 로딩 중에 보여줄 위젯
-                                      return Image.asset("img/product/11.png", fit: BoxFit.cover);
-                                    } else if (snapshot.hasError) {
-                                      // 에러가 발생했을 때 보여줄 위젯
-                                      return Image.asset("img/product/11.png", fit: BoxFit.cover);
-                                    } else {
-                                      // 데이터가 성공적으로 로드되었을 때 보여줄 위젯
-                                      return snapshot.data ??
-                                         Image.network("http://10.0.2.2:8081/api/img?file=${category[index]["productThumnail"].toString()}", fit: BoxFit.cover);
-                                    }
-                                  },
-                                ),
+                                child: 
 
-                                //checkUrlAccessibility("http://10.0.2.2:8081/api/img?file=${category[index]["productThumnail"].toString()}", index),
-
-                                // Image.network(
-                                //   "http://10.0.2.2:8081/api/img?file=${category[index]["productThumnail"].toString()}",
-                                //   fit: BoxFit.cover,
-                                // ),
+                                //썸네일 이미지
+                                connected ? 
+                                Image.network(
+                                  "http://10.0.2.2:8081/api/img?file=${category[index]["productThumnail"].toString()}",
+                                  fit: BoxFit.cover,
+                                ) : Image.asset("img/product/11.png", fit: BoxFit.cover)
+                                ,
                               ),
                             ),
                             Padding(
@@ -469,7 +403,6 @@ class _CategoryState extends State<Category> {
                                                   Navigator.of(context)
                                                       .push(MaterialPageRoute(
                                                           builder: (context) =>
-                                                              //TODO 수정예정
                                                               ProductDetail(productNo: '${category[index]["productNo"]}')));
                                                 }),
                                           ),
@@ -485,10 +418,7 @@ class _CategoryState extends State<Category> {
                                             child: AppButton(
                                                 buttontext: "장바구니",
                                                 onclick: () {
-                                                  Navigator.of(context).push(
-                                                      MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              const homepage()));
+                                                 addCart("${category[index]["productNo"]}");
                                                 }),
                                           ),
                                         ],

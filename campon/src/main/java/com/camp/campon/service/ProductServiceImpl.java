@@ -297,8 +297,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public int dupliCateTest(int productNo) throws Exception {
-        int result = productMapper.dupliCateTest(productNo);
+    public int dupliCateTest(Product product) throws Exception {
+        int result = productMapper.dupliCateTest(product);
         return result;
     }
 

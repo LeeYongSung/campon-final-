@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:ui' as ui;
+import 'package:campon_app/store/cart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:readmore/readmore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -23,6 +25,20 @@ class ProductDetail extends StatefulWidget {
 }
 
 class _ProductDetailState extends State<ProductDetail> {
+  //상세이지의 높이값 알아오기
+  int? _width;
+  int? _height;
+  Future<void> getImageSize(String imageUrl) async {
+    final ByteData data =
+        await NetworkAssetBundle(Uri.parse(imageUrl)).load(imageUrl);
+    final Uint8List bytes = data.buffer.asUint8List();
+    final decodedImage = await decodeImageFromList(bytes);
+    print(decodedImage.width);
+    print(decodedImage.height);
+    _width = decodedImage.width;
+    _height = decodedImage.height;
+  }
+
   var connected = false;
   late String productNo = widget.productNo;
   int _current = 0;
@@ -35,6 +51,15 @@ class _ProductDetailState extends State<ProductDetail> {
     'img/product/14.png',
     'img/product/15.png',
   ];
+  List<dynamic> imgList2 = [
+    'img/product/11.png',
+    'img/product/12.png',
+    'img/product/13.png',
+    'img/product/14.png',
+    'img/product/15.png',
+  ];
+
+  String imgLink3 = 'img/product/11.png';
 
   late ColorNotifire notifire;
   bool _pinned = true;
@@ -118,64 +143,221 @@ class _ProductDetailState extends State<ProductDetail> {
         reviewCount = reviewCount2;
         print('reviewCount? ${reviewCount}');
       });
+      String exampleImageUrl =
+          "http://10.0.2.2:8081/api/img?file=${product['productCon']}";
+      getImageSize(exampleImageUrl);
     } else {
       throw Exception('Failed to load getReviewList()');
     }
   }
 
-  //장바구니 버튼 클릭 시 실행되는 함수
-  Future<dynamic> addCart() async {
-    print("장바구니 버튼 클릭");
-    print("장바구니 버튼 클릭");
-    print("장바구니 버튼 클릭");
-    print("장바구니 버튼 클릭");
-    //TODO 하드코딩
-    int userNo = 1;
-    final response = await http.get(Uri.parse(
-        'http://10.0.2.2:8081/api/product/addProductsaveAjax?productNo=${productNo}&userNo=${userNo}'));
-    if (response.statusCode == 200) {
-      print("response.statusCode == 200 입니다. ");
-      final data = jsonDecode(utf8.decode(response.bodyBytes));
-      if (data == "SUCCESS") {
-        print("data == 'SUCCESS' ");
-        return showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text("장바구니에 등록되었습니다."),
-            );
-          },
-        );
+  //장바구니 클릭 시 실행될 함수
+  Future<void> addCart(String productNo) async {
+    int userNo = 2; //TODO 하드코딩
+    try {
+      var response = await http.get(Uri.parse(
+          "http://10.0.2.2:8081/api/product/addProductsaveAjax?productNo=${productNo}&userNo=${userNo}"));
+      var result = response.body;
+      if (result == "SUCCESS") {
+        print("장바구니에 담기기 성공");
+        //위젯
+        showCartDialogS();
       } else {
-        print("data == 'SUCCESS' 아님 ");
-        return showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text("장바구니에 이미 등록되어있습니다. "),
-            );
-          },
-        );
+        print("이미 장바구니에 담긴 상품");
+        showCartDialogF();
       }
+    } catch (e) {
+      print("장바구니에 담기 실패.. 서버에러 ${e}");
+      showCartDialogE();
     }
+  }
+
+  void showCartDialogS() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text("장바구니에 담겼습니다!"),
+          content: Text("장바구니로 이동하시겠습니까?"),
+          actions: [
+            TextButton(
+                onPressed: () {
+                  Navigator.pushReplacement(
+                      context, MaterialPageRoute(builder: (context) => Cart()));
+                },
+                child: Text("이동")),
+            TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text("취소")),
+          ],
+        );
+      },
+    );
+  }
+
+  void showCartDialogF() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text("이미 장바구니에 담긴 상품입니다!"),
+          content: Text("장바구니로 이동하시겠습니까?"),
+          actions: [
+            TextButton(
+                onPressed: () {
+                  Navigator.pushReplacement(
+                      context, MaterialPageRoute(builder: (context) => Cart()));
+                },
+                child: Text("이동")),
+            TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text("취소")),
+          ],
+        );
+      },
+    );
+  }
+
+  void showCartDialogE() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text("장바구니에 담기 실패!"),
+          content: Text("다시 시도해보세요"),
+          actions: [
+            TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text("확인")),
+          ],
+        );
+      },
+    );
+  }
+  //장바구니 클릭 시 실행될 함수 끝
+
+  //상품찜 함수
+  Future<void> addWish(productNo) async {
+    print('상품찜 함수 실행');
+    try {
+      var response = await http.get(Uri.parse(
+          'http://10.0.2.2:8081/api/product/addProductsave?productNo=${productNo}'));
+      var data = response.body;
+      if (data == 'SUCCESS') {
+        print('찜목록에 추가됨');
+        addWishDialogS();
+      } else {
+        print('찜목록에 추가안됨(이미 되어있음)');
+        addWishDialogF();
+      }
+    } catch (e) {
+      print('찜 서버연동 오류 ${e}');
+      addWishDialogE();
+    }
+  }
+
+  void addWishDialogS() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text("찜!"),
+          content: Text("찜 목록으로 이동하시겠습니까?"),
+          actions: [
+            TextButton(
+                onPressed: () {
+                  //TODO 찜화면으로 이동
+                  // Navigator.pushReplacement(
+                  //     context, MaterialPageRoute(builder: (context) => Cart()));
+                },
+                child: Text("확인")),
+            TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text("취소")),
+          ],
+        );
+      },
+    );
+  }
+
+  void addWishDialogF() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text("이미 찜에 있어요!"),
+          content: Text("찜 목록으로 이동하시겠습니까?"),
+          actions: [
+            TextButton(
+                onPressed: () {
+                  //TODO 찜화면으로 이동
+                  // Navigator.pushReplacement(
+                  //     context, MaterialPageRoute(builder: (context) => Cart()));
+                },
+                child: Text("확인")),
+            TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text("취소")),
+          ],
+        );
+      },
+    );
+  }
+
+  void addWishDialogE() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text("찜하지 못했어요!"),
+          content: Text("서버연동오류. 다시 실행해보세요."),
+          actions: [
+            TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text("확인")),
+          ],
+        );
+      },
+    );
   }
 
 //이미지 슬라이드
   Widget sliderWidget() {
     return CarouselSlider(
         carouselController: _controller,
-        items: imgList.map((imgLink) {
+        items: 
+        imgList.map((
+          imgLink,
+        ) {
           return Builder(
             builder: (context) {
               return SizedBox(
                 width: MediaQuery.of(context).size.width,
-                child: Image(
+                child: FadeInImage(
+                  placeholder: AssetImage(imgLink),
                   fit: BoxFit.cover,
                   image: connected
                       ? NetworkImage(
-                              'http://10.0.2.2:8081/api/img?file=${imgLink}')
-                          as ImageProvider<Object>
+                          'http://10.0.2.2:8081/api/img?file=${imgLink}',
+                        ) as ImageProvider<Object>
                       : AssetImage(imgLink),
+                  imageErrorBuilder: (context, error, stackTrace) {
+                    return 
+                    //TODO 이미지를 imgLink2로 수정해야함
+                    Image.asset(imgLink3);
+                  },
                 ),
               );
             },
@@ -264,7 +446,7 @@ class _ProductDetailState extends State<ProductDetail> {
                     GestureDetector(
                       onTap: () {
                         print("장바구니 버튼 클릭");
-                        addCart();
+                        addCart(productNo);
                       },
                       child: CircleAvatar(
                         radius: 22,
@@ -278,13 +460,19 @@ class _ProductDetailState extends State<ProductDetail> {
                     ),
                     const SizedBox(width: 20),
                     //찜 버튼
-                    CircleAvatar(
-                      radius: 22,
-                      backgroundColor: notifire.getlightblackcolor,
-                      child: Image.asset(
-                        "assets/images/heart.png",
-                        color: notifire.getdarkwhitecolor,
-                        height: 25,
+                    GestureDetector(
+                      onTap: () {
+                        print("찜 버튼 클릭");
+                        addWish(productNo);
+                      },
+                      child: CircleAvatar(
+                        radius: 22,
+                        backgroundColor: notifire.getlightblackcolor,
+                        child: Image.asset(
+                          "assets/images/heart.png",
+                          color: notifire.getdarkwhitecolor,
+                          height: 25,
+                        ),
                       ),
                     ),
                     const SizedBox(width: 20),
@@ -360,15 +548,23 @@ class _ProductDetailState extends State<ProductDetail> {
                     //상세 이미지
 
                     AnimatedContainer(
-                      height: isExpanded ? 1000 : 150,
-                      width: MediaQuery.of(context).size.width,
+                      height: isExpanded
+                          ? (_height != null ? (_height! * 370 / 860) : 750)
+                          // (_height! * 370 / 860)
+                          : 150,
+                      width: 370,
                       child: Container(
-                        width: MediaQuery.of(context).size.width,
                         height: 100,
                         child: connected
                             ? Image.network(
                                 "http://10.0.2.2:8081/api/img?file=${product['productCon']}",
                                 fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Image.asset(
+                                    "img/product/detailproduct.jpg",
+                                    fit: BoxFit.fitWidth,
+                                  );
+                                },
                               )
                             : Image.asset(
                                 "img/product/detailproduct.jpg",

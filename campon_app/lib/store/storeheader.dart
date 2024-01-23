@@ -1,3 +1,4 @@
+import 'package:campon_app/store/cart.dart';
 import 'package:flutter/material.dart';
 
 class StoreHeader extends StatefulWidget {
@@ -34,8 +35,7 @@ class _StoreHeaderState extends State<StoreHeader> {
             ),
             onTap: () {
               print('장바구니 클릭.....');
-              //TODO
-
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>Cart()));
             },
           ),
         ],

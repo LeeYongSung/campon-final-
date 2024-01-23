@@ -124,11 +124,11 @@ INSERT INTO productsave (product_no, user_no) VALUES (#{productNo}, #{userNo})
     JOIN product p ON c.product_no = p.product_no
     WHERE c.user_no = #{userNo}
 </select>
-
+<!-- userNo가 장바구니에 몇개를 넣었는지-->
 <select id="dupliCateTest" resultType="int">
     SELECT COUNT(*)
     FROM cart
-    WHERE product_no = #{productNo}
+    WHERE product_no = #{productNo} AND user_no = #{userNo}
 </select>
 
 <!--장바구니에서 수량 업뎃-->

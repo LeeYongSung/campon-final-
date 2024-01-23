@@ -137,7 +137,8 @@ public class ProductApiController {
         }
     }
 
-    @PreAuthorize("hasRole('ROLE_USER')")
+    //TODO 권한 주석해제
+    // @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping(value = "/addProductsave")
     public ResponseEntity<?> addProductsave(int productNo) {
         try {
@@ -174,29 +175,38 @@ public class ProductApiController {
         }
     }
 
-    @PreAuthorize("hasRole('ROLE_USER')")
+    //TODO 권한 주석해제
+    // @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/cart")
     public ResponseEntity<?> cartlist(Principal principal) {
-        String userId = principal.getName();
+        String userId = "";
+        if (principal == null || principal.getName() == null){
+            userId = "user";
+        } else {
+            userId = principal.getName();
+        }
         try {
             Users users = userService.selectById(userId);
             int userNo = users.getUserNo();
             List<Product> cartList = productService.cartList(userNo);
-
+            log.info(cartList.toString());
             return new ResponseEntity<>(cartList, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
+    //장바구니에 넣기
     @GetMapping(value = "/addProductsaveAjax")
     public ResponseEntity<?> addCart(Product product) {
         try {
             String state = "";
             int result = 0;
             int productNo = product.getProductNo();
-            log.info(productNo + "productNo 입니다. ");
-            int cnt = productService.dupliCateTest(productNo);
+            log.info(productNo + " productNo 입니다. ");
+            log.info(product.getUserNo()+" userNo입니다.");
+            //여기서 ... 오류가 나는구나~!~!~!~!
+            int cnt = productService.dupliCateTest(product);
             if (cnt == 0) {
                 result = productService.addCart(product);
                 log.info("장바구니에 넣기 성공여부 : " + result);
@@ -239,8 +249,9 @@ public class ProductApiController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
-    @PreAuthorize("hasRole('ROLE_USER')")
+    
+ //TODO 권한 주석해제
+    // @PreAuthorize("hasRole('ROLE_USER')")
     @DeleteMapping("/cartDelete")
     public ResponseEntity<?> cartListDelete(Product product) {
         try {
@@ -258,8 +269,13 @@ public class ProductApiController {
      */
     @GetMapping(value = "/payment")
     public ResponseEntity<?> payMent(Principal principal) {
+        String userId = "";
+        if (principal == null || principal.getName() == null){
+            userId = "user";
+        } else {
+            userId = principal.getName();
+        }
         try {
-            String userId = principal.getName();
             Users users = userService.selectById(userId);
             int userNo = users.getUserNo();
 

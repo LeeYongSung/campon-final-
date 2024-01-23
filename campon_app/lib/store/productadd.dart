@@ -1,25 +1,21 @@
-import 'package:image_picker/image_picker.dart';
-import 'package:flutter/material.dart';
 import 'dart:io';
-import 'package:campon_app/common/footer_screen.dart';
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ProductAdd extends StatefulWidget {
-  const ProductAdd({Key? key}) : super(key: key);
-
   @override
-  State<ProductAdd> createState() => _ProductAddState();
+  _ProductAddState createState() => _ProductAddState();
 }
 
 class _ProductAddState extends State<ProductAdd> {
   final _formKey = GlobalKey<FormState>();
-
-  String? productName;
-  late File productThmFile;
   String? productCategory;
   String? productPrice;
   String? productIntro;
-  late File productConFile;
-  late List<File> productImgs;
+  String? productName;
+  List<XFile>? thumbnail = []; // image_picker 0.8.5+3 이상에서 XFile 사용
+  List<XFile>? detailedImages = [];
+  List<XFile>? productImages = [];
 
   @override
   Widget build(BuildContext context) {
@@ -46,18 +42,38 @@ class _ProductAddState extends State<ProductAdd> {
                   onSaved: (value) => productName = value,
                 ),
                 SizedBox(height: 16),
-                Text('상품 썸네일'),
+                Text('썸네일(여러장)'),
                 ElevatedButton(
-                  onPressed: () {
-                    _pickImage(ImageSource.gallery).then((file) {
-                      if (file != null) {
-                        setState(() {
-                          productThmFile = file;
-                        });
-                      }
-                    });
+                  onPressed: () async {
+                    final ImagePicker picker = ImagePicker();
+                    final List<XFile>? pickedFiles =
+                        await picker.pickMultiImage();
+                    if (pickedFiles != null && pickedFiles.isNotEmpty) {
+                      setState(() {
+                        thumbnail = pickedFiles;
+                      });
+                    }
                   },
                   child: Text('이미지 선택'),
+                ),
+                SizedBox(height: 16),
+                // 첨부한 이미지를 보여주는 GridView
+                GridView.builder(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                    mainAxisSpacing: 10.0,
+                    crossAxisSpacing: 10.0,
+                  ),
+                  itemCount: thumbnail?.length ?? 0,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Image.file(
+                      File(thumbnail![index].path),
+                      width: 100,
+                      height: 100,
+                    );
+                  },
                 ),
                 SizedBox(height: 16),
                 Text('카테고리'),
@@ -260,29 +276,69 @@ class _ProductAddState extends State<ProductAdd> {
                 ),
                 Text('상품 상세설명(이미지)'),
                 ElevatedButton(
-                  onPressed: () {
-                    _pickImage(ImageSource.gallery).then((file) {
-                      if (file != null) {
-                        setState(() {
-                          productConFile = file;
-                        });
-                      }
-                    });
+                  onPressed: () async {
+                    final ImagePicker picker = ImagePicker();
+                    final List<XFile>? pickedFiles =
+                        await picker.pickMultiImage();
+                    if (pickedFiles != null && pickedFiles.isNotEmpty) {
+                      setState(() {
+                        detailedImages = pickedFiles;
+                      });
+                    }
                   },
                   child: Text('이미지 선택'),
                 ),
+                SizedBox(height: 16),
+                // 첨부한 이미지를 보여주는 GridView
+                GridView.builder(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                    mainAxisSpacing: 10.0,
+                    crossAxisSpacing: 10.0,
+                  ),
+                  itemCount: detailedImages?.length ?? 0,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Image.file(
+                      File(detailedImages![index].path),
+                      width: 100,
+                      height: 100,
+                    );
+                  },
+                ),
                 Text('상품 이미지(여러장)'),
                 ElevatedButton(
-                  onPressed: () {
-                    _pickMultipleImages().then((files) {
-                      if (files != null) {
-                        setState(() {
-                          productImgs = files;
-                        });
-                      }
-                    });
+                  onPressed: () async {
+                    final ImagePicker picker = ImagePicker();
+                    final List<XFile>? pickedFiles =
+                        await picker.pickMultiImage();
+                    if (pickedFiles != null && pickedFiles.isNotEmpty) {
+                      setState(() {
+                        productImages = pickedFiles;
+                      });
+                    }
                   },
                   child: Text('이미지 선택'),
+                ),
+                SizedBox(height: 16),
+                // 첨부한 이미지를 보여주는 GridView
+                GridView.builder(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                    mainAxisSpacing: 10.0,
+                    crossAxisSpacing: 10.0,
+                  ),
+                  itemCount: productImages?.length ?? 0,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Image.file(
+                      File(productImages![index].path),
+                      width: 100,
+                      height: 100,
+                    );
+                  },
                 ),
                 SizedBox(height: 16),
                 Container(
@@ -307,21 +363,29 @@ class _ProductAddState extends State<ProductAdd> {
     );
   }
 
-  Future<File?> _pickImage(ImageSource source) async {
-    final picker = ImagePicker();
-    final pickedImage = await picker.getImage(source: source);
-    if (pickedImage != null) {
-      return File(pickedImage.path);
-    }
-    return null;
-  }
+  Future<List<File>> _pickImages() async {
+    List<File> files = [];
 
-  Future<List<File>?> _pickMultipleImages() async {
-    final picker = ImagePicker();
-    final pickedImages = await picker.getMultiImage();
-    if (pickedImages != null) {
-      return pickedImages.map((pickedImage) => File(pickedImage.path)).toList();
+    try {
+      final picker = ImagePicker();
+      int maxImages = 5;
+      int selectedImages = 0;
+
+      while (selectedImages < maxImages) {
+        final imageFile = await picker.pickImage(source: ImageSource.gallery);
+        if (imageFile != null) {
+          final file = File(imageFile.path);
+          files.add(file);
+          selectedImages++;
+        } else {
+          // 사용자가 이미지 선택을 취소했거나 최대 개수에 도달했을 때
+          break;
+        }
+      }
+    } catch (e) {
+      // 에러 처리
     }
-    return null;
+
+    return files;
   }
 }

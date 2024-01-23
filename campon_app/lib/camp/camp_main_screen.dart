@@ -1,6 +1,7 @@
 import 'package:campon_app/camp/camp_favorites_screen.dart';
 import 'package:campon_app/camp/camp_home_screen.dart';
 import 'package:campon_app/camp/camp_products_screen.dart';
+import 'package:campon_app/camp/camp_reviewadd_screen.dart';
 import 'package:campon_app/example/Login&ExtraDesign/home.dart';
 import 'package:campon_app/example/Massage/massage.dart';
 import 'package:campon_app/example/Profile/profile.dart';
@@ -40,7 +41,7 @@ class _CampMainScreenState extends State<CampMainScreen> {
                 keyword: keyword,
                 searchDate: todaySearch,
                 checkBoxList: checkBoxList), // 검색
-            CampFavoritesScreen(), // 리뷰게시판
+            CampReviewAdd(), // 리뷰게시판
             profile(), // 마이페이지
           ]
         : [];

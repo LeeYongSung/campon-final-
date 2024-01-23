@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:campon_app/board/board_main.dart';
+import 'package:campon_app/camp/camp_favorites_screen.dart';
 import 'package:campon_app/camp/camp_home_screen.dart';
 import 'package:campon_app/camp/campdetail.dart';
 import 'package:campon_app/common/footer_screen.dart';
@@ -172,6 +174,40 @@ class _CampProductState extends State<CampProduct> {
     // }
   }
 
+  Future<void> Add() async{
+    Map<String,dynamic> data = {
+      'campNo' : campNo
+    };
+
+    var url = 'http://10.0.2.2:8081/api/camp/favorites';
+    var response = await http.post(
+      Uri.parse(url),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(data)
+    );
+
+    if (response.statusCode == 201) {
+        print('성공');
+        showDialog(context: context, builder: (BuildContext context){
+                                              return AlertDialog(
+                                                content: Text("찜 페이지로 이동하시겠습니까?"),
+                                                actions: [
+                                                  TextButton(onPressed: (){Navigator.of(context).push(MaterialPageRoute(
+                                                                            builder: (context) => CampFavoritesScreen()));}, child: Text("이동")),
+                                                  TextButton(onPressed: (){Navigator.of(context).pop();}, child: Text("취소")),
+                                                ],
+                                              );
+                                            });
+
+    }else{
+      print("에러");
+
+    }
+
+  }
+
   late ColorNotifire notifire;
 
   @override
@@ -221,10 +257,9 @@ class _CampProductState extends State<CampProduct> {
                     child: Icon(Icons.share, color: Colors.orange, size: 25,)
                   ),
                   const SizedBox(width: 20),
-                  CircleAvatar(
-                    radius: 22,
-                    backgroundColor: notifire.getlightblackcolor.withAlpha(0),
-                    child: Icon(Icons.star_border, color:Colors.orange, size: 30,)
+                  GestureDetector(
+                    onTap: () { Add();},
+                    child: Icon(Icons.star_border, color:Colors.orange, size: 30,),
                   ),
                   const SizedBox(width: 20),
                 ],
@@ -549,7 +584,7 @@ class _CampProductState extends State<CampProduct> {
                         InkWell(
                           onTap: () {
                             Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => const review(),
+                              builder: (context) => const boardMain(),
                             ));
                           },
                           child: Text(

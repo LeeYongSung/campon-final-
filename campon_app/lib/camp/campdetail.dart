@@ -132,7 +132,7 @@ class _CampDetailState extends State<CampDetail> {
                           height: 60,
                         ),
                       ),
-                      const SizedBox(width: 20),
+                      const SizedBox(width: 70),
                       CircleAvatar(
                           radius: 22,
                           backgroundColor:
@@ -143,16 +143,16 @@ class _CampDetailState extends State<CampDetail> {
                             size: 25,
                           )),
                       const SizedBox(width: 20),
-                      CircleAvatar(
-                          radius: 22,
-                          backgroundColor:
-                              notifire.getlightblackcolor.withAlpha(0),
-                          child: Icon(
-                            Icons.star_border,
-                            color: Colors.orange,
-                            size: 30,
-                          )),
-                      const SizedBox(width: 20),
+                      // CircleAvatar(
+                      //     radius: 22,
+                      //     backgroundColor:
+                      //         notifire.getlightblackcolor.withAlpha(0),
+                      //     child: Icon(
+                      //       Icons.star_border,
+                      //       color: Colors.orange,
+                      //       size: 30,
+                      //     )),
+                      // const SizedBox(width: 20),
                     ],
                   ),
                 ),

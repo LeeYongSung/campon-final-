@@ -428,7 +428,7 @@ public class CampAPIController {
         }
     }
     //찜 등록
-    @PreAuthorize("hasRole('ROLE_USER')")
+    // @PreAuthorize("hasRole('ROLE_USER')")
     @PostMapping(value="/favorites")
     public ResponseEntity<?> favoriteInsert(@RequestBody Camp camp) {
         try{

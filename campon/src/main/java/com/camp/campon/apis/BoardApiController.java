@@ -93,7 +93,9 @@ public class BoardApiController {
     @GetMapping(value = "/crread/{reviewNo}")
     public ResponseEntity<?> crread(@PathVariable int reviewNo) throws Exception {
         try {
+            log.info(reviewNo + "");
             Board crread = boardService.crread(reviewNo);
+            log.info("crread : " + crread);
             return new ResponseEntity<>(crread, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -117,7 +119,7 @@ public class BoardApiController {
         }
     }
 
-    @PreAuthorize("hasRole('ROLE_USER')")
+    // @PreAuthorize("hasRole('ROLE_USER')")
     @PostMapping(value = "/crinsert")
     public ResponseEntity<?> crinsertPro(Board board) throws Exception {
         log.info(board + "board는?");
@@ -132,7 +134,7 @@ public class BoardApiController {
     // ---------------------------------------------------------------------------
 
     // 캠핑 리뷰 삭제
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SELL', 'ROLE_USER')")
+    // @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SELL', 'ROLE_USER')")
     @DeleteMapping(value = "/crdelete/{reviewNo}")
     public ResponseEntity<?> crdelete(@PathVariable Integer reviewNo) throws Exception {
         try {
@@ -149,7 +151,7 @@ public class BoardApiController {
     // ---------------------------------------------------------------------------
 
     // 캠핑 리뷰 수정
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SELL', 'ROLE_USER')")
+    // @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SELL', 'ROLE_USER')")
     @GetMapping(value = "/crupdate/{reviewNo}")
     public ResponseEntity<?> crupdate(@PathVariable int reviewNo) throws Exception {
         try {
@@ -160,7 +162,7 @@ public class BoardApiController {
         }
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SELL', 'ROLE_USER')")
+    // @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SELL', 'ROLE_USER')")
     @PostMapping(value = "/crupdate")
     public ResponseEntity<?> crupdatePro(Board board) throws Exception {
         int result = boardService.crupdate(board);
@@ -187,7 +189,7 @@ public class BoardApiController {
     // ---------------------------------------------------------------------------
 
     // 상품 리뷰 등록
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SELL', 'ROLE_USER')")
+    // @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SELL', 'ROLE_USER')")
     @GetMapping(value = "/prinsert/{orderNo}")
     public ResponseEntity<?> prinsert(@PathVariable int orderNo) throws Exception {
         try {
@@ -201,7 +203,7 @@ public class BoardApiController {
         }
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SELL', 'ROLE_USER')")
+    // @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SELL', 'ROLE_USER')")
     @PostMapping(value = "/prinsert")
     public ResponseEntity<?> prinsertPro(Board board) throws Exception {
         log.info(board + "board는?");

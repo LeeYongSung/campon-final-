@@ -64,6 +64,7 @@ dependencies:
   image_picker: ^1.0.7
   # 안전한 저장소
   flutter_secure_storage: ^5.0.0
+  file_picker: ^6.1.1
 
 dev_dependencies:
   flutter_test:

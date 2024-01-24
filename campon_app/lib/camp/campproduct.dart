@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:campon_app/board/board_main.dart';
+import 'package:campon_app/board/review_read.dart';
 import 'package:campon_app/camp/camp_favorites_screen.dart';
 import 'package:campon_app/camp/camp_home_screen.dart';
 import 'package:campon_app/camp/campdetail.dart';
@@ -24,7 +25,7 @@ import 'package:http/http.dart' as http;
 int selectedIndex = 0;
 
 class CampProduct extends StatefulWidget {
-  final int campNo;
+  final int? campNo;
   const CampProduct({super.key, required this.campNo});
 
   @override
@@ -49,7 +50,6 @@ class _CampProductState extends State<CampProduct> {
   void initState() {
     getdarkmodepreviousstate();
     super.initState();
-    campNo = widget.campNo;
 
     getCamp().then((campData) {
       setState(() {
@@ -69,7 +69,7 @@ class _CampProductState extends State<CampProduct> {
   Future<Map<String, dynamic>> getCamp() async{
     Board productsreview;
     // try{
-    var url = 'http://10.0.2.2:8081/api/camp/campproduct/$campNo';
+    var url = 'http://10.0.2.2:8081/api/camp/campproduct/${widget.campNo}';
     var response = await http.get(Uri.parse(url));
     print(response.statusCode);
 
@@ -176,7 +176,7 @@ class _CampProductState extends State<CampProduct> {
 
   Future<void> Add() async{
     Map<String,dynamic> data = {
-      'campNo' : campNo
+      'campNo' : widget.campNo
     };
 
     var url = 'http://10.0.2.2:8081/api/camp/favorites';
@@ -434,21 +434,21 @@ class _CampProductState extends State<CampProduct> {
                                 ))
                             .toList(),
                       ),
-                      Divider(),
-                      const SizedBox(height: 10),
-                      Text(
-                        "캠핑장 위치",
-                        style: TextStyle(
-                            fontSize: 18,
-                            color: notifire.getwhiteblackcolor,
-                            fontFamily: "Gilroy Bold"),
-                      ),
-                      Image.asset(
-                        "assets/images/SagamoreResort.jpg", //카카오Map 연결
-                        height: 300,
-                        width: double.infinity,
-                        fit: BoxFit.fill,
-                      ),
+                      // Divider(),
+                      // const SizedBox(height: 10),
+                      // Text(
+                      //   "캠핑장 위치",
+                      //   style: TextStyle(
+                      //       fontSize: 18,
+                      //       color: notifire.getwhiteblackcolor,
+                      //       fontFamily: "Gilroy Bold"),
+                      // ),
+                      // Image.asset(
+                      //   "assets/images/SagamoreResort.jpg", //카카오Map 연결
+                      //   height: 300,
+                      //   width: double.infinity,
+                      //   fit: BoxFit.fill,
+                      // ),
                       Divider(),
                       const SizedBox(height: 10),
                       Text(
@@ -601,9 +601,8 @@ class _CampProductState extends State<CampProduct> {
                       child: campreview.reviewNo != null ?
                               InkWell(
                                 onTap: () {
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (context) =>
-                                          const review()));
+Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => reviewRead(reviewNo: campreview.reviewNo)));
                                 },
                               child:  Container(
                                 margin: const EdgeInsets.symmetric(vertical: 5),
@@ -755,11 +754,9 @@ class _CampProductState extends State<CampProduct> {
                 ),
 
             ),
-          SizedBox(height: 50.0),
-          // Container(
-          //   width: double.infinity,
-          //   child:FooterScreen(),
-          // )
+          Divider(),
+          SizedBox(height: 50,),
+          const FooterScreen()
           ],
         ),
         ),

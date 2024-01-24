@@ -30,9 +30,9 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      // home: LoadingScreen(),
+      home: LoadingScreen(),
       // home: Payment(),
-      home: StoreMain(),
+      // home: StoreMain(),
       // home: Login(),
     );
   }

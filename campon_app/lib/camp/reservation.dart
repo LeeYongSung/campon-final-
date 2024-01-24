@@ -4,6 +4,7 @@
 import 'dart:convert';
 
 import 'package:campon_app/camp/camp_home_screen.dart';
+import 'package:campon_app/common/footer_screen.dart';
 import 'package:campon_app/example/Profile/Favourite.dart';
 import 'package:campon_app/example/Utils/customwidget%20.dart';
 import 'package:campon_app/example/Utils/dark_lightmode.dart';
@@ -56,6 +57,9 @@ class _ReservationState extends State<Reservation> {
       List<Camp>? campList = [];
       for(var i = 0; i < reservationList.length; i++){
         campList.add(Camp(
+          campNo: reservationList[i].campNo,
+          userNo: reservationList[i].userNo,
+          cpdtNo: reservationList[i].cpdtNo,
           campName: reservationList[i].campName,
           cpdtName: reservationList[i].cpdtName,
           reservationNo: reservationList[i].reservationNo,
@@ -261,6 +265,7 @@ class _ReservationState extends State<Reservation> {
                                     Column(
                                       crossAxisAlignment: CrossAxisAlignment.end,
                                       children: [
+                                        Row(children: [
                                         GestureDetector(
                                           onTap: () {
                                             showDialog(context: context, builder: (BuildContext context){
@@ -285,6 +290,29 @@ class _ReservationState extends State<Reservation> {
                                             color: Colors.black
                                           ),
                                         ),
+                                        SizedBox(width: 10,),
+                                        GestureDetector(
+                                          onTap: () {
+                                            showDialog(context: context, builder: (BuildContext context){
+                                              return AlertDialog(
+                                                content: Text("리뷰쓰러가기"),
+                                                actions: [
+                                                  TextButton(onPressed: (){Navigator.of(context).pop();}, child: Text("취소")),
+                                                  TextButton(onPressed: (){
+                                                      // Navigator.of(context).push(MaterialPageRoute(
+                                                      //   builder: (context) => reviewInsert()));
+                                                  }, child: Text("확인")),
+                                                ],
+                                              );
+                                            });
+                                            
+                                          },
+                                          child: const Icon(
+                                            Icons.edit,
+                                            color: Colors.black
+                                          ),
+                                        ),
+                                        ],),
                                         SizedBox(height: 10,),
                                         Text("${camp[index].reservationNo ?? "0"}",overflow: TextOverflow.ellipsis),
                                         Text(camp[index].userName ?? "예약자명",overflow: TextOverflow.ellipsis),
@@ -414,9 +442,9 @@ class _ReservationState extends State<Reservation> {
                                                   TextButton(onPressed: (){Navigator.of(context).pop();}, child: Text("취소")),
                                                   TextButton(onPressed: (){
                                                     // productdelete(product[index]['orderNo']);
-                                                    setState(() {
-                                                      product.removeAt(index); 
-                                                    });   
+                                                    // setState(() {
+                                                    //   product.removeAt(index); 
+                                                    // });   
                                                     Navigator.of(context).pop();
                                                   }, child: Text("삭제")),
                                                 ],
@@ -462,6 +490,9 @@ class _ReservationState extends State<Reservation> {
                           color: notifire.getwhiteblackcolor,
                           fontFamily: "Gilroy Bold"),
                     ),)),
+                    const Divider(),
+                    const SizedBox(height: 50,),
+                    const FooterScreen()
             ],
           ),
         ),

@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'package:campon_app/camp/Calander.dart';
 import 'package:campon_app/camp/camp_home_screen.dart';
 import 'package:campon_app/camp/reservation.dart';
+import 'package:campon_app/common/footer_screen.dart';
 import 'package:campon_app/example/Login&ExtraDesign/homepage.dart';
 import 'package:campon_app/example/Profile/MyCupon.dart';
 import 'package:campon_app/example/Utils/Colors.dart';
@@ -264,9 +265,10 @@ class _CompleteState extends State<Complete> {
                           color: notifire.getwhiteblackcolor,
                           fontFamily: "Gilroy Bold"),
                     ),)
-              ],)
-
-            
+              ],),
+              const Divider(),
+              const SizedBox(height: 50,),
+              const FooterScreen()
             ],
           ),
         ),

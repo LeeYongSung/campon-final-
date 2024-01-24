@@ -12,6 +12,7 @@ import 'package:campon_app/example/Profile/profile.dart';
 import 'package:campon_app/example/Search/Search.dart';
 import 'package:campon_app/models/camp.dart';
 import 'package:campon_app/store/storemain.dart';
+import 'package:campon_app/user/login.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -51,7 +52,8 @@ class _CampMainScreenState extends State<CampMainScreen> {
             ProductReviewUpdate(
               reviewNo: 29,
             ),
-            profile(), // 마이페이지
+            // profile(), // 마이페이지
+            Login()
           ]
         : [];
   }

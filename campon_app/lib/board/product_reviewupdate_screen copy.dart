@@ -59,22 +59,26 @@ class _ProductReviewUpdateState extends State<ProductReviewUpdate> {
 
     if (response.statusCode == 200) {
       setState(() {
-        var utf8Decoded = utf8.decode(response.bodyBytes);
-        var result = json.decode(utf8Decoded);
+        try {
+          var utf8Decoded = utf8.decode(response.bodyBytes);
+          if (response.bodyBytes == null) {
+            var result = json.decode(utf8Decoded);
+            print(result);
+            board.prNo = result['prNo'];
+            board.userNo = result['userNo'];
+            board.productNo = result['productNo'];
+            board.orderNo = result['orderNo'];
+            board.prTitle = result['prTitle'];
+            board.prCon = result['prCon'];
+            board.campName = result['campName'];
+            board.cpdtName = result['cpdtName'];
+            board.userName = result['userName'];
 
-        print(result);
-
-        board.prNo = result['prNo'];
-        board.userNo = result['userNo'];
-        board.productNo = result['productNo'];
-        board.orderNo = result['orderNo'];
-        board.prTitle = result['prTitle'];
-        board.prCon = result['prCon'];
-        board.campName = result['campName'];
-        board.cpdtName = result['cpdtName'];
-        board.userName = result['userName'];
-
-        images.add(XFile(result['prImg']));
+            images.add(XFile(result['prImg']));
+          }
+        } catch (e) {
+          print("error: $e");
+        }
       });
     }
   }

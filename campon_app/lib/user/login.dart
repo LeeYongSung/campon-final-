@@ -17,10 +17,9 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  
   late ColorNotifire notifire;
 //컨트롤러
-    final TextEditingController _userIdController = TextEditingController();
+  final TextEditingController _userIdController = TextEditingController();
   final TextEditingController _userPwController = TextEditingController();
 
   //아이디 저장, 자동로그인
@@ -29,61 +28,62 @@ class _LoginState extends State<Login> {
 
   //로그인 함수
   // Future<void> login (username, password) async {
-  Future<void> login (UserProvider userProvider) async {
+  Future<void> login(UserProvider userProvider) async {
     try {
       String username = _userIdController.text;
       String password = _userPwController.text;
       // 로그인 요청
       await userProvider.login(username, password);
 
-      if( userProvider.isLogin ) {
+      if (userProvider.isLogin) {
         print('로그인 여부 : ${userProvider.isLogin}');
         await userProvider.getUserInfo();
         print('유저정보 저장 완료...');
-        print( userProvider.userInfo );
+        print(userProvider.userInfo);
         print('로그인 성공');
-        Navigator.of(context).push(MaterialPageRoute(builder: (context) => const StoreMain()));
+        Navigator.of(context)
+            .push(MaterialPageRoute(builder: (context) => const StoreMain()));
       }
       // 로그인 요청
-    // var response = await http.post(Uri.parse('http://10.0.2.2:8081/login?username=${username}&password=${password}'));
-    // if (response.statusCode == 200 ){
-    //   print('로그인 성공');
-    //    Navigator.of(context).push(MaterialPageRoute(builder: (context) => const StoreMain()));
-    // } else {
-    //   print('로그인 실패');
-    //   showLoginFailedDialog();
-    // }
+      // var response = await http.post(Uri.parse('http://10.0.2.2:8081/login?username=${username}&password=${password}'));
+      // if (response.statusCode == 200 ){
+      //   print('로그인 성공');
+      //    Navigator.of(context).push(MaterialPageRoute(builder: (context) => const StoreMain()));
+      // } else {
+      //   print('로그인 실패');
+      //   showLoginFailedDialog();
+      // }
     } catch (e) {
-     print('로그인 시도 중 서버와의 연결 오류 ${e}'); 
+      print('로그인 시도 중 서버와의 연결 오류 ${e}');
     }
   }
 
   // 로그인 실패 시 알림 다이얼로그 표시
-void showLoginFailedDialog() {
-  //showDialog 메서드
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: Text('로그인 실패'),
-        content: Text('아이디 혹은 비밀번호가 일치하지 않습니다.'),
-        actions: [
-          TextButton(
-            child: Text('확인'),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-        ],
-      );
-    },
-  );
-}
-  
+  void showLoginFailedDialog() {
+    //showDialog 메서드
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('로그인 실패'),
+          content: Text('아이디 혹은 비밀번호가 일치하지 않습니다.'),
+          actions: [
+            TextButton(
+              child: Text('확인'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    UserProvider userProvider = Provider.of<UserProvider>(context, listen: false);
+    UserProvider userProvider =
+        Provider.of<UserProvider>(context, listen: false);
 
     notifire = Provider.of<ColorNotifire>(
       context,

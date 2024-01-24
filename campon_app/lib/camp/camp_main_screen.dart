@@ -1,7 +1,7 @@
 import 'package:campon_app/camp/camp_favorites_screen.dart';
 import 'package:campon_app/camp/camp_home_screen.dart';
 import 'package:campon_app/camp/camp_products_screen.dart';
-import 'package:campon_app/camp/camp_reviewadd_screen.dart';
+import 'package:campon_app/board/camp_reviewadd_screen.dart';
 import 'package:campon_app/example/Login&ExtraDesign/home.dart';
 import 'package:campon_app/example/Massage/massage.dart';
 import 'package:campon_app/example/Profile/profile.dart';

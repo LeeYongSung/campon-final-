@@ -3,6 +3,7 @@ import 'package:campon_app/models/board.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -28,16 +29,39 @@ class _CampReviewAddState extends State<CampReviewAdd> {
     super.initState();
   }
 
+  File? _selectedFile;
+  TextEditingController _titleController = TextEditingController();
+  TextEditingController _writerController = TextEditingController();
+  TextEditingController _contentController = TextEditingController();
+
+  Future<void> _pickFile() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles();
+
+    if (result != null) {
+      setState(() {
+        _selectedFile = File(result.files.single.path!);
+      });
+    }
+  }
+
   Future _reviewInsert() async {
-    final url = Uri.parse("http://10.0.2.2:8081/api/admin/crinsert");
-    final response = await http.post(url,
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'keyword': "",
-          'searchDate': "",
-          'regionNo': "",
-          'checkBoxList': "",
-        }));
+    print(reviewTitle);
+    print(images[0]!.path);
+
+    // if (_selectedFile == null) {
+    //   return;
+    // }
+    // var url = Uri.parse("http://10.0.2.2:8081/api/admin/crinsert");
+    // var request = http.MultipartRequest('POST', url);
+
+    // var filefield =
+    //     await http.MultipartFile.fromPath('files', _selectedFile!.path);
+
+    // final response = await http.post(url,
+    //     headers: {'Content-Type': 'application/json'},
+    //     body: jsonEncode({
+
+    //     }));
   }
 
   @override
@@ -280,7 +304,9 @@ class _CampReviewAddState extends State<CampReviewAdd> {
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 10.0),
                       child: ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () async {
+                          _reviewInsert();
+                        },
                         child: Text(
                           "등록",
                           style: TextStyle(color: Colors.white),

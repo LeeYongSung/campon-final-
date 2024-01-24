@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -16,6 +18,18 @@ class _ProductAddState extends State<ProductAdd> {
   List<XFile>? thumbnail = []; // image_picker 0.8.5+3 이상에서 XFile 사용
   List<XFile>? detailedImages = [];
   List<XFile>? productImages = [];
+
+  Future _productInsert() async {
+    final url = Uri.parse("http://10.0.2.2:8081/api/admin/productInsert");
+    final response = await http.post(url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'keyword': "",
+          'searchDate': "",
+          'regionNo': "",
+          'checkBoxList': "",
+        }));
+  }
 
   @override
   Widget build(BuildContext context) {

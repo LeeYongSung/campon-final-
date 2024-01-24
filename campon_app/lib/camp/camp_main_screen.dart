@@ -1,7 +1,11 @@
+import 'package:campon_app/board/board_main.dart';
+import 'package:campon_app/board/camp_reviewupdate_screen.dart';
+import 'package:campon_app/board/product_reviewupdate_screen%20copy.dart';
 import 'package:campon_app/camp/camp_favorites_screen.dart';
 import 'package:campon_app/camp/camp_home_screen.dart';
 import 'package:campon_app/camp/camp_products_screen.dart';
 import 'package:campon_app/board/camp_reviewadd_screen.dart';
+import 'package:campon_app/camp/reservation.dart';
 import 'package:campon_app/example/Login&ExtraDesign/home.dart';
 import 'package:campon_app/example/Massage/massage.dart';
 import 'package:campon_app/example/Profile/profile.dart';
@@ -41,7 +45,12 @@ class _CampMainScreenState extends State<CampMainScreen> {
                 keyword: keyword,
                 searchDate: todaySearch,
                 checkBoxList: checkBoxList), // 검색
-            CampReviewAdd(), // 리뷰게시판
+            // boardMain(), // 리뷰게시판
+            // CampReviewUpdate(reviewNo: 11),
+            // CampReviewAdd(userNo: 2, campNo: 11, cpdtNo: 10, reservationNo: 11),
+            ProductReviewUpdate(
+              reviewNo: 29,
+            ),
             profile(), // 마이페이지
           ]
         : [];

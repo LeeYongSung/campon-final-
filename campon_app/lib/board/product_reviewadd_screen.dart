@@ -1,7 +1,7 @@
 import 'package:campon_app/board/board_main.dart';
+import 'package:campon_app/camp/reservation.dart';
 import 'package:campon_app/common/footer_screen.dart';
 import 'package:campon_app/models/board.dart';
-import 'package:campon_app/models/camp.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
@@ -9,23 +9,22 @@ import 'package:file_picker/file_picker.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-class CampReviewAdd extends StatefulWidget {
-  final int userNo;
-  final int campNo;
-  final int cpdtNo;
-  final int reservationNo;
-  const CampReviewAdd(
+class ProductReviewAdd extends StatefulWidget {
+  final int? productNo;
+  final int? orderNo;
+  final int? userNo;
+
+  const ProductReviewAdd(
       {super.key,
-      required this.userNo,
-      required this.campNo,
-      required this.cpdtNo,
-      required this.reservationNo});
+      required this.productNo,
+      required this.orderNo,
+      required this.userNo});
 
   @override
-  State<CampReviewAdd> createState() => _CampReviewAddState();
+  State<ProductReviewAdd> createState() => _ProductReviewAddState();
 }
 
-class _CampReviewAddState extends State<CampReviewAdd> {
+class _ProductReviewAddState extends State<ProductReviewAdd> {
   final picker = ImagePicker();
   XFile? image; // 카메라로 촬영한 이미지를 저장할 변수
   List<XFile?> multiImage = []; // 갤러리에서 여러 장의 사진을 선택해서 저장할 변수
@@ -61,27 +60,25 @@ class _CampReviewAddState extends State<CampReviewAdd> {
     print(images[0]!.path);
     print(_selectedFile!.path);
 
-    int userNo = widget.userNo;
-    int campNo = widget.campNo;
-    int cpdtNo = widget.cpdtNo;
-    int reservationNo = widget.reservationNo;
+    int productNo = widget.productNo!;
+    int userNo = widget.userNo!;
+    int orderNo = widget.orderNo!;
 
     if (_selectedFile == null) {
       return;
     }
-    var url = Uri.parse("http://10.0.2.2:8081/api/board/crinsert");
+    var url = Uri.parse("http://10.0.2.2:8081/api/board/prinsert");
     var request = http.MultipartRequest('POST', url);
 
     var filefield =
-        await http.MultipartFile.fromPath('reviewImgfile', _selectedFile!.path);
+        await http.MultipartFile.fromPath('prImgfile', _selectedFile!.path);
     request.files.add(filefield);
 
     request.fields['userNo'] = userNo.toString();
-    request.fields['campNo'] = campNo.toString();
-    request.fields['cpdtNo'] = cpdtNo.toString();
-    request.fields['reservationNo'] = reservationNo.toString();
-    request.fields['reviewTitle'] = _titleController.text;
-    request.fields['reviewCon'] = _contentController.text;
+    request.fields['orderNo'] = orderNo.toString();
+    request.fields['productNo'] = productNo.toString();
+    request.fields['prTitle'] = _titleController.text;
+    request.fields['prCon'] = _contentController.text;
     try {
       // 업로드 요청 보내기
       var response = await request.send();
@@ -90,7 +87,7 @@ class _CampReviewAddState extends State<CampReviewAdd> {
       if (response.statusCode == 201) {
         print('File uploaded successfully');
         Navigator.push(context,
-            MaterialPageRoute(builder: (context) => const boardMain()));
+            MaterialPageRoute(builder: (context) => const Reservation()));
       } else {
         print('File upload failed with status: ${response.statusCode}');
       }
@@ -106,7 +103,6 @@ class _CampReviewAddState extends State<CampReviewAdd> {
 
   @override
   Widget build(BuildContext context) {
-    setState(() {});
     return Scaffold(
       appBar: AppBar(
         title: Image.asset(
@@ -124,7 +120,7 @@ class _CampReviewAddState extends State<CampReviewAdd> {
           Column(
             children: [
               Text(
-                "캠핑장 리뷰 등록",
+                "상품 리뷰 등록",
                 style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
               ),
             ],
@@ -216,7 +212,6 @@ class _CampReviewAddState extends State<CampReviewAdd> {
                     _pickFile();
                     multiImage = await picker.pickMultiImage();
                     setState(() {
-                      print("multiImage : ");
                       //multiImage를 통해 갤러리에서 가지고 온 사진들은 리스트 변수에 저장되므로 addAll()을 사용해서 images와 multiImage 리스트를 합쳐줍니다.
                       images.addAll(multiImage);
                     });

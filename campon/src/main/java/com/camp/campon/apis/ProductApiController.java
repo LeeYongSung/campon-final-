@@ -269,26 +269,28 @@ public class ProductApiController {
      */
     @GetMapping(value = "/payment")
     public ResponseEntity<?> payMent(Principal principal) {
+        log.info("payment 함수 실행");
         String userId = "";
         if (principal == null || principal.getName() == null){
             userId = "user";
         } else {
             userId = principal.getName();
+            log.info("payment 함수 실행 - userId :" + userId);
         }
         try {
             Users users = userService.selectById(userId);
             int userNo = users.getUserNo();
-
+            
             List<Product> cartList = productService.cartList(userNo);
             List<Camp> reservationList = campService.reservationNow(userNo);
             Map<String, Object> payments = new HashMap<>();
             payments.put("cartList", cartList);
+            log.info("payment 함수 실행 - cartList :" + cartList);
             payments.put("reservationList", reservationList);
-
-            log.info("payments : " + payments);
-
+            log.info("payment 함수 실행 - reservationList :" + reservationList);
             return new ResponseEntity<>(payments, HttpStatus.OK);
         } catch (Exception e) {
+            log.info("에러가 뭐지:"+ e);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

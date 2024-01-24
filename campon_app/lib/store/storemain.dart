@@ -341,13 +341,15 @@ class _StoreMainState extends State<StoreMain> {
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                   child: 
                   Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        
                         children: [
 
                           
-                          Expanded(
+                          Container( width : 60, 
                             child: InkWell(
                               onTap: () {
                                 Navigator.push(
@@ -371,7 +373,7 @@ class _StoreMainState extends State<StoreMain> {
                               ),
                             ),
                           ),
-                          Expanded(
+                          Container( width : 60, 
                             child: InkWell(
                               onTap: () {
                                  Navigator.push(
@@ -395,7 +397,7 @@ class _StoreMainState extends State<StoreMain> {
                               ),
                             ),
                           ),
-                          Expanded(
+                          Container( width : 60, 
                             child: InkWell(
                               onTap: () {
                                  Navigator.push(
@@ -419,7 +421,7 @@ class _StoreMainState extends State<StoreMain> {
                               ),
                             ),
                           ),
-                          Expanded(
+                          Container( width : 60, 
                             child: InkWell(
                               onTap: () {
                                  Navigator.push(
@@ -443,7 +445,7 @@ class _StoreMainState extends State<StoreMain> {
                               ),
                             ),
                           ),
-                          Expanded(
+                          Container( width : 60, 
                             child: InkWell(
                                 onTap: () {
                                    Navigator.push(
@@ -471,7 +473,7 @@ class _StoreMainState extends State<StoreMain> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Expanded(
+                          Container( width : 60, 
                             child: InkWell(
                               onTap: () {
                                  Navigator.push(
@@ -495,7 +497,7 @@ class _StoreMainState extends State<StoreMain> {
                               ),
                             ),
                           ),
-                          Expanded(
+                          Container( width : 60, 
                             child: InkWell(
                               onTap: () {
                                  Navigator.push(
@@ -519,7 +521,7 @@ class _StoreMainState extends State<StoreMain> {
                               ),
                             ),
                           ),
-                          Expanded(
+                          Container( width : 60, 
                             child: InkWell(
                               onTap: () {
                                  Navigator.push(
@@ -543,7 +545,7 @@ class _StoreMainState extends State<StoreMain> {
                               ),
                             ),
                           ),
-                          Expanded(
+                          Container( width : 60, 
                             child: InkWell(
                               onTap: () {
                                  Navigator.push(
@@ -567,7 +569,7 @@ class _StoreMainState extends State<StoreMain> {
                               ),
                             ),
                           ),
-                          Expanded(
+                          Container( width : 60, 
                             child: InkWell(
                                 onTap: () {
                                    Navigator.push(

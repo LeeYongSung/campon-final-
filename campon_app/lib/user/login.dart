@@ -1,4 +1,5 @@
 import 'package:campon_app/common/footer_screen.dart';
+import 'package:campon_app/provider/user_provider.dart';
 import 'package:campon_app/store/storeheader.dart';
 import 'package:campon_app/store/storemain.dart';
 import 'package:campon_app/user/join_intro.dart';
@@ -27,16 +28,31 @@ class _LoginState extends State<Login> {
   bool isChecked1 = false;
 
   //로그인 함수
-  Future<void> login (username, password) async {
+  // Future<void> login (username, password) async {
+  Future<void> login (UserProvider userProvider) async {
     try {
-    var response = await http.post(Uri.parse('http://10.0.2.2:8081/login?username=${username}&password=${password}'));
-    if (response.statusCode == 200 ){
-      print('로그인 성공');
-       Navigator.of(context).push(MaterialPageRoute(builder: (context) => const StoreMain()));
-    } else {
-      print('로그인 실패');
-      showLoginFailedDialog();
-    }
+      String username = _userIdController.text;
+      String password = _userPwController.text;
+      // 로그인 요청
+      await userProvider.login(username, password);
+
+      if( userProvider.isLogin ) {
+        print('로그인 여부 : ${userProvider.isLogin}');
+        await userProvider.getUserInfo();
+        print('유저정보 저장 완료...');
+        print( userProvider.userInfo );
+        print('로그인 성공');
+        Navigator.of(context).push(MaterialPageRoute(builder: (context) => const StoreMain()));
+      }
+      // 로그인 요청
+    // var response = await http.post(Uri.parse('http://10.0.2.2:8081/login?username=${username}&password=${password}'));
+    // if (response.statusCode == 200 ){
+    //   print('로그인 성공');
+    //    Navigator.of(context).push(MaterialPageRoute(builder: (context) => const StoreMain()));
+    // } else {
+    //   print('로그인 실패');
+    //   showLoginFailedDialog();
+    // }
     } catch (e) {
      print('로그인 시도 중 서버와의 연결 오류 ${e}'); 
     }
@@ -67,6 +83,8 @@ void showLoginFailedDialog() {
 
   @override
   Widget build(BuildContext context) {
+    UserProvider userProvider = Provider.of<UserProvider>(context, listen: false);
+
     notifire = Provider.of<ColorNotifire>(
       context,
       listen: true,
@@ -250,7 +268,8 @@ void showLoginFailedDialog() {
                             print('아이디저장여부 : ${isChecked}');
                             print('자동로그인여부 : ${isChecked1}');
                             //로그인 함수
-                            login(_userIdController.text, _userPwController.text);
+                            login(userProvider);
+                            // login(_userIdController.text, _userPwController.text);
                           }),
 
                       SizedBox(

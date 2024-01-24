@@ -62,6 +62,8 @@ dependencies:
   intl: ^0.18.0
   path_provider: ^2.1.2
   image_picker: ^1.0.7
+  # 안전한 저장소
+  flutter_secure_storage: ^5.0.0
 
 dev_dependencies:
   flutter_test:

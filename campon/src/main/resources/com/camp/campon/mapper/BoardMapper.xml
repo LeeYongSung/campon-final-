@@ -25,6 +25,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         join campdetail cd on r.cp_dt_no = cd.cp_dt_no
         join user u on r.user_no = u.user_no
         join reservation v on r.reservation_no = v.reservation_no
+        join campimg img on r.camp_no = img.camp_no
+        join (select min(cpi_no) no from campimg group by camp_no) i on img.cpi_no = i.no
         where r.review_no = #{reviewNo}
     </select>
 

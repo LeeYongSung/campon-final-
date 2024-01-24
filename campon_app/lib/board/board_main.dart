@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 
+import 'package:campon_app/board/review_read.dart';
 import 'package:campon_app/example/Login&ExtraDesign/review.dart';
 import 'package:campon_app/example/Utils/Colors.dart';
 import 'package:campon_app/example/Utils/customwidget%20.dart';
@@ -162,7 +163,7 @@ class _boardMainState extends State<boardMain> {
                           return InkWell(
                             onTap: () {
                               Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => review()));
+                                  builder: (context) => reviewRead(reviewNo: newcr[index].reviewNo)));
                             },
                             child: Container(
                               width: double.infinity,
@@ -237,7 +238,7 @@ class _boardMainState extends State<boardMain> {
                           return InkWell(
                             onTap: () {
                               Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => review()));
+                                  builder: (context) => reviewRead(reviewNo: crlist[index].reviewNo)));
                             },
                             child: Container(
                               width: double.infinity,
@@ -394,7 +395,7 @@ class _boardMainState extends State<boardMain> {
                       // 목록
           const Padding(
             padding: EdgeInsets.all(10),
-            child:Text("전체 캠핑장 리뷰", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),),),          
+            child:Text("전체 스토어 리뷰", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),),),          
           ListView.builder(
                         shrinkWrap: true,
                         padding: EdgeInsets.zero,

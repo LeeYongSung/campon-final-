@@ -13,6 +13,7 @@ class Board{
   DateTime? regDate;
   DateTime? updDate;
   int? cpdtNo;
+  String? cpiUrl;
 
   String? campName;
   String? cpdtName;
@@ -71,6 +72,7 @@ class Board{
       this.page,
       this.start,
       this.end,
+      this.cpiUrl
   });
 
     factory Board.fromJson(Map<String, dynamic> json) {
@@ -88,7 +90,8 @@ class Board{
       updDate: parseDateTime(json['updDate']),
       cpdtNo: json['cpdtNo'],      
       campName: json['campName'],      
-      cpdtName: json['cpdtName'],      
+      cpdtName: json['cpdtName'],   
+      cpiUrl: json['cpiUrl'],   
       userName: json['userName'],      
       userId: json['userId'],      
       prNo: json['prNo'],      

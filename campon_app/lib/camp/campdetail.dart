@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:campon_app/camp/camp_home_screen.dart';
 import 'package:campon_app/camp/reservate.dart';
+import 'package:campon_app/common/footer_screen.dart';
 import 'package:campon_app/example/Login&ExtraDesign/chackout.dart';
 import 'package:campon_app/example/Login&ExtraDesign/hoteldetail.dart';
 import 'package:campon_app/example/Utils/Colors.dart';
@@ -357,6 +358,9 @@ class _CampDetailState extends State<CampDetail> {
                             fontFamily: "Gilroy Bold"),
                       ),
                     )),
+                    const Divider(),
+                    const SizedBox(height: 50,),
+                    const FooterScreen()
               ],
             ),
           ),

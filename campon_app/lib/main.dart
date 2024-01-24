@@ -29,6 +29,9 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       home: LoadingScreen(),
+      // home: Payment(),
+      // home: StoreMain(),
+      // home: Login(),
     );
   }
 }

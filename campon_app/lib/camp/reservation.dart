@@ -3,6 +3,8 @@
 // ignore: unused_import
 import 'dart:convert';
 
+import 'package:campon_app/board/camp_reviewadd_screen.dart';
+import 'package:campon_app/board/product_reviewadd_screen.dart';
 import 'package:campon_app/camp/camp_home_screen.dart';
 import 'package:campon_app/common/footer_screen.dart';
 import 'package:campon_app/example/Profile/Favourite.dart';
@@ -347,8 +349,11 @@ class _ReservationState extends State<Reservation> {
                                                               TextButton(
                                                                   onPressed:
                                                                       () {
-                                                                    // Navigator.of(context).push(MaterialPageRoute(
-                                                                    //   builder: (context) => reviewInsert()));
+                                                                    Navigator.of(context).push(MaterialPageRoute(
+                                                                      builder: (context) => CampReviewAdd(userNo: camp[index].userNo,
+                                                                                                          campNo: camp[index].campNo,
+                                                                                                          cpdtNo: camp[index].cpdtNo,
+                                                                                                          reservationNo: camp[index].reservationNo,)));
                                                                   },
                                                                   child: Text(
                                                                       "확인")),
@@ -503,12 +508,11 @@ class _ReservationState extends State<Reservation> {
                                                       child: Text("취소")),
                                                   TextButton(
                                                       onPressed: () {
-                                                        // productdelete(product[index]['orderNo']);
-                                                        // setState(() {
-                                                        //   product.removeAt(index);
-                                                        // });
-                                                        Navigator.of(context)
-                                                            .pop();
+                                                        Navigator.of(context).push(MaterialPageRoute(
+                                                                                  builder: (context) =>
+                                                                                      ProductReviewAdd(productNo: product[index]['productNo'],
+                                                                                                       orderNo: product[index]['orderNo'],
+                                                                                                       userNo: product[index]['userNo'],)));
                                                       },
                                                       child: Text("확인")),
                                                 ],

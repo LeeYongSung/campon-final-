@@ -25,6 +25,8 @@ class Board{
   String? prCon;
   String? prImg;
   MultipartFile? prImgfile;
+  String? productThumnail;
+  int? orderCnt;
 
   int? productNo;
   String? productName;
@@ -72,7 +74,9 @@ class Board{
       this.page,
       this.start,
       this.end,
-      this.cpiUrl
+      this.cpiUrl,
+      this.orderCnt,
+      this.productThumnail
   });
 
     factory Board.fromJson(Map<String, dynamic> json) {
@@ -99,6 +103,8 @@ class Board{
       prCon: json['prCon'],      
       prImg: json['prImg'],      
       prImgfile: json['prImgfile'],      
+      productThumnail: json['productThumnail'],      
+      orderCnt: json['orderCnt'],      
       productNo: json['productNo'],      
       productName: json['productName'],      
       productCategory: json['productCategory'],      

@@ -3,6 +3,7 @@
 import 'dart:convert';
 
 import 'package:campon_app/board/review_read.dart';
+import 'package:campon_app/board/storereview_read.dart';
 import 'package:campon_app/example/Login&ExtraDesign/review.dart';
 import 'package:campon_app/example/Utils/Colors.dart';
 import 'package:campon_app/example/Utils/customwidget%20.dart';
@@ -348,8 +349,9 @@ class _boardMainState extends State<boardMain> {
                   itemBuilder: (BuildContext context, int index) {
                     return InkWell(
                       onTap: () {
-                        Navigator.of(context).push(
-                            MaterialPageRoute(builder: (context) => review()));
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) =>
+                                storereviewRead(prNo: newpr[index].prNo)));
                       },
                       child: Container(
                         width: double.infinity,
@@ -420,8 +422,9 @@ class _boardMainState extends State<boardMain> {
                   itemBuilder: (BuildContext context, int index) {
                     return InkWell(
                       onTap: () {
-                        Navigator.of(context).push(
-                            MaterialPageRoute(builder: (context) => review()));
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) =>
+                                storereviewRead(prNo: prlist[index].prNo)));
                       },
                       child: Container(
                         width: double.infinity,

@@ -10,10 +10,10 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class CampReviewAdd extends StatefulWidget {
-  final int userNo;
-  final int campNo;
-  final int cpdtNo;
-  final int reservationNo;
+  final int? userNo;
+  final int? campNo;
+  final int? cpdtNo;
+  final int? reservationNo;
   const CampReviewAdd(
       {super.key,
       required this.userNo,
@@ -61,10 +61,10 @@ class _CampReviewAddState extends State<CampReviewAdd> {
     print(images[0]!.path);
     print(_selectedFile!.path);
 
-    int userNo = widget.userNo;
-    int campNo = widget.campNo;
-    int cpdtNo = widget.cpdtNo;
-    int reservationNo = widget.reservationNo;
+    int? userNo = widget.userNo;
+    int? campNo = widget.campNo;
+    int? cpdtNo = widget.cpdtNo;
+    int? reservationNo = widget.reservationNo;
 
     if (_selectedFile == null) {
       return;

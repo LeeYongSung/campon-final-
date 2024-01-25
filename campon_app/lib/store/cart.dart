@@ -150,38 +150,47 @@ class _CartState extends State<Cart> {
   }
 
   //대여하기 버튼 클릭 시 실행되는 함수
-  Future<void> paymentfunc () async {
-  print('(cartList.length는? ${cartList.length}');
-    if (cartList.length <= 0 ){
-      
+  Future<void> paymentfunc() async {
+    print('(cartList.length는? ${cartList.length}');
+    if (cartList.length <= 0) {
       print('장바구니에 담긴 상품 없음');
       //장바구니에 추가하라고 알림창 띄우기
       paymentDialog();
     } else {
       //대여 페이지로 이동
-      Navigator.push(context, MaterialPageRoute(builder: (context) {
-        return Payment();
-      },));
+      Navigator.push(context, MaterialPageRoute(
+        builder: (context) {
+          return Payment();
+        },
+      ));
     }
   }
+
   void paymentDialog() {
-    showDialog(context: context, builder: 
-    (context) {
-      return AlertDialog(
-        title : Text("장바구니에 상품을 추가하세요!"),
-        content: Text('상품 메인 화면으로 이동할까요?'),
-        actions: [
-          TextButton(onPressed: (){
-            Navigator.push(context, MaterialPageRoute(builder: (context) {
-              return StoreMain();
-            },));
-          }, child: Text("확인")),
-          TextButton(onPressed: (){
-            Navigator.pop(context);
-          }, child: Text("취소")),
-        ],
-      );
-    },
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text("장바구니에 상품을 추가하세요!"),
+          content: Text('상품 메인 화면으로 이동할까요?'),
+          actions: [
+            TextButton(
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(
+                    builder: (context) {
+                      return StoreMain();
+                    },
+                  ));
+                },
+                child: Text("확인")),
+            TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text("취소")),
+          ],
+        );
+      },
     );
   }
 
@@ -242,169 +251,175 @@ class _CartState extends State<Cart> {
               Divider(
                 color: notifire.getgreycolor,
               ),
-
-              (cartList.length == 0) ? Text("장바구니에 담긴 상품 없음!", style: TextStyle(fontSize: 20,),) : 
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                child: Container(
-                  child: ListView.builder(
-                    physics: const NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: cartList.length,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 6),
-                        child: Container(
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(15),
-                              color: notifire.getdarkmodecolor),
-                          child: Column(
-                            children: [
-                              Container(
-                                height: 140,
-                                width: double.infinity,
-                                child: ClipRRect(
-                                  borderRadius: const BorderRadius.only(
-                                      topLeft: Radius.circular(12),
-                                      topRight: Radius.circular(12)),
-                                  child:
-
-                                      //썸네일 이미지
-                                      connected
-                                          ? Image.network(
-                                              "http://10.0.2.2:8081/api/img?file=${cartList[index]["productThumnail"].toString()}",
-                                              fit: BoxFit.cover,
-                                            )
-                                          : Image.asset("img/product/11.png",
-                                              fit: BoxFit.cover),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: 10),
+              (cartList.length == 0)
+                  ? Text(
+                      "장바구니에 담긴 상품 없음!",
+                      style: TextStyle(
+                        fontSize: 20,
+                      ),
+                    )
+                  : Padding(
+                      padding:
+                          EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                      child: Container(
+                        child: ListView.builder(
+                          physics: const NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          itemCount: cartList.length,
+                          itemBuilder: (context, index) {
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 6),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(15),
+                                    color: notifire.getdarkmodecolor),
                                 child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          cartList[index]["productCategory"]
-                                              .toString(),
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              color:
-                                                  notifire.getwhiteblackcolor,
-                                              fontFamily: "Gilroy Bold"),
-                                        ),
-                                        Text(
-                                          cartList[index]["productName"]
-                                              .toString(),
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              color: notifire.getdarkbluecolor,
-                                              fontFamily: "Gilroy Bold"),
-                                        ),
-                                      ],
+                                    Container(
+                                      height: 140,
+                                      width: double.infinity,
+                                      child: ClipRRect(
+                                        borderRadius: const BorderRadius.only(
+                                            topLeft: Radius.circular(12),
+                                            topRight: Radius.circular(12)),
+                                        child:
+
+                                            //썸네일 이미지
+                                            connected
+                                                ? Image.network(
+                                                    "http://10.0.2.2:8081/api/img?file=${cartList[index]["productThumnail"].toString()}",
+                                                    fit: BoxFit.cover,
+                                                  )
+                                                : Image.asset(
+                                                    "img/product/11.png",
+                                                    fit: BoxFit.cover),
+                                      ),
                                     ),
-                                    //상품 인트로
-                                    Text(
-                                      cartList[index]["productIntro"]
-                                          .toString(),
-                                      style: TextStyle(
-                                          fontSize: 14,
-                                          color: notifire.getgreycolor,
-                                          fontFamily: "Gilroy Medium",
-                                          overflow: TextOverflow.ellipsis),
-                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 10, vertical: 10),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                cartList[index]
+                                                        ["productCategory"]
+                                                    .toString(),
+                                                style: TextStyle(
+                                                    fontSize: 16,
+                                                    color: notifire
+                                                        .getwhiteblackcolor,
+                                                    fontFamily: "Gilroy Bold"),
+                                              ),
+                                              Text(
+                                                cartList[index]["productName"]
+                                                    .toString(),
+                                                style: TextStyle(
+                                                    fontSize: 16,
+                                                    color: notifire
+                                                        .getdarkbluecolor,
+                                                    fontFamily: "Gilroy Bold"),
+                                              ),
+                                            ],
+                                          ),
+                                          //상품 인트로
+                                          Text(
+                                            cartList[index]["productIntro"]
+                                                .toString(),
+                                            style: TextStyle(
+                                                fontSize: 14,
+                                                color: notifire.getgreycolor,
+                                                fontFamily: "Gilroy Medium",
+                                                overflow:
+                                                    TextOverflow.ellipsis),
+                                          ),
 
-                                    //가격
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          "${cartList[index]["productPrice"].toString()}원",
-                                          style: TextStyle(
-                                              fontSize: 18,
-                                              color:
-                                                  notifire.getwhiteblackcolor,
-                                              fontFamily: "Gilroy Bold"),
-                                        ),
-                                        //버튼 2개
-                                        Row(
-                                          children: [
-                                            //상세정보 버튼
-                                            Container(
-                                              width: 80,
-                                              height: 40,
-                                              child: AppButton(
-                                                  buttontext: "상세정보",
-                                                  onclick: () {
-                                                    Navigator.of(context).push(
-                                                        MaterialPageRoute(
-                                                            builder: (context) =>
-                                                                ProductDetail(
-                                                                    productNo:
-                                                                        '${cartList[index]["productNo"]}')));
-                                                  }),
-                                            ),
+                                          //가격
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                "${cartList[index]["productPrice"].toString()}원",
+                                                style: TextStyle(
+                                                    fontSize: 18,
+                                                    color: notifire
+                                                        .getwhiteblackcolor,
+                                                    fontFamily: "Gilroy Bold"),
+                                              ),
+                                              //버튼 2개
+                                              Row(
+                                                children: [
+                                                  //상세정보 버튼
+                                                  Container(
+                                                    width: 80,
+                                                    height: 40,
+                                                    child: AppButton(
+                                                        buttontext: "상세정보",
+                                                        onclick: () {
+                                                          Navigator.of(context).push(
+                                                              MaterialPageRoute(
+                                                                  builder: (context) =>
+                                                                      ProductDetail(
+                                                                          productNo:
+                                                                              '${cartList[index]["productNo"]}')));
+                                                        }),
+                                                  ),
 
-                                            SizedBox(
-                                              width: 10,
-                                            ),
+                                                  SizedBox(
+                                                    width: 10,
+                                                  ),
 
-                                            //삭제 버튼
-                                            Container(
-                                              width: 80,
-                                              height: 40,
-                                              child: AppButton(
-                                                  buttontext: "삭제",
-                                                  onclick: () {
-                                                    //장바구니에서 삭제 함수 실행
-                                                    removeCart(
-                                                        '${cartList[index]["cartNo"]}');
-                                                  }),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
+                                                  //삭제 버튼
+                                                  Container(
+                                                    width: 80,
+                                                    height: 40,
+                                                    child: AppButton(
+                                                        buttontext: "삭제",
+                                                        onclick: () {
+                                                          //장바구니에서 삭제 함수 실행
+                                                          removeCart(
+                                                              '${cartList[index]["cartNo"]}');
+                                                        }),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ],
                                 ),
                               ),
-                            ],
-                          ),
+                            );
+                          },
                         ),
-                      );
-                    },
-                  ),
-                ),
-              ),
+                      ),
+                    ),
             ],
           ),
         ),
-    
         bottomNavigationBar: Container(
           height: 65,
           color: Colors.amber,
-          child: 
-          Center(
+          child: Center(
             child: InkWell(
-                    onTap: () {
-                      //결제 페이지로 이동
-                      paymentfunc();
-
-                    },
-                    child: Text(
-                      "대여하기",
-                      style: TextStyle(
-                          color: WhiteColor,
-                          fontSize: 20,
-                          fontFamily: "Gilroy Bold"),
-                    ),
-                  ),
+              onTap: () {
+                //결제 페이지로 이동
+                paymentfunc();
+              },
+              child: Text(
+                "대여하기",
+                style: TextStyle(
+                    color: WhiteColor, fontSize: 20, fontFamily: "Gilroy Bold"),
+              ),
+            ),
           ),
         ),
       ),

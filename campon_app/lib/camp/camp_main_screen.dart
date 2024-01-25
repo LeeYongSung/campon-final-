@@ -1,16 +1,8 @@
 import 'package:campon_app/board/board_main.dart';
-import 'package:campon_app/board/camp_reviewupdate_screen.dart';
-import 'package:campon_app/board/product_reviewupdate_screen%20copy.dart';
-import 'package:campon_app/camp/camp_favorites_screen.dart';
 import 'package:campon_app/camp/camp_home_screen.dart';
 import 'package:campon_app/camp/camp_products_screen.dart';
-import 'package:campon_app/board/camp_reviewadd_screen.dart';
-import 'package:campon_app/camp/reservation.dart';
-import 'package:campon_app/example/Login&ExtraDesign/home.dart';
-import 'package:campon_app/example/Massage/massage.dart';
-import 'package:campon_app/example/Profile/profile.dart';
-import 'package:campon_app/example/Search/Search.dart';
 import 'package:campon_app/models/camp.dart';
+import 'package:campon_app/provider/user_provider.dart';
 import 'package:campon_app/store/storemain.dart';
 import 'package:campon_app/user/login.dart';
 import 'package:flutter/material.dart';
@@ -26,15 +18,20 @@ class CampMainScreen extends StatefulWidget {
 }
 
 class _CampMainScreenState extends State<CampMainScreen> {
+  UserProvider userProvider = UserProvider();
   var _userAuth = 'user';
   Camp camp = Camp();
   DateTime today = DateTime.now();
   var todaySearch;
   List<String> checkBoxList = ["1", "2", "3", "4", "5"];
   String? keyword;
-
   // 각 페이지 연결
   // 로그인 기능 완료 시 각 권한 별 체크
+
+  Future<void> _userCheck(UserProvider userProvider) async {
+    await userProvider.getUserInfo();
+    print(userProvider.userInfo);
+  }
 
   List<Widget> get _pageOption {
     return _userAuth == 'user'
@@ -46,12 +43,12 @@ class _CampMainScreenState extends State<CampMainScreen> {
                 keyword: keyword,
                 searchDate: todaySearch,
                 checkBoxList: checkBoxList), // 검색
-            // boardMain(), // 리뷰게시판
+            boardMain(), // 리뷰게시판
             // CampReviewUpdate(reviewNo: 11),
             // CampReviewAdd(userNo: 2, campNo: 11, cpdtNo: 10, reservationNo: 11),
-            ProductReviewUpdate(
-              reviewNo: 29,
-            ),
+            // ProductReviewUpdate(
+            //   reviewNo: 29,
+            // ),
             // profile(), // 마이페이지
             Login()
           ]
@@ -63,6 +60,8 @@ class _CampMainScreenState extends State<CampMainScreen> {
     initState() {
       todaySearch = DateFormat('yyyy-MM-dd').format(today);
       keyword = camp.keyword;
+      print('여기');
+      _userCheck(userProvider);
     }
 
     return Scaffold(

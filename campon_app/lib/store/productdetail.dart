@@ -337,8 +337,7 @@ class _ProductDetailState extends State<ProductDetail> {
   Widget sliderWidget() {
     return CarouselSlider(
         carouselController: _controller,
-        items: 
-        imgList.map((
+        items: imgList.map((
           imgLink,
         ) {
           return Builder(
@@ -354,9 +353,9 @@ class _ProductDetailState extends State<ProductDetail> {
                         ) as ImageProvider<Object>
                       : AssetImage(imgLink),
                   imageErrorBuilder: (context, error, stackTrace) {
-                    return 
-                    //TODO 이미지를 imgLink2로 수정해야함
-                    Image.asset(imgLink3);
+                    return
+                        //TODO 이미지를 imgLink2로 수정해야함
+                        Image.asset(imgLink3);
                   },
                 ),
               );

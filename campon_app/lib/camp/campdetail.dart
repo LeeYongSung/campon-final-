@@ -35,43 +35,43 @@ class _CampDetailState extends State<CampDetail> {
   Camp camp = Camp();
   Camp date = Camp();
   List<Camp> imgs = [];
-  
+
   @override
   void initState() {
     getdarkmodepreviousstate();
     super.initState();
 
-    getCamp().then((campData){
-      setState((){
+    getCamp().then((campData) {
+      setState(() {
         camp = campData['camp'];
         imgs = campData['img'];
       });
     });
   }
 
-  Future<Map<String, dynamic>> getCamp() async{
+  Future<Map<String, dynamic>> getCamp() async {
     var url = 'http://10.0.2.2:8081/api/camp/campdetail/${widget.cpdtNo}';
     var response = await http.get(Uri.parse(url));
 
-    if (response.statusCode == 200){
+    if (response.statusCode == 200) {
       var utf8Decoded = utf8.decode(response.bodyBytes);
       Map<String, dynamic> data = jsonDecode(utf8Decoded);
 
-      List<Camp> productimg = List<Camp>.from(data['productimg'].map((item) => Camp.fromJson(item)));
+      List<Camp> productimg = List<Camp>.from(
+          data['productimg'].map((item) => Camp.fromJson(item)));
       Camp productintro = Camp.fromJson(data['productintro']);
-      
+
       Camp camp = Camp(
-        cpdtNo: productintro.cpdtNo,
-        campName: productintro.campName,
-        cpdtName: productintro.cpdtName,
-        campTypeName: productintro.campTypeName,
-        cpdtSize: productintro.cpdtSize,
-        cpdtNop: productintro.cpdtNop,
-        cpdtPrice: productintro.cpdtPrice,
-        cpdtIntroduction: productintro.cpdtIntroduction
-      );
+          cpdtNo: productintro.cpdtNo,
+          campName: productintro.campName,
+          cpdtName: productintro.cpdtName,
+          campTypeName: productintro.campTypeName,
+          cpdtSize: productintro.cpdtSize,
+          cpdtNop: productintro.cpdtNop,
+          cpdtPrice: productintro.cpdtPrice,
+          cpdtIntroduction: productintro.cpdtIntroduction);
       List<Camp>? img = [];
-      for(var i = 0; i < productimg.length; i++){
+      for (var i = 0; i < productimg.length; i++) {
         img.add(Camp(
           cpdiUrl: productimg[i].cpdiUrl,
         ));
@@ -79,9 +79,9 @@ class _CampDetailState extends State<CampDetail> {
 
       return {
         'camp': camp,
-        'img' : img,
+        'img': img,
       };
-    }else{
+    } else {
       print("서버 문제");
       return {};
     }
@@ -94,8 +94,6 @@ class _CampDetailState extends State<CampDetail> {
     'assets/images/SagamoreResort.jpg',
     'assets/images/SagamoreResort.jpg',
   ];
-
-  
 
   @override
   Widget build(BuildContext context) {
@@ -124,8 +122,7 @@ class _CampDetailState extends State<CampDetail> {
                       GestureDetector(
                         onTap: () {
                           Navigator.of(context).push(MaterialPageRoute(
-                                                builder: (context) =>
-                                                    CampHomeScreen()));
+                              builder: (context) => CampHomeScreen()));
                         },
                         child: Image.asset(
                           "assets/images/logo2.png",
@@ -167,18 +164,18 @@ class _CampDetailState extends State<CampDetail> {
                     itemCount: imgs.length,
                     itemBuilder: (context, index, realIndex) {
                       if (index >= 0 && index < imgs.length) {
-                      return Stack(           
-                        children: [
-                          Image.asset(
-                            "${imgs[index].cpdiUrl}",
-                            fit: BoxFit.cover,
-                            width: MediaQuery.of(context).size.width,
-                          )
-                        ],
-                      );
-                    } else {
-                      return Container();
-                    }   
+                        return Stack(
+                          children: [
+                            Image.asset(
+                              "${imgs[index].cpdiUrl}",
+                              fit: BoxFit.cover,
+                              width: MediaQuery.of(context).size.width,
+                            )
+                          ],
+                        );
+                      } else {
+                        return Container();
+                      }
                     },
                     options: CarouselOptions(viewportFraction: 1.0)),
               )),
@@ -337,8 +334,10 @@ class _CampDetailState extends State<CampDetail> {
                     child: ElevatedButton(
                       onPressed: () {
                         Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) =>
-                                      Reservate(cpdtNo: widget.cpdtNo, date: date,)));
+                            builder: (context) => Reservate(
+                                  cpdtNo: widget.cpdtNo,
+                                  date: date,
+                                )));
                       },
                       style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.all<Color>(
@@ -358,9 +357,11 @@ class _CampDetailState extends State<CampDetail> {
                             fontFamily: "Gilroy Bold"),
                       ),
                     )),
-                    const Divider(),
-                    const SizedBox(height: 50,),
-                    const FooterScreen()
+                const Divider(),
+                const SizedBox(
+                  height: 50,
+                ),
+                const FooterScreen()
               ],
             ),
           ),

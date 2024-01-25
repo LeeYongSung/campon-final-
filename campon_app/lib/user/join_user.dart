@@ -53,8 +53,8 @@ class _JoinUserState extends State<JoinUser> {
   }
 
   //회원가입 버튼 클릭 시 실행되는 함수
-  Future<void> join(
-      userId, userName, userEmail, userTel, userAddress, userPw,companyName,  companyNumber) async {
+  Future<void> join(userId, userName, userEmail, userTel, userAddress, userPw,
+      companyName, companyNumber) async {
     Map<String, dynamic> body = {
       "userId": userId,
       "userName": userName,
@@ -62,8 +62,8 @@ class _JoinUserState extends State<JoinUser> {
       "userTel": userTel,
       "userAddress": userAddress,
       "userPw": userPw,
-      "companyName": (widget.role =="ROLE_SELL") ? companyName : '',
-      "companyNumber": (widget.role =="ROLE_SELL") ?  companyNumber : '0',
+      "companyName": (widget.role == "ROLE_SELL") ? companyName : '',
+      "companyNumber": (widget.role == "ROLE_SELL") ? companyNumber : '0',
       "auth": widget.role,
     };
 
@@ -417,27 +417,28 @@ class _JoinUserState extends State<JoinUser> {
                             print('비밀번호 : ${_userPwController.text}');
                             print('비밀번호 확인 : ${_userPwCheckController.text}');
                             // if (widget.role == "ROLE_SELL") {
-                              print('업체명 : ${_companyNameController.text}');
-                              print('사업자번호 : ${_companyNumberController.text}');
+                            print('업체명 : ${_companyNameController.text}');
+                            print('사업자번호 : ${_companyNumberController.text}');
                             // }
                             join(
-                                _userIdController.text,
-                                _userNameController.text,
-                                _userEmailController.text,
-                                _userTelController.text,
-                                _userAddressController.text,
-                                _userPwController.text,
-                                _companyNameController.text,
-                                _companyNumberController.text,
-                                );
+                              _userIdController.text,
+                              _userNameController.text,
+                              _userEmailController.text,
+                              _userTelController.text,
+                              _userAddressController.text,
+                              _userPwController.text,
+                              _companyNameController.text,
+                              _companyNumberController.text,
+                            );
                           }
                           // Navigator.of(context).push(MaterialPageRoute(
                           //     builder: (context) => const homepage()));
 
-                          Navigator.pushReplacement(context, MaterialPageRoute(
-                            //TODO 경로수정
-                            builder : (context)=>StoreMain()
-                          ));
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  //TODO 경로수정
+                                  builder: (context) => StoreMain()));
                         }),
                   ]),
                 ),

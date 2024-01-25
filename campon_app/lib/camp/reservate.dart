@@ -43,8 +43,8 @@ class _ReservateState extends State<Reservate> {
     getdarkmodepreviousstate();
     super.initState();
 
-    getCamp().then((campData){
-      setState((){
+    getCamp().then((campData) {
+      setState(() {
         camp = campData['camp'];
         user = campData['user'];
       });
@@ -55,25 +55,24 @@ class _ReservateState extends State<Reservate> {
     var url = 'http://10.0.2.2:8081/api/camp/reservate/${widget.cpdtNo}';
     var response = await http.get(Uri.parse(url));
 
-    if(response.statusCode == 200){
+    if (response.statusCode == 200) {
       var utf8Decoded = utf8.decode(response.bodyBytes);
       Map<String, dynamic> data = jsonDecode(utf8Decoded);
 
       Camp productintro = Camp.fromJson(data['camp']);
       Users users = Users.fromJson(data['user']);
-      
+
       Camp camp = Camp(
-        campNo: productintro.campNo,
-        cpdtNo: productintro.cpdtNo,
-        cpdiUrl: productintro.cpdiUrl,
-        campName: productintro.campName,
-        cpdtName: productintro.cpdtName,
-        campTypeName: productintro.campTypeName,
-        cpdtSize: productintro.cpdtSize,
-        cpdtNop: productintro.cpdtNop,
-        cpdtPrice: productintro.cpdtPrice,
-        cpdtIntroduction: productintro.cpdtIntroduction
-      );
+          campNo: productintro.campNo,
+          cpdtNo: productintro.cpdtNo,
+          cpdiUrl: productintro.cpdiUrl,
+          campName: productintro.campName,
+          cpdtName: productintro.cpdtName,
+          campTypeName: productintro.campTypeName,
+          cpdtSize: productintro.cpdtSize,
+          cpdtNop: productintro.cpdtNop,
+          cpdtPrice: productintro.cpdtPrice,
+          cpdtIntroduction: productintro.cpdtIntroduction);
 
       Users user = Users(
         userNo: users.userNo,
@@ -86,67 +85,77 @@ class _ReservateState extends State<Reservate> {
         'camp': camp,
         'user': user,
       };
-    }else{
+    } else {
       print("서버 문제");
       return {};
     }
   }
 
   Future<void> reserve() async {
-
     Map<String, dynamic> data = {
-      'campNo' : camp.campNo,
-      'cpdtNo' : camp.cpdtNo,
-      'userNo' : user.userNo,
-      'reservationNop' : _counter1,
-      'reservationStart' : DateFormat('yyyy-MM-dd').format(widget.date.reservationStart ?? DateTime.now()),
-      'reservationEnd' : DateFormat('yyyy-MM-dd').format(widget.date.reservationEnd ?? DateTime.now()),
-      'reservationDate' : widget.date.reservationDate,
-      'campPaymentType' : selectedValue,
+      'campNo': camp.campNo,
+      'cpdtNo': camp.cpdtNo,
+      'userNo': user.userNo,
+      'reservationNop': _counter1,
+      'reservationStart': DateFormat('yyyy-MM-dd')
+          .format(widget.date.reservationStart ?? DateTime.now()),
+      'reservationEnd': DateFormat('yyyy-MM-dd')
+          .format(widget.date.reservationEnd ?? DateTime.now()),
+      'reservationDate': widget.date.reservationDate,
+      'campPaymentType': selectedValue,
     };
     print(data);
 
-    if(widget.date.reservationDate != null ){
-    if(widget.date.reservationDate! > 0 && _counter1 > 0){
-    var url = 'http://10.0.2.2:8081/api/camp/reservate';
-    var response = await http.post(
-      Uri.parse(url),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(data)
-    );
-      if (response.statusCode == 201) {
-        print('성공');
-        Navigator.of(context).push(MaterialPageRoute(
-                                   builder: (context) =>
-                                       Complete()));
+    if (widget.date.reservationDate != null) {
+      if (widget.date.reservationDate! > 0 && _counter1 > 0) {
+        var url = 'http://10.0.2.2:8081/api/camp/reservate';
+        var response = await http.post(Uri.parse(url),
+            headers: <String, String>{
+              'Content-Type': 'application/json; charset=UTF-8',
+            },
+            body: jsonEncode(data));
+        if (response.statusCode == 201) {
+          print('성공');
+          Navigator.of(context)
+              .push(MaterialPageRoute(builder: (context) => Complete()));
+        } else {
+          print('실패 ${response.statusCode}');
+        }
       } else {
-        print('실패 ${response.statusCode}');
+        print("정보입력이부족");
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                content: Text("날짜와 인원을 다시 확인해주세요"),
+                actions: [
+                  TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Text("확인")),
+                ],
+              );
+            });
       }
-    }else{
-      print("정보입력이부족");
-      showDialog(context: context, builder: (BuildContext context){
-                                              return AlertDialog(
-                                                content: Text("날짜와 인원을 다시 확인해주세요"),
-                                                actions: [
-                                                  TextButton(onPressed: (){Navigator.of(context).pop();}, child: Text("확인")),
-                                                ],
-                                              );
-                                            });
-    }}else {
+    } else {
       print('Value is null.');
-      showDialog(context: context, builder: (BuildContext context){
-                                              return AlertDialog(
-                                                content: Text("날짜와 인원을 다시 확인해주세요"),
-                                                actions: [
-                                                  TextButton(onPressed: (){Navigator.of(context).pop();}, child: Text("확인")),
-                                                ],
-                                              );
-                                            });
-    } 
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              content: Text("날짜와 인원을 다시 확인해주세요"),
+              actions: [
+                TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text("확인")),
+              ],
+            );
+          });
+    }
   }
-
 
   late ColorNotifire notifire;
   @override
@@ -156,12 +165,10 @@ class _ReservateState extends State<Reservate> {
       backgroundColor: notifire.getbgcolor,
       appBar: AppBar(
         backgroundColor: notifire.getbgcolor,
-        title: 
-        GestureDetector(
+        title: GestureDetector(
           onTap: () {
-            Navigator.of(context).push(MaterialPageRoute(
-                                   builder: (context) =>
-                                       CampHomeScreen()));
+            Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => CampHomeScreen()));
           },
           child: Image.asset(
             "assets/images/logo2.png",
@@ -171,7 +178,6 @@ class _ReservateState extends State<Reservate> {
         ),
         centerTitle: true,
       ),
-      
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
@@ -198,8 +204,8 @@ class _ReservateState extends State<Reservate> {
                       ),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(10),
-                        child:
-                            Image.asset(camp.cpdiUrl ?? "assets/images/Confidiantehotel.png"),
+                        child: Image.asset(camp.cpdiUrl ??
+                            "assets/images/Confidiantehotel.png"),
                       ),
                     ),
                     Column(
@@ -232,130 +238,139 @@ class _ReservateState extends State<Reservate> {
               const SizedBox(height: 15),
               Divider(),
               Container(
-                      width: double.infinity,
-                      margin: EdgeInsets.symmetric(vertical: 10),
-                      padding: EdgeInsets.all(15.0),
-                      decoration: BoxDecoration(
-                      border: Border.symmetric(horizontal:BorderSide (
-                        color: notifire.getgreycolor, // 외곽선 색상
-                        width: 1.0,) // 외곽선 두께
-                      ),
-                    ),
-                      child:
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Column(
-                            children:[
-                              Text(
-                                "체크인",
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  color: notifire.getwhiteblackcolor,
-                                  fontFamily: "Gilroy Bold"),
-                              ),
-                              const SizedBox(height: 10,),
-                              Text( 
-                                DateFormat('yyyy-MM-dd').format(widget.date.reservationStart ?? DateTime.now()),
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  color: notifire.getwhiteblackcolor,
-                                  fontFamily: "Gilroy Bold"),
-                              ),
-                            ]
-                            ),
-                              Text(
-                                "${widget.date.reservationDate ?? 0}박 ${(widget.date.reservationDate ?? 0) + 1}일",
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  color: notifire.getwhiteblackcolor,
-                                  fontFamily: "Gilroy Bold"),
-                              ),
-                            Column(
-                            children:[
-                              Text(
-                                "체크아웃",
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  color: notifire.getwhiteblackcolor,
-                                  fontFamily: "Gilroy Bold"),
-                              ),
-                              const SizedBox(height: 10,),
-                              Text(
-                                DateFormat('yyyy-MM-dd').format(widget.date.reservationEnd ?? DateTime.now()),
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  color: notifire.getwhiteblackcolor,
-                                  fontFamily: "Gilroy Bold"),
-                              ),
-                            ]
-                            ),       
-                        ],)
+                  width: double.infinity,
+                  margin: EdgeInsets.symmetric(vertical: 10),
+                  padding: EdgeInsets.all(15.0),
+                  decoration: BoxDecoration(
+                    border: Border.symmetric(
+                        horizontal: BorderSide(
+                      color: notifire.getgreycolor, // 외곽선 색상
+                      width: 1.0,
+                    ) // 외곽선 두께
                         ),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(children: [
+                        Text(
+                          "체크인",
+                          style: TextStyle(
+                              fontSize: 15,
+                              color: notifire.getwhiteblackcolor,
+                              fontFamily: "Gilroy Bold"),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Text(
+                          DateFormat('yyyy-MM-dd').format(
+                              widget.date.reservationStart ?? DateTime.now()),
+                          style: TextStyle(
+                              fontSize: 15,
+                              color: notifire.getwhiteblackcolor,
+                              fontFamily: "Gilroy Bold"),
+                        ),
+                      ]),
+                      Text(
+                        "${widget.date.reservationDate ?? 0}박 ${(widget.date.reservationDate ?? 0) + 1}일",
+                        style: TextStyle(
+                            fontSize: 15,
+                            color: notifire.getwhiteblackcolor,
+                            fontFamily: "Gilroy Bold"),
+                      ),
+                      Column(children: [
+                        Text(
+                          "체크아웃",
+                          style: TextStyle(
+                              fontSize: 15,
+                              color: notifire.getwhiteblackcolor,
+                              fontFamily: "Gilroy Bold"),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Text(
+                          DateFormat('yyyy-MM-dd').format(
+                              widget.date.reservationEnd ?? DateTime.now()),
+                          style: TextStyle(
+                              fontSize: 15,
+                              color: notifire.getwhiteblackcolor,
+                              fontFamily: "Gilroy Bold"),
+                        ),
+                      ]),
+                    ],
+                  )),
               selectdetail(
-                image: "assets/images/calendar.png",
-                text: "날짜를 선택해주세요.",
-                icon: Icons.keyboard_arrow_down,
-                onclick: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => Calander(no: camp.cpdtNo),
-                  ));}
-              ),
+                  image: "assets/images/calendar.png",
+                  text: "날짜를 선택해주세요.",
+                  icon: Icons.keyboard_arrow_down,
+                  onclick: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => Calander(no: camp.cpdtNo),
+                    ));
+                  }),
               const SizedBox(height: 10),
               Divider(),
               Room(
-                text: "숙박 인원",
-                onclick1: () {
-                  if(_counter1 > 0)
-                    setState(() {
-                      _counter1--;
-                    });
+                  text: "숙박 인원",
+                  onclick1: () {
+                    if (_counter1 > 0)
+                      setState(() {
+                        _counter1--;
+                      });
                   },
-                middeltext: "$_counter1",
-                onclick2: () {
-                  setState(() {
-                    _counter1++;
-                  });
-                }),
+                  middeltext: "$_counter1",
+                  onclick2: () {
+                    setState(() {
+                      _counter1++;
+                    });
+                  }),
               const SizedBox(height: 10),
               Divider(),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("예약자명 : ${user.userName ?? '유저명'} ",
-                  style: TextStyle(fontSize: 15),),
-                  Text("연락처 : ${user.userTel ?? '연락처'}",
-                  style: TextStyle(fontSize: 15),)
+                  Text(
+                    "예약자명 : ${user.userName ?? '유저명'} ",
+                    style: TextStyle(fontSize: 15),
+                  ),
+                  Text(
+                    "연락처 : ${user.userTel ?? '연락처'}",
+                    style: TextStyle(fontSize: 15),
+                  )
                 ],
               ),
               Divider(),
               SizedBox(height: 10),
-              Text("결제 방법", style: TextStyle(fontSize: 15,),textAlign: TextAlign.center),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Radio(
-                    value: 'card',
-                    groupValue: selectedValue,
-                    onChanged: (value) {
-                      setState(() {
-                        selectedValue = value.toString();
-                      });
-                    },
+              Text("결제 방법",
+                  style: TextStyle(
+                    fontSize: 15,
                   ),
-                  Text('카드'),
-
-                  Radio(
-                    value: 'bankbook',
-                    groupValue: selectedValue,
-                    onChanged: (value) {
-                      setState(() {
-                        selectedValue = value.toString();
-                      });
-                    },
-                  ),
-                  Text('무통장입금'),]),
-                  Divider(),
+                  textAlign: TextAlign.center),
+              Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                Radio(
+                  value: 'card',
+                  groupValue: selectedValue,
+                  onChanged: (value) {
+                    setState(() {
+                      selectedValue = value.toString();
+                    });
+                  },
+                ),
+                Text('카드'),
+                Radio(
+                  value: 'bankbook',
+                  groupValue: selectedValue,
+                  onChanged: (value) {
+                    setState(() {
+                      selectedValue = value.toString();
+                    });
+                  },
+                ),
+                Text('무통장입금'),
+              ]),
+              Divider(),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -366,7 +381,8 @@ class _ReservateState extends State<Reservate> {
                           style: TextStyle(
                               fontFamily: "Gilroy Bold",
                               color: notifire.getwhiteblackcolor)),
-                      Text("${(camp.cpdtPrice ?? 0) * (widget.date.reservationDate ?? 0)}",
+                      Text(
+                          "${(camp.cpdtPrice ?? 0) * (widget.date.reservationDate ?? 0)}",
                           style: TextStyle(
                               fontFamily: "Gilroy Bold",
                               color: notifire.getwhiteblackcolor)),
@@ -374,7 +390,7 @@ class _ReservateState extends State<Reservate> {
                   ),
                   const SizedBox(height: 40),
                   InkWell(
-                    onTap: (){
+                    onTap: () {
                       reserve();
                     },
                     child: Container(
@@ -386,8 +402,7 @@ class _ReservateState extends State<Reservate> {
                       child: Center(
                         child: Text("결제하기",
                             style: TextStyle(
-                                fontSize: 16,
-                                fontFamily: "Gilroy Bold")),
+                                fontSize: 16, fontFamily: "Gilroy Bold")),
                       ),
                     ),
                   ),
@@ -444,7 +459,6 @@ class _ReservateState extends State<Reservate> {
       ],
     );
   }
-
 
   Room({text, onclick1, onclick2, middeltext}) {
     return Column(

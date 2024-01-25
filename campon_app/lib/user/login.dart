@@ -98,15 +98,15 @@ class _LoginState extends State<Login> {
             height: 60,
           ),
           centerTitle: true,
-          leading: GestureDetector(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 15.0, vertical: 15.0),
-              child: Icon(Icons.arrow_back_ios),
-            ),
-            onTap: () {
-              Navigator.pop(context);
-            },
-          ),
+          // leading: GestureDetector(
+          //   child: Padding(
+          //     padding: EdgeInsets.symmetric(horizontal: 15.0, vertical: 15.0),
+          //     child: Icon(Icons.arrow_back_ios),
+          //   ),
+          //   onTap: () {
+          //     Navigator.pop(context);
+          //   },
+          // ),
         ),
         backgroundColor: notifire.getbgcolor,
         body: SingleChildScrollView(

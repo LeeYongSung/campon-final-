@@ -518,23 +518,23 @@ class _PaymentState extends State<Payment> {
                   ),
                   Expanded(
                     child: ListTile(
-                      title: const Text(
-                        '카드 결제',
-                        style: TextStyle(fontSize: 12),
-                      ),
-                      leading: SizedBox(
+                        title: const Text(
+                          '카드 결제',
+                          style: TextStyle(fontSize: 12),
+                        ),
+                        leading: SizedBox(
                           width: 24,
                           height: 24,
                           child: Radio(
-                        value: "카드",
-                        groupValue: _payVal,
-                        onChanged: (value) {
-                          setState(() {
-                            _payVal = value;
-                          });
-                        },
-                      ),)
-                    ),
+                            value: "카드",
+                            groupValue: _payVal,
+                            onChanged: (value) {
+                              setState(() {
+                                _payVal = value;
+                              });
+                            },
+                          ),
+                        )),
                   ),
                   Expanded(
                     child: ListTile(

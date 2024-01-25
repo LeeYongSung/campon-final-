@@ -24,55 +24,23 @@ class _CategoryState extends State<Category> {
 
   bool connected = false;
 
-
   //카테고리명, 이미지 등..
   List<dynamic> categories = [
-    {
-      "name" : "텐트", 
-      "image" : "img/product/product1.png"
-    },
-    {
-      "name" : "테이블", 
-      "image" : "img/product/product2.png"
-    },
-    {
-      "name" : "체어", 
-      "image" : "img/product/product3.png"
-    },
-    {
-      "name" : "매트", 
-      "image" : "img/product/product4.png"
-    },
-    {
-      "name" : "조명", 
-      "image" : "img/product/product5.png"
-    },
-    {
-      "name" : "화로대", 
-      "image" : "img/product/product6.png"
-    },
-    {
-      "name" : "타프", 
-      "image" : "img/product/product7.png"
-    },
-    {
-      "name" : "수납", 
-      "image" : "img/product/product8.png"
-    },
-    {
-      "name" : "캠핑가전", 
-      "image" : "img/product/product9.png"
-    },
-    {
-      "name" : "주방용품", 
-      "image" : "img/product/product10.png"
-    },
+    {"name": "텐트", "image": "img/product/product1.png"},
+    {"name": "테이블", "image": "img/product/product2.png"},
+    {"name": "체어", "image": "img/product/product3.png"},
+    {"name": "매트", "image": "img/product/product4.png"},
+    {"name": "조명", "image": "img/product/product5.png"},
+    {"name": "화로대", "image": "img/product/product6.png"},
+    {"name": "타프", "image": "img/product/product7.png"},
+    {"name": "수납", "image": "img/product/product8.png"},
+    {"name": "캠핑가전", "image": "img/product/product9.png"},
+    {"name": "주방용품", "image": "img/product/product10.png"},
   ];
-  
 
   List category = [
     {
-      "productNo" : "1",
+      "productNo": "1",
       "productThumnail": "img/product/11.png",
       "productCategory": "텐트",
       "productName": "상품이름",
@@ -80,7 +48,7 @@ class _CategoryState extends State<Category> {
       "productPrice": "3000",
     },
     {
-       "productNo" : "2",
+      "productNo": "2",
       "productThumnail": "img/product/12.png",
       "productCategory": "텐트2",
       "productName": "상품이름2",
@@ -124,12 +92,13 @@ class _CategoryState extends State<Category> {
   }
 
   //장바구니 클릭 시 실행될 함수
-  Future<void> addCart (String productNo) async {
+  Future<void> addCart(String productNo) async {
     int userNo = 2; //TODO 하드코딩
     try {
-      var response = await http.get(Uri.parse("http://10.0.2.2:8081/api/product/addProductsaveAjax?productNo=${productNo}&userNo=${userNo}"));
+      var response = await http.get(Uri.parse(
+          "http://10.0.2.2:8081/api/product/addProductsaveAjax?productNo=${productNo}&userNo=${userNo}"));
       var result = response.body;
-      if (result == "SUCCESS"){
+      if (result == "SUCCESS") {
         print("장바구니에 담기기 성공");
         //위젯
         showCartDialogS();
@@ -144,61 +113,73 @@ class _CategoryState extends State<Category> {
   }
 
   void showCartDialogS() {
-    showDialog(context: context, builder: (context) {
-      return AlertDialog(
-        title : Text("장바구니에 담겼습니다!"),
-        content: Text("장바구니로 이동하시겠습니까?"),
-        actions: [
-          TextButton(onPressed: 
-          (){
-            //TODO 장바구니 페이지로 이동
-                Navigator.pushReplacement(
-                    context, MaterialPageRoute(builder: (context) => Cart()));
-          }
-          , child: Text("이동")),
-          TextButton(onPressed: (){
-            Navigator.pop(context);
-          }, child: Text("취소")),
-        ],
-
-      );
-    },);
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text("장바구니에 담겼습니다!"),
+          content: Text("장바구니로 이동하시겠습니까?"),
+          actions: [
+            TextButton(
+                onPressed: () {
+                  //TODO 장바구니 페이지로 이동
+                  Navigator.pushReplacement(
+                      context, MaterialPageRoute(builder: (context) => Cart()));
+                },
+                child: Text("이동")),
+            TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text("취소")),
+          ],
+        );
+      },
+    );
   }
 
   void showCartDialogF() {
-    showDialog(context: context, builder: (context) {
-      return AlertDialog(
-        title : Text("이미 장바구니에 담긴 상품입니다!"),
-        content: Text("장바구니로 이동하시겠습니까?"),
-        actions: [
-          TextButton(onPressed: 
-          (){
-            //TODO 장바구니 페이지로 이동
-            Navigator.pop(context);
-          }
-          , child: Text("이동")),
-          TextButton(onPressed: (){
-            Navigator.pop(context);
-          }, child: Text("취소")),
-        ],
-
-      );
-    },);
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text("이미 장바구니에 담긴 상품입니다!"),
+          content: Text("장바구니로 이동하시겠습니까?"),
+          actions: [
+            TextButton(
+                onPressed: () {
+                  //TODO 장바구니 페이지로 이동
+                  Navigator.pop(context);
+                },
+                child: Text("이동")),
+            TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text("취소")),
+          ],
+        );
+      },
+    );
   }
 
   void showCartDialogE() {
-    showDialog(context: context, builder: (context) {
-      return AlertDialog(
-        title : Text("장바구니에 담기 실패!"),
-        content: Text("다시 시도해보세요"),
-        actions: [
-          TextButton(onPressed: (){
-            Navigator.pop(context);
-          }, child: Text("확인")),
-        ],
-
-      );
-    },);
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text("장바구니에 담기 실패!"),
+          content: Text("다시 시도해보세요"),
+          actions: [
+            TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text("확인")),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -244,32 +225,32 @@ class _CategoryState extends State<Category> {
       ),
       backgroundColor: notifire.getbgcolor,
       body: SingleChildScrollView(
-        child: 
-        
-        Column(
+        child: Column(
           children: [
             Text('카테고리'),
             SizedBox(
               height: 100,
               width: MediaQuery.of(context).size.width * 5,
-
               child: ListView.builder(
-                 scrollDirection: Axis.horizontal,
+                scrollDirection: Axis.horizontal,
                 itemCount: categories.length,
                 itemBuilder: (context, index) {
-                  return    Container(
+                  return Container(
                     width: 85,
                     child: InkWell(
                       onTap: () {
-                        Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => Category(categoryName : "${categories[index]["name"]}")));
+                        // Navigator.push(
+                        //             context,
+                        //             MaterialPageRoute(
+                        //                 builder: (context) => Category(categoryName : "${categories[index]["name"]}")));
+                        categoryName = categories[index]["name"];
+                        print(categoryName);
+                        getCatProList();
                       },
                       child: Column(
                         children: [
                           Image.asset(
-                             "${categories[index]["image"]}",
+                            "${categories[index]["image"]}",
                             height: 60,
                           ),
                           Text(
@@ -283,13 +264,8 @@ class _CategoryState extends State<Category> {
                       ),
                     ),
                   );
-                  
                 },
-              
               ),
-
-
-
             ),
 
             SizedBox(
@@ -310,7 +286,7 @@ class _CategoryState extends State<Category> {
               padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
               child: Container(
                 child: ListView.builder(
-                   physics: const NeverScrollableScrollPhysics(),
+                  physics: const NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
                   itemCount: category.length,
                   itemBuilder: (context, index) {
@@ -329,15 +305,16 @@ class _CategoryState extends State<Category> {
                                 borderRadius: const BorderRadius.only(
                                     topLeft: Radius.circular(12),
                                     topRight: Radius.circular(12)),
-                                child: 
+                                child:
 
-                                //썸네일 이미지
-                                connected ? 
-                                Image.network(
-                                  "http://10.0.2.2:8081/api/img?file=${category[index]["productThumnail"].toString()}",
-                                  fit: BoxFit.cover,
-                                ) : Image.asset("img/product/11.png", fit: BoxFit.cover)
-                                ,
+                                    //썸네일 이미지
+                                    connected
+                                        ? Image.network(
+                                            "http://10.0.2.2:8081/api/img?file=${category[index]["productThumnail"].toString()}",
+                                            fit: BoxFit.cover,
+                                          )
+                                        : Image.asset("img/product/11.png",
+                                            fit: BoxFit.cover),
                               ),
                             ),
                             Padding(
@@ -400,10 +377,12 @@ class _CategoryState extends State<Category> {
                                             child: AppButton(
                                                 buttontext: "상세정보",
                                                 onclick: () {
-                                                  Navigator.of(context)
-                                                      .push(MaterialPageRoute(
+                                                  Navigator.of(context).push(
+                                                      MaterialPageRoute(
                                                           builder: (context) =>
-                                                              ProductDetail(productNo: '${category[index]["productNo"]}')));
+                                                              ProductDetail(
+                                                                  productNo:
+                                                                      '${category[index]["productNo"]}')));
                                                 }),
                                           ),
 
@@ -418,7 +397,8 @@ class _CategoryState extends State<Category> {
                                             child: AppButton(
                                                 buttontext: "장바구니",
                                                 onclick: () {
-                                                 addCart("${category[index]["productNo"]}");
+                                                  addCart(
+                                                      "${category[index]["productNo"]}");
                                                 }),
                                           ),
                                         ],

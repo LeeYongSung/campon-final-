@@ -1,3 +1,4 @@
+import 'package:campon_app/board/review_read.dart';
 import 'package:campon_app/camp/camp_products_screen.dart';
 import 'package:campon_app/camp/camp_schedule_screen.dart';
 import 'package:campon_app/camp/campproduct.dart';
@@ -177,8 +178,9 @@ class _CampHomeScreenState extends State<CampHomeScreen> {
                           category: '0',
                           keyword: searchTitle = searchTitle ?? "",
                           searchDate: searchDate = searchDate ?? todays,
-                          checkBoxList:
-                              checkBoxList.isEmpty ? [] : checkBoxList)));
+                          checkBoxList: checkBoxList.isEmpty
+                              ? ["1", "2", "3", "4", "5"]
+                              : checkBoxList)));
             },
           ),
         ],
@@ -751,8 +753,8 @@ class _CampHomeScreenState extends State<CampHomeScreen> {
                 child: GridView.builder(
                   physics: NeverScrollableScrollPhysics(),
                   padding: EdgeInsets.all(10),
-                  itemCount: min(
-                      suggestList.length, 6), // 6과 hotelList2.length 중 작은 값을 사용
+                  itemCount: min(suggestList.length,
+                      6), // 6과 suggestList.length 중 작은 값을 사용
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 3, // 가로에 표시할 항목 수
                     crossAxisSpacing: 10, // 가로 간격
@@ -820,6 +822,11 @@ class _CampHomeScreenState extends State<CampHomeScreen> {
                   // Navigator.of(context).push(MaterialPageRoute(
                   //     builder: (context) =>
                   //         const hoteldetailpage()));
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: ((context) => reviewRead(
+                              reviewNo: newReviewList[index]["reviewNo"]))));
                 },
                 child: Container(
                   width: double.infinity,

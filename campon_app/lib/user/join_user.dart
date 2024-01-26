@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:campon_app/camp/camp_main_screen.dart';
 import 'package:campon_app/store/storemain.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -430,15 +431,15 @@ class _JoinUserState extends State<JoinUser> {
                               _companyNameController.text,
                               _companyNumberController.text,
                             );
-                          }
-                          // Navigator.of(context).push(MaterialPageRoute(
-                          //     builder: (context) => const homepage()));
-
                           Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
                                   //TODO 경로수정
-                                  builder: (context) => StoreMain()));
+                                  builder: (context) => CampMainScreen()));
+                          }
+                          // Navigator.of(context).push(MaterialPageRoute(
+                          //     builder: (context) => const homepage()));
+
                         }),
                   ]),
                 ),

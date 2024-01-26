@@ -1,3 +1,5 @@
+import 'package:campon_app/camp/camp_home_screen.dart';
+import 'package:campon_app/camp/camp_main_screen.dart';
 import 'package:campon_app/common/footer_screen.dart';
 import 'package:campon_app/provider/user_provider.dart';
 import 'package:campon_app/store/storeheader.dart';
@@ -42,7 +44,7 @@ class _LoginState extends State<Login> {
         print(userProvider.userInfo);
         print('로그인 성공');
         Navigator.of(context)
-            .push(MaterialPageRoute(builder: (context) => const StoreMain()));
+            .push(MaterialPageRoute(builder: (context) => const CampMainScreen()));
       }
       // 로그인 요청
       // var response = await http.post(Uri.parse('http://10.0.2.2:8081/login?username=${username}&password=${password}'));

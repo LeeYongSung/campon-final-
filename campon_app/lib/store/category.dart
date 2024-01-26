@@ -218,7 +218,9 @@ class _CategoryState extends State<Category> {
             ),
             onTap: () {
               print('장바구니 클릭.....');
-              //TODO
+              //장바구니로 이동
+              Navigator.pushReplacement(
+                      context, MaterialPageRoute(builder: (context) => Cart()));
             },
           ),
         ],

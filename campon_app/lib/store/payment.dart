@@ -138,6 +138,7 @@ class _PaymentState extends State<Payment> {
       final data = jsonDecode(utf8.decode(response.bodyBytes));
       print("getPayList () 함수 실행2");
       setState(() {
+        connected = true;
         cartList = data["cartList"];
         print("cartList ? ${cartList}");
         //{productNo: 1, productName: 1, productThumnail: /img/product/3d5486f7-470c-496f-a5ef-707ff8d29c1a_20231115_103134.png, productCon: C:/upload/productCon1.jpg, productIntro: 상품설명1, productCategory: 텐트, productPrice: 10000000, regDate: 2023-11-01T07:28:23.000+00:00, updDate: 2023-11-01T07:28:23.000+00:00, userNo: 2, productimgNo: null, productimgUrl: null, productImgsUrlList: null, productThmFile: null, productConFile: null, productImgs: null, cartNo: 43, cartCnt: 1, productsaveNo: 0, wishlistNo: 0, orderCnt: 0, sum: null, orderNo: 0},
@@ -162,6 +163,7 @@ class _PaymentState extends State<Payment> {
         print("reservationList.length ? ${reservationList.length}");
         print("reservationList ? ${reservationList}");
         isSelectedLength(reservationList.length);
+        
       });
     } catch (e) {
       print("getPayList () 중 에러 발생 ${e}");
@@ -228,7 +230,8 @@ class _PaymentState extends State<Payment> {
 
                                     //썸네일 이미지
                                     connected
-                                        ? Image.network(
+                                        ? 
+                                        Image.network(
                                             "http://10.0.2.2:8081/api/img?file=${cartList[index]["productThumnail"].toString()}",
                                             fit: BoxFit.cover,
                                           )

@@ -3,7 +3,6 @@ import 'package:campon_app/provider/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'example/Utils/dark_lightmode.dart';
-import 'package:campon_app/store/productadd.dart';
 
 void main() {
   runApp(
@@ -30,10 +29,6 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       home: LoadingScreen(),
-      // home: Payment(),
-      // home: StoreMain(),
-      // home: Login(),
-      // home: ProductAdd(),
     );
   }
 }

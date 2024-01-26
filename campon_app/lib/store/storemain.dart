@@ -122,7 +122,8 @@ class _StoreMainState extends State<StoreMain> {
       "prCon": "텐트가 좋았어요 가족들이랑 재밌게 놀다가요",
       "productName": "productName",
       "regDate": "2024-01-17",
-      "userId": "홍길동"
+      "userId": "홍길동",
+      "formattedDate" : "2024-01-26"
     },
     {
       "prNo": 1,
@@ -131,7 +132,8 @@ class _StoreMainState extends State<StoreMain> {
       "prCon": "텐트가 좋았어요 가족들이랑 재밌게 놀다가요",
       "productName": "productName",
       "regDate": "2024-01-17",
-      "userId": "길동이"
+      "userId": "길동이",
+      "formattedDate" : "2024-01-26"
     },
     {
       "prNo": 1,
@@ -140,7 +142,8 @@ class _StoreMainState extends State<StoreMain> {
       "prCon": "텐트가 좋았어요 가족들이랑 재밌게 놀다가요",
       "productName": "productName",
       "regDate": "2024-01-17",
-      "userId": "동길이"
+      "userId": "동길이",
+      "formattedDate" : "2024-01-26"
     },
   ];
 
@@ -886,24 +889,7 @@ class _StoreMainState extends State<StoreMain> {
                                         fit: BoxFit.cover,
                                       ),
 
-                                // FutureBuilder<Widget?>(
-                                //     future: checkUrlAccessibility(
-                                //         "http://10.0.2.2:8081/api/img?file=${proReviewList[index]['prImg'].toString()}",
-                                //         index),
-                                //     builder: (context, snapshot) {
-                                //       if (snapshot.connectionState == ConnectionState.waiting) {
-                                //         // 데이터 로딩 중에 보여줄 위젯
-                                //         return Image.asset("img/product/product1.png", fit: BoxFit.cover);
-                                //       } else if (snapshot.hasError) {
-                                //         // 에러가 발생했을 때 보여줄 위젯
-                                //         return Image.asset("img/product/product2.png", fit: BoxFit.cover);
-                                //       } else {
-                                //         // 데이터가 성공적으로 로드되었을 때 보여줄 위젯
-                                //         return snapshot.data ??
-                                //            Image.asset("img/product/product3.png", fit: BoxFit.cover);
-                                //       }
-                                //     },
-                                //   ),
+                              
                               ),
                             ),
                             Column(
